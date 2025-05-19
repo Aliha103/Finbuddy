@@ -1,0 +1,27 @@
+.NavBar_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0 30px;
+  box-shadow: 0 2px 4px rgba(160, 153, 153, 0.1);
+}
+.NavBar_logo {
+  display: flex;
+  align-items: center;
+  margin: 50%;
+}
+.NavBar_links {
+  display: flex;
+  gap: 20px;
+}
+.NavBar_link {
+  text-decoration: none;
+  font-size: 1.2rem;
+    color: black;
+}
+.NavBar_link:hover {
+  text-decoration: underline;
+}
