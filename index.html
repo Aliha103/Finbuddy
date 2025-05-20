@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Character Encoding -->
@@ -7,72 +7,270 @@
     <!-- Viewport Settings for Responsive Design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
     <!-- SEO Meta Tags -->
-    <meta name="description" content="FinBuddy - Your Personal Finance Assistant" />
-    <meta name="keywords" content="finance, personal finance, budgeting, investment" />
+    <meta
+      name="description"
+      content="FinBuddy - Your Personal Finance Assistant"
+    />
+    <meta
+      name="keywords"
+      content="finance, personal finance, budgeting, investment"
+    />
     <meta name="author" content="FinBuddy Team" />
 
-    <!-- Browser Theme Color (Primary Blue) -->
+    <!-- Theme Color for Browsers -->
     <meta name="theme-color" content="#0066FF" />
 
-    <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
-
-    <!-- Favicon -->
-    <link rel="icon" href="/front-end/src/assets/favicons/android-chrome-512x512.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/front-end/src/assets/favicons/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/front-end/src/assets/favicons/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/front-end/src/assets/favicons/favicon-16x16.png" />
-    <link rel="shortcut icon" href="/front-end/src/assets/favicons/favicon.ico" type="image/x-icon" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/front-end/src/assets/favicons/android-chrome-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/front-end/src/assets/favicons/android-chrome-512x512.png" />
-    <link rel="manifest" href="./src/assets/favicons/site.webmanifest" />
-    <link rel="mask-icon" href="./src/assets/favicons/safari-pinned-tab.svg" color="#5bbad5" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ffffff" />
-    <!-- Open Graph Meta Tags for Social Media Sharing -->
-    <meta property="og:title" content="FinBuddy - Your Personal Finance Assistant" />
-    <meta property="og:description" content="FinBuddy helps you manage your finances effortlessly." />
-    <meta property="og:image" content="/front-end/src/assets/favicons/android-chrome-512x512.png" />
+    <!-- Open Graph Tags -->
+    <meta
+      property="og:title"
+      content="FinBuddy - Your Personal Finance Assistant"
+    />
+    <meta
+      property="og:description"
+      content="FinBuddy helps you manage your finances effortlessly."
+    />
+    <meta
+      property="og:image"
+      content="/src/assets/favicons/android-chrome-512x512.png"
+    />
     <meta property="og:url" content="https://finbuddy.com" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FinBuddy" />
     <meta property="og:locale" content="en_US" />
 
+    <!-- Favicon & Manifest -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/src/assets/favicons/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/src/assets/favicons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/src/assets/favicons/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/src/assets/favicons/android-chrome-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/src/assets/favicons/android-chrome-512x512.png"
+    />
+    <link rel="manifest" href="/src/assets/favicons/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="/src/assets/favicons/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="msapplication-TileColor" content="#da532c" />
 
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
-    
     <!-- Stylesheets -->
-    <!-- Reset default browser styles -->
     <link rel="stylesheet" href="/src/styles/reset.css" />
-    <!-- CSS Variables for color palette and consistency -->
     <link rel="stylesheet" href="/src/styles/variables.css" />
-    <!-- Global base styles -->
     <link rel="stylesheet" href="/src/styles/global.css" />
-    <!-- Typography settings (font sizes, weights, etc.) -->
     <link rel="stylesheet" href="/src/styles/typography.css" />
-    <!-- Layout utilities (grid, flexbox helpers) -->
     <link rel="stylesheet" href="/src/styles/layout.css" />
-    <!-- UI components (buttons, cards, etc.) -->
     <link rel="stylesheet" href="/src/styles/components.css" />
-    <!-- Utility classes (margins, paddings, shadows, etc.) -->
     <link rel="stylesheet" href="/src/styles/utilities.css" />
-    <!-- Animations and transitions -->
     <link rel="stylesheet" href="/src/styles/animations.css" />
-    <!-- Responsive design tweaks -->
     <link rel="stylesheet" href="/src/styles/responsive.css" />
-    <!-- Accessibility improvements -->
     <link rel="stylesheet" href="/src/styles/accessibility.css" />
-    <!-- Print-specific styles -->
     <link rel="stylesheet" href="/src/styles/print.css" media="print" />
+    <link
+      rel="stylesheet"
+      href="/src/styles/dark-mode.css"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link
+      rel="stylesheet"
+      href="/src/styles/light-mode.css"
+      media="(prefers-color-scheme: light)"
+    />
 
     <title>FinBuddy</title>
-  </head>
-  <body style="background-color: #F5F7FA;">
-    <!-- React root element -->
-    <div id="root"></div>
 
-    <!-- Main JavaScript/React Entry Point -->
+    <style>
+      /* Ensures footer sticks to the bottom */
+      .page-container {
+        display: flex;
+        min-height: 98vh;
+        flex-direction: column;
+        background-color: #f5f7fa;
+        font-family: "Lato", "Open Sans", sans-serif;
+        color: #333;
+        padding-top: 2vh;
+      }
+
+      .content {
+        flex: 1;
+      }
+
+      .site-footer {
+        background-color: #ffffff;
+        border-top: 1px solid #d4d4d4;
+        padding: 10px 20px;
+        font-family: "Lato", "Open Sans", sans-serif;
+        font-size: 14px;
+        color: #555;
+        display: flex;
+        justify-content:space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .footer-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1200px;
+      }
+
+      .footer-logo img {
+        width: 110px;
+        height: 60px;
+        transition: transform 0.3s ease;
+      }
+
+      .footer-logo img:hover {
+        transform: scale(1.1);
+      }
+
+      .footer-info {
+        flex: 1;
+        display: flex;
+        gap: 20px;
+        align-items: space-between;
+        justify-content: center;
+      }
+
+      .footer-info a {
+        color: #0066ff;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-info a:hover {
+        color: #004bb5;
+        text-decoration: underline;
+      }
+
+      .social-icons {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 15px;
+      }
+
+      .social-icons a {
+        font-size: 18px;
+        color: #777;
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+
+      .social-icons a:hover {
+        color: #0066ff;
+        transform: scale(1.2);
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .footer-content {
+          flex-direction: column;
+          gap: 10px;
+          text-align: center;
+        }
+
+        .footer-logo,
+        .social-icons {
+          justify-content: center;
+          margin: 5px 0;
+        }
+
+        .footer-info {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+
+  <!-- Inside <body> -->
+  <body style="background-color: #f5f7fa; margin: 0">
+    <div class="page-container">
+      <!-- React root -->
+      <main id="root" class="content"></main>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <img
+              src="./src/assets/logo/finbuddy_loading_logo.png"
+              alt="FinBuddy Logo"
+            />
+          </div>
+
+          <div class="footer-info">
+            <a href="/privacy-policy.html">Privacy Policy</a>
+            <span>|</span>
+            <a href="/terms-of-service.html">Terms of Service</a>
+            <span>|</span>
+            Contact: <a href="mailto:help@finbuddy.com">help@finbuddy.com</a>
+            <span>|</span>
+            &copy; 2025 FinBuddy. All rights reserved.
+          </div>
+
+          <div class="social-icons">
+            <a
+              href="https://twitter.com/FinBuddy"
+              aria-label="Twitter"
+              target="_blank"
+              ><i class="fab fa-twitter"></i
+            ></a>
+            <a
+              href="https://facebook.com/FinBuddy"
+              aria-label="Facebook"
+              target="_blank"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a
+              href="https://instagram.com/FinBuddy"
+              aria-label="Instagram"
+              target="_blank"
+              ><i class="fab fa-instagram"></i
+            ></a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
+<!-- End of HTML Document -->
