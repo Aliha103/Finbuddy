@@ -1,27 +1,206 @@
-.NavBar_container {
+:root {
+  --primary-color: #5a32f2; /* Customizable primary color */
+  --primary-hover: #4022b4;
+  --text-color: #222;
+  --bg-color: #fff;
+  --search-border: #ccc;
+}
+
+/* Navbar Container */
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
-  color: white;
-  font-size: 1.5rem;
-  padding: 0 30px;
-  box-shadow: 0 2px 4px rgba(160, 153, 153, 0.1);
+  padding: 6px 30px;
+  background-color: var(--bg-color);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  font-family: "Lato", sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: top 0.4s ease;
 }
-.NavBar_logo {
+
+/* Scroll behavior */
+.navbar-hidden {
+  top: -100px;
+}
+
+.navbar-visible {
+  top: 0;
+}
+
+/* Logo */
+.navbar-logo {
+  height: 45px;
+}
+
+/* Center - Search */
+.navbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-search {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.navbar-search input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid var(--search-border);
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+/* Right - Buttons */
+.navbar-right {
   display: flex;
   align-items: center;
-  margin: 50%;
+  gap: 15px;
 }
-.NavBar_links {
+
+.navbar-links {
   display: flex;
-  gap: 20px;
+  gap: 12px;
 }
-.NavBar_link {
+
+/* Buttons */
+.btn {
+  padding: 6px 14px;
+  font-size: 14px;
   text-decoration: none;
-  font-size: 1.2rem;
-    color: black;
+  border-radius: 20px;
+  transition: all 0.2s ease-in-out;
 }
-.NavBar_link:hover {
-  text-decoration: underline;
+
+.btn-outline {
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  background-color: transparent;
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+/* Menu Toggle */
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  display: none;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+/* === MOBILE NAVBAR (<= 768px) === */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    position: relative;
+  }
+
+  .navbar-left {
+    order: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .navbar-right {
+    order: 2;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 24px;
+  }
+
+  .navbar-center {
+    order: 3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .navbar-search {
+    width: 90%;
+    max-width: 320px;
+  }
+
+  .navbar-links {
+    order: 4;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .btn {
+    width: 70%;
+    max-width: 280px;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 25px;
+  }
+}
+
+/* === DESKTOP NAVBAR (> 768px) === */
+@media (min-width: 769px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 12px 30px;
+  }
+
+  .navbar-left,
+  .navbar-center,
+  .navbar-right {
+    width: auto;
+  }
+
+  .navbar-links {
+    display: flex;
+    gap: 12px;
+  }
 }

@@ -1,0 +1,26 @@
+.why-finbuddy {
+  padding: 5rem 2rem;
+  text-align: center;
+  background: white;
+}
+
+.why-finbuddy h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.why-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.why-cards div {
+  background-color: #f9f9fb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  text-align: left;
+}

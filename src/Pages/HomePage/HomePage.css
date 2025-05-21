@@ -1,0 +1,109 @@
+/* ========================
+   🎨 GLOBAL DESIGN TOKENS
+   ======================== */
+:root {
+  --primary-color: #3f51b5;
+  --primary-hover: #303f9f;
+  --background-light: #f7f9fc;
+  --text-dark: #1e1e1e;
+  --text-muted: #6b7280;
+  --font-main: "Poppins", sans-serif;
+  --font-secondary: "Inter", sans-serif;
+  --radius: 16px;
+}
+
+/* ========================
+   🧭 SECTION TITLE
+   ======================== */
+.section-title {
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+}
+
+/* ========================
+   💬 TESTIMONIALS SECTION
+   ======================== */
+.testimonials {
+  background-color: var(--background-light);
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.testimonials h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: var(--text-dark);
+}
+
+/* 🧱 Grid container for testimonials */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* 🧾 Individual testimonial card */
+.testimonial-card {
+  background-color: #ffffff;
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  position: relative;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Decorative quote icon */
+.testimonial-card .quote-icon {
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+/* Quote body */
+.testimonial-card p {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+/* Attribution */
+.testimonial-card span {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* ========================
+   🔄 RESPONSIVE TWEAKS
+   ======================== */
+@media (max-width: 768px) {
+  .testimonial-card {
+    padding: 1.5rem;
+  }
+
+  .testimonial-card .quote-icon {
+    font-size: 3rem;
+  }
+
+  .testimonial-card p {
+    font-size: 1rem;
+  }
+
+  .testimonial-card span {
+    font-size: 0.9rem;
+  }
+}

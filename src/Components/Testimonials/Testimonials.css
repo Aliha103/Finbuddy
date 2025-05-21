@@ -1,0 +1,60 @@
+/* ========================
+   💬 TESTIMONIALS SECTION
+   ======================== */
+.testimonials {
+  background-color: #f7faff;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.testimonials h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: var(--text-dark);
+}
+
+/* Layout for testimonials */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background-color: white;
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  position: relative;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Large decorative quote mark */
+.testimonial-card .quote-icon {
+  font-size: 4rem;
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+/* Quote text */
+.testimonial-card p {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+/* User name and role */
+.testimonial-card span {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
