@@ -1,14 +1,23 @@
 {
-  "name": "front-end",
+  "name": "finbuddy-frontend",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
+  "description": "A personal finance frontend built with React and Vite.",
+  "author": "Ali Hassan Cheema",
+  "license": "MIT",
   "type": "module",
+
+  "homepage": "https://aliha103.github.io/Finbuddy",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
+
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -17,6 +26,7 @@
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1"
   },
+
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
@@ -26,6 +36,55 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "gh-pages": "^6.0.0"
+  },
+
+  "eslintConfig": {
+    "extends": [
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended",
+      "plugin:react-refresh/recommended",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "env": {
+      "browser": true,
+      "es6": true
+    },
+    "rules": {
+      "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off"
+    }
+  },
+
+  "eslintIgnore": ["node_modules", "dist"],
+
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": false
+  },
+
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aliha103/Finbuddy.git"
   }
 }
