@@ -76,9 +76,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "homepage": "https://aliha103.github.io/Finbuddy",
-"scripts": {
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d dist"
+  }
 }
