@@ -4,14 +4,8 @@
     <!-- Character Encoding -->
     <meta charset="UTF-8" />
 
-    <!-- Viewport Settings for Responsive Design -->
+    <!-- Viewport for Responsive Design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
 
     <!-- SEO Meta Tags -->
     <meta
@@ -24,10 +18,7 @@
     />
     <meta name="author" content="FinBuddy Team" />
 
-    <!-- Theme Color for Browsers -->
-    <meta name="theme-color" content="#0066FF" />
-
-    <!-- Open Graph Tags -->
+    <!-- Open Graph -->
     <meta
       property="og:title"
       content="FinBuddy - Your Personal Finance Assistant"
@@ -38,53 +29,29 @@
     />
     <meta
       property="og:image"
-      content="/src/assets/favicons/android-chrome-512x512.png"
+      content="./assets/favicons/android-chrome-512x512.png"
     />
-    <meta property="og:url" content="https://finbuddy.com" />
+    <meta property="og:url" content="https://aliha103.github.io/Finbuddy/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FinBuddy" />
     <meta property="og:locale" content="en_US" />
 
-    <link rel="manifest" href="/src/assets/favicons/site.webmanifest" />
-    <link rel="preload" as="image" href="/path-to-lcp-image.jpg" />
-
-    <!-- Favicon & Manifest -->
+    <!-- Theme + Favicons -->
+    <meta name="theme-color" content="#0066FF" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <link rel="manifest" href="./assets/favicons/site.webmanifest" />
+    <link rel="icon" href="./assets/favicons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" href="./assets/favicons/favicon-16x16.png" sizes="16x16" />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/src/assets/favicons/apple-touch-icon.png"
+      href="./assets/favicons/apple-touch-icon.png"
     />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="/src/assets/favicons/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="/src/assets/favicons/favicon-16x16.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href="/src/assets/favicons/android-chrome-192x192.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="512x512"
-      href="/src/assets/favicons/android-chrome-512x512.png"
-    />
-    <link rel="manifest" href="/src/assets/favicons/site.webmanifest" />
     <link
       rel="mask-icon"
-      href="/src/assets/favicons/safari-pinned-tab.svg"
+      href="./assets/favicons/safari-pinned-tab.svg"
       color="#5bbad5"
     />
-    <meta name="msapplication-TileColor" content="#da532c" />
 
     <!-- Google Fonts -->
     <link
@@ -92,52 +59,33 @@
       rel="stylesheet"
     />
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/src/styles/reset.css" />
-    <link rel="stylesheet" href="/src/styles/variables.css" />
-    <link rel="stylesheet" href="/src/styles/global.css" />
-    <link rel="stylesheet" href="/src/styles/typography.css" />
-    <link rel="stylesheet" href="/src/styles/layout.css" />
-    <link rel="stylesheet" href="/src/styles/components.css" />
-    <link rel="stylesheet" href="/src/styles/utilities.css" />
-    <link rel="stylesheet" href="/src/styles/animations.css" />
-    <link rel="stylesheet" href="/src/styles/responsive.css" />
-    <link rel="stylesheet" href="/src/styles/accessibility.css" />
-    <link rel="stylesheet" href="/src/styles/print.css" media="print" />
+    <!-- Font Awesome -->
     <link
       rel="stylesheet"
-      href="/src/styles/dark-mode.css"
-      media="(prefers-color-scheme: dark)"
-    />
-    <link
-      rel="stylesheet"
-      href="/src/styles/light-mode.css"
-      media="(prefers-color-scheme: light)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
 
     <title>FinBuddy</title>
 
     <style>
-      /* Ensures footer sticks to the bottom */
+      /* Layout helper for footer + root */
       .page-container {
         display: flex;
         min-height: 98vh;
         flex-direction: column;
         background-color: #f5f7fa;
-        font-family: "Lato", "Open Sans", sans-serif;
+        font-family: 'Lato', 'Open Sans', sans-serif;
         color: #333;
-        padding-top: 2vh;
       }
 
       .content {
         flex: 1;
       }
 
-      .site-footer {
+      footer.site-footer {
         background-color: #ffffff;
         border-top: 1px solid #d4d4d4;
         padding: 10px 20px;
-        font-family: "Lato", "Open Sans", sans-serif;
         font-size: 14px;
         color: #555;
         display: flex;
@@ -157,7 +105,7 @@
 
       .footer-logo img {
         width: 110px;
-        height: 60px;
+        height: auto;
         transition: transform 0.3s ease;
       }
 
@@ -169,8 +117,8 @@
         flex: 1;
         display: flex;
         gap: 20px;
-        align-items: space-between;
         justify-content: center;
+        flex-wrap: wrap;
       }
 
       .footer-info a {
@@ -185,7 +133,6 @@
       }
 
       .social-icons {
-        flex: 0 0 auto;
         display: flex;
         gap: 15px;
       }
@@ -201,30 +148,21 @@
         transform: scale(1.2);
       }
 
-      /* Responsive Adjustments */
       @media (max-width: 768px) {
         .footer-content {
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
           text-align: center;
-        }
-
-        .footer-logo,
-        .social-icons {
-          justify-content: center;
-          margin: 5px 0;
         }
 
         .footer-info {
           justify-content: center;
-          flex-wrap: wrap;
         }
       }
     </style>
   </head>
 
-  <!-- Inside <body> -->
-  <body style="background-color: #f5f7fa; margin: 0">
+  <body style="margin: 0">
     <div class="page-container">
       <!-- React root -->
       <main id="root" class="content"></main>
@@ -234,21 +172,19 @@
         <div class="footer-content">
           <div class="footer-logo">
             <img
-              src="./src/assets/logo/finbuddy_loading_logo.png"
+              src="./assets/logo/finbuddy_loading_logo.png"
               alt="FinBuddy Logo"
             />
           </div>
-
           <div class="footer-info">
-            <a href="/privacy-policy.html">Privacy Policy</a>
+            <a href="/Finbuddy/privacy-policy.html">Privacy Policy</a>
             <span>|</span>
-            <a href="/terms-of-service.html">Terms of Service</a>
+            <a href="/Finbuddy/terms-of-service.html">Terms of Service</a>
             <span>|</span>
             Contact: <a href="mailto:help@finbuddy.com">help@finbuddy.com</a>
             <span>|</span>
-            &copy; 2025 FinBuddy. All rights reserved.
+            &copy; 2025 FinBuddy
           </div>
-
           <div class="social-icons">
             <a
               href="https://twitter.com/FinBuddy"
@@ -273,7 +209,7 @@
       </footer>
     </div>
 
+    <!-- Vite Injected Output -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-<!-- End of HTML Document -->
