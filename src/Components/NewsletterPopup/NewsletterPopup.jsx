@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
-import "./NewsletterPopup.css";
+import React, { useEffect, useState } from 'react'
+import './NewsletterPopup.css'
 
 function NewsletterPopup() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const hasSeen = localStorage.getItem("finbuddy_newsletter_seen");
+    const hasSeen = localStorage.getItem('finbuddy_newsletter_seen')
     if (!hasSeen) {
-      setTimeout(() => setVisible(true), 2000); // show after 2s
+      const timer = setTimeout(() => setVisible(true), 2000) // show after 2s
+      return () => clearTimeout(timer) // clean up timer if component unmounts
     }
-  }, []);
+  }, [])
 
   const handleClose = () => {
-    setVisible(false);
-    localStorage.setItem("finbuddy_newsletter_seen", "true");
-  };
+    localStorage.setItem('finbuddy_newsletter_seen', 'true')
+    setVisible(false)
+  }
 
-  if (!visible) return null;
+  if (!visible) return null
 
   return (
     <div className="newsletter-popup">
@@ -25,10 +26,12 @@ function NewsletterPopup() {
         <p>Get smart financial tips and product updates monthly!</p>
         <input type="email" placeholder="Enter your email" />
         <button>Subscribe</button>
-        <span onClick={handleClose} className="close-btn">&times;</span>
+        <span onClick={handleClose} className="close-btn">
+          &times;
+        </span>
       </div>
     </div>
-  );
+  )
 }
 
-export default NewsletterPopup;
+export default NewsletterPopup
