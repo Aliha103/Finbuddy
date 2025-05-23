@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import NavBar from '../../Components/NavBar/NavBar'
 import './LogIn.css'
 
@@ -7,6 +8,9 @@ function LogIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -17,8 +21,8 @@ function LogIn() {
     }
 
     setError('')
-    console.log({ email, password })
-    alert('Login successful (mock).')
+    login() // authenticate user via context
+    navigate('/dashboard') // redirect to protected route
   }
 
   return (
