@@ -1,0 +1,99 @@
+/* --- Modern Visual Step Indicator --- */
+
+.step-indicator-vision {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin: 0px 0 20px 0;
+}
+
+.step-dot-vision {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eaf1fd 60%, #f8fcff 100%);
+  border: 2.5px solid #c1d8f7;
+  box-shadow: 0 2px 14px #b6cdfa22;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  position: relative;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #2351c5;
+  transition: border-color 0.28s, box-shadow 0.28s, background 0.25s,
+    color 0.18s, transform 0.16s;
+  user-select: none;
+}
+
+.step-dot-vision.active {
+  border-color: #2253f0;
+  background: linear-gradient(135deg, #e5ecff 75%, #c7dcff 100%);
+  color: #2253f0;
+  box-shadow: 0 4px 24px #47b6ff30;
+  transform: scale(1.11);
+  z-index: 2;
+}
+
+.step-dot-vision .dot-number {
+  position: relative;
+  z-index: 1;
+}
+
+.step-dot-vision .dot-ai {
+  position: absolute;
+  right: -18px;
+  top: 6px;
+  color: #2253f0cc;
+  font-size: 1.1rem;
+  pointer-events: none;
+  opacity: 0.76;
+}
+
+/* --- Connector lines between steps --- */
+.step-dot-vision:not(:last-child)::after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: -26px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, #d0e2fa 70%, #e6f2fd 100%);
+  border-radius: 2px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* --- Responsive tweaks for mobile --- */
+@media (max-width: 600px) {
+  .step-indicator-vision {
+    gap: 14px;
+  }
+  .step-dot-vision {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  .step-dot-vision:not(:last-child)::after {
+    width: 16px;
+    right: -14px;
+  }
+}
+
+@media (max-width: 370px) {
+  .step-indicator-vision {
+    gap: 7px;
+  }
+  .step-dot-vision {
+    width: 20px;
+    height: 20px;
+    font-size: 0.88rem;
+  }
+  .step-dot-vision:not(:last-child)::after {
+    width: 8px;
+    right: -6px;
+  }
+}

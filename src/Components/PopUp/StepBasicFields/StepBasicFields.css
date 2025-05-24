@@ -1,0 +1,339 @@
+/* --- Modern, Smooth Step Basic Fields Styles (With Animated Scroll Bubble) --- */
+
+.step-basic-fields-container,
+.scrollable-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  padding: 0;
+  background: transparent;
+  position: relative;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+  scroll-behavior: smooth;
+}
+
+/* Hide Native Scrollbars */
+.scrollable-bubble {
+  scrollbar-width: none;
+}
+.scrollable-bubble::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* --- Animated Scroll Indicator Bubble --- */
+.scroll-bubble-indicator {
+  position: absolute;
+  right: 7px;
+  width: 8px;
+  background: transparent;
+  z-index: 10;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.47s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: top, opacity;
+  box-shadow: 0 2px 10px #7da9ff2b;
+}
+
+.scroll-bubble-indicator.visible {
+  opacity: 1;
+  transition: opacity 0.17s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bubble-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #478bff 68%, #c9e0ff 100%);
+  border-radius: 8px;
+  box-shadow: 0 0 8px #417fff35, 0 1.5px 7px #bbd7ff3a;
+  opacity: 0.88;
+  animation: bubble-pop 0.34s cubic-bezier(0.43, 0, 0.55, 1);
+}
+@keyframes bubble-pop {
+  from {
+    transform: scaleY(0.7);
+    opacity: 0.5;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 0.88;
+  }
+}
+
+/* --- Field Styles --- */
+.step-basic-fields-container label {
+  font-size: 1rem;
+  color: #222b45;
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: color 0.16s;
+}
+
+.amount-currency-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.amount-currency-row > span {
+  font-size: 1rem;
+  color: #232940;
+  font-weight: 500;
+}
+
+.amount-currency-fields {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.amount-currency-fields input[type='number'] {
+  width: 100%;
+  min-width: 0;
+  flex: 3 1 120px;
+  max-width: 200px;
+}
+
+.amount-currency-fields .currency-select {
+  min-width: 70px;
+  font-size: 1.04rem;
+  padding: 8px 10px;
+  background: #f8fbfd;
+  border-radius: 10px;
+  border: 1.5px solid #d2d7df;
+  font-weight: 500;
+  transition: border 0.2s, box-shadow 0.18s;
+}
+.amount-currency-fields .currency-select:focus {
+  border-color: #477eff;
+  box-shadow: 0 0 0 2px #c3e4ff7c;
+}
+
+/* Inputs and Textarea */
+.step-basic-fields-container input[type='number'],
+.step-basic-fields-container input[type='date'],
+.step-basic-fields-container input[type='text'],
+.step-basic-fields-container select,
+.step-basic-fields-container textarea {
+  font-size: 1rem;
+  border: 1.5px solid #d2d7df;
+  border-radius: 10px;
+  padding: 11px 14px;
+  background: #fafbfc;
+  transition: border-color 0.22s, box-shadow 0.22s;
+  outline: none;
+  margin-top: 3px;
+  font-weight: 500;
+  box-shadow: 0 2px 10px #dde5fd09;
+}
+
+.step-basic-fields-container input:focus,
+.step-basic-fields-container select:focus,
+.step-basic-fields-container textarea:focus {
+  border-color: #3a81ff;
+  box-shadow: 0 0 0 2px #b4d6ff3a;
+  background: #f5f9ff;
+}
+
+.input-error {
+  border-color: #f23d4f !important;
+  background: #fff3f3;
+}
+
+.step-basic-fields-container .error {
+  color: #f23d4f;
+  background: #ffeaea;
+  font-size: 0.97rem;
+  padding: 2px 10px;
+  border-radius: 6px;
+  margin-top: 2px;
+  font-weight: 500;
+  box-shadow: 0 1px 8px #f9707010;
+  transition: background 0.19s, color 0.13s;
+}
+
+/* Helper text */
+.label-helper {
+  color: #8da7be;
+  font-size: 0.97rem;
+  font-weight: 400;
+  margin-left: 4px;
+  margin-top: 3px;
+}
+
+/* --- AI Banner --- */
+.ai-banner {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, #fafdff 70%, #e7ecfb 100%);
+  border-left: 4px solid #47b6ff;
+  color: #1a2953;
+  font-size: 1rem;
+  padding: 9px 17px;
+  border-radius: 11px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 18px #7ec9ff12;
+  gap: 8px;
+  animation: ai-banner-in 0.6s;
+}
+@keyframes ai-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-quick-btn {
+  margin-left: 10px;
+  background: #297eff;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 4px 12px;
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 6px #2450ff14;
+  transition: background 0.16s;
+}
+.ai-quick-btn:hover {
+  background: #4896f8;
+}
+
+/* --- AI Dropdown --- */
+.ai-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border: 1.5px solid #e5ebf6;
+  border-radius: 11px;
+  box-shadow: 0 2px 16px #b5cdfa22;
+  z-index: 20;
+  animation: fadeInUp 0.17s;
+  margin-top: 4px;
+  min-width: 140px;
+  font-size: 1rem;
+  padding: 4px 0;
+  max-height: 180px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #bdd8fb #fafdff;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ai-dropdown-option {
+  padding: 9px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.13s;
+  margin: 1px 0;
+}
+.ai-dropdown-option:hover,
+.ai-dropdown-option:focus {
+  background: #f0f5ff;
+}
+
+/* --- Mobile Responsive Styles --- */
+@media (max-width: 600px) {
+  .step-basic-fields-container {
+    gap: 10px;
+    font-size: 0.98rem;
+    padding: 0 2px;
+  }
+  .step-basic-fields-container label {
+    font-size: 0.97rem;
+    gap: 2.5px;
+    margin-bottom: 1px;
+  }
+  .amount-currency-row {
+    gap: 2px;
+  }
+  .amount-currency-fields {
+    flex-direction: row;
+    gap: 4px;
+    align-items: stretch;
+    margin-top: 1.5px;
+  }
+  .amount-currency-fields input,
+  .amount-currency-fields .currency-select {
+    max-width: 48%;
+    min-width: 0;
+    font-size: 0.97rem;
+    padding: 7px 8px;
+  }
+  .ai-dropdown {
+    min-width: 90px;
+    max-width: 96vw;
+    font-size: 0.97rem;
+    padding: 2px 0;
+  }
+  .ai-dropdown-option {
+    padding: 8px 13px;
+    font-size: 0.97rem;
+  }
+  .ai-banner {
+    font-size: 0.96rem;
+    padding: 6px 7px;
+    margin-bottom: 5px;
+  }
+  .scroll-bubble-indicator {
+    right: 2px;
+    width: 5px;
+    border-radius: 7px;
+  }
+}
+
+@media (max-width: 370px) {
+  .step-basic-fields-container {
+    gap: 6px;
+    font-size: 0.94rem;
+    padding: 0 1px;
+  }
+  .amount-currency-fields input,
+  .amount-currency-fields .currency-select {
+    font-size: 0.93rem;
+    padding: 5px 6px;
+  }
+  .ai-banner,
+  .ai-dropdown-option {
+    font-size: 0.91rem;
+  }
+}
+
+/* Subtle placeholder */
+::-webkit-input-placeholder {
+  color: #a0aec0;
+}
+::-moz-placeholder {
+  color: #a0aec0;
+}
+:-ms-input-placeholder {
+  color: #a0aec0;
+}
+::placeholder {
+  color: #a0aec0;
+}
