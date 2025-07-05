@@ -1,3 +1,6 @@
+/* Import accessibility styles */
+@import './styles/accessibility.css';
+
 /* typography.css */
 
 /* Headings */

@@ -1,0 +1,275 @@
+/* Accessibility CSS - Enhanced focus management and screen reader support */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Skip link styles */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 10000;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Focus management */
+.keyboard-navigation *:focus {
+  outline: 2px solid #246bf7 !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+
+/* Remove focus outline for mouse users */
+body:not(.keyboard-navigation) *:focus {
+  outline: none;
+}
+
+/* Enhanced button focus */
+.keyboard-navigation button:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus,
+.keyboard-navigation a:focus {
+  outline: 2px solid #246bf7;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(36, 107, 247, 0.2);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor !important;
+  }
+  
+  .dashboard-card {
+    border: 2px solid currentColor !important;
+  }
+  
+  button {
+    border: 2px solid currentColor !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode preference */
+@media (prefers-color-scheme: dark) {
+  .skip-link {
+    background: #fff;
+    color: #000;
+  }
+  
+  .keyboard-navigation *:focus {
+    outline-color: #74b9ff !important;
+  }
+}
+
+/* Error message styling for screen readers */
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.error-message::before {
+  content: "⚠️ ";
+  speak: literal;
+}
+
+/* Required field indicator */
+.required::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+  speak: literal;
+}
+
+/* Loading states */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #246bf7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+    border-top-color: transparent;
+  }
+  
+  .loading-spinner::after {
+    content: "Loading...";
+    position: absolute;
+    margin-left: 25px;
+    font-size: 14px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Landmark styling */
+main[role="main"] {
+  min-height: 60vh;
+}
+
+nav[aria-label] {
+  position: relative;
+}
+
+/* Form enhancements */
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+}
+
+input[aria-required="true"],
+select[aria-required="true"],
+textarea[aria-required="true"] {
+  border-left: 4px solid #246bf7;
+}
+
+/* Modal accessibility */
+[role="dialog"] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+[role="dialog"] .modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Tooltip accessibility */
+[role="tooltip"] {
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1001;
+}
+
+/* Status messages */
+[aria-live] {
+  position: relative;
+}
+
+[role="status"] {
+  padding: 12px;
+  border-radius: 4px;
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  color: #0066cc;
+}
+
+[role="alert"] {
+  padding: 12px;
+  border-radius: 4px;
+  background: #ffe6e6;
+  border: 1px solid #ffb3b3;
+  color: #cc0000;
+}
+
+/* Color contrast improvements */
+.text-muted {
+  color: #666 !important;
+}
+
+.text-success {
+  color: #006600 !important;
+}
+
+.text-warning {
+  color: #b8860b !important;
+}
+
+.text-danger {
+  color: #cc0000 !important;
+}
+
+/* Ensure minimum target size (44x44px) */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+a[role="button"],
+.clickable {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+}
+
+/* Mobile accessibility improvements */
+@media (max-width: 768px) {
+  .skip-link {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    text-align: center;
+  }
+  
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"] {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px 20px;
+  }
+}

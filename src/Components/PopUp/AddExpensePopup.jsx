@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { FaTimes, FaPlus, FaUsers, FaRegSave } from 'react-icons/fa'
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'framer-motion'
+import { logStepEvent } from '../../utils/analytics'
 import StepBasicFields from './StepBasicFields/StepBasicFields'
 import StepSplitGroup from './StepSplitGroup/StepSplitGroup'
 import StepFinalTouch from './StepFinalTouch/StepFinalTouch'
 import ScrollableFieldsWithIndicator from '../../Components/ScrollableFieldsWithIndicator/ScrollableFieldsWithIndicator'
+import AutoHelpMessage from '../../Components/AutoHelpMessage/AutoHelpMessage'
 import './AddExpensePopup.css'
 
-// --- Validators ---
 const isValidAmount = (amount) =>
   amount && !isNaN(amount) && parseFloat(amount) > 0
 const isValidDate = (date) => !isNaN(Date.parse(date))
@@ -40,7 +43,6 @@ const parseParticipants = (raw) =>
       (n, i, arr) => n && n.toLowerCase() !== 'you' && arr.indexOf(n) === i,
     )
 
-// -- Step Indicator (simple, inline) --
 const StepIndicator = ({ step, maxStep }) => (
   <div className="step-indicator">
     {Array.from({ length: maxStep }, (_, idx) => (
@@ -56,16 +58,32 @@ const StepIndicator = ({ step, maxStep }) => (
 function AddExpensePopup({ onClose, onAdd }) {
   const [form, setForm] = useState(() => {
     try {
-      const draft = localStorage.getItem('expenseDraft')
-      return draft ? JSON.parse(draft) : defaultForm
+      if (typeof Storage !== 'undefined') {
+        const draft = localStorage.getItem('expenseDraft')
+        return draft ? JSON.parse(draft) : defaultForm
+      }
+      return defaultForm
     } catch {
-      localStorage.removeItem('expenseDraft')
+      if (typeof Storage !== 'undefined') {
+        localStorage.removeItem('expenseDraft')
+      }
       return defaultForm
     }
   })
   const [errors, setErrors] = useState({})
   const [step, setStep] = useState(1)
+  const [direction, setDirection] = useState(1)
+  const [validationFailCount, setValidationFailCount] = useState(0)
+  const [aiConfig, setAiConfig] = useState(null)
   const popupRef = useRef(null)
+
+  // Fetch AI config from backend per step (e.g., `/api/ai-suggestions?step=2`)
+  useEffect(() => {
+    fetch(`/api/ai-suggestions?step=${step}`)
+      .then((r) => r.json())
+      .then(setAiConfig)
+      .catch(() => setAiConfig(null))
+  }, [step])
 
   // Derived state
   const parsedParticipants = parseParticipants(form.participants)
@@ -79,12 +97,18 @@ function AddExpensePopup({ onClose, onAdd }) {
     if (step < 1) setStep(1)
   }, [maxStep, step])
 
-  // Escape close
+  // Always clear errors when changing step
   useEffect(() => {
-    const handleEscape = (e) => e.key === 'Escape' && onClose()
+    setErrors({})
+  }, [step])
+
+  // Escape close (accessibility)
+  useEffect(() => {
+    const handleEscape = (e) => e.key === 'Escape' && handleClose()
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [onClose])
+    // eslint-disable-next-line
+  }, [])
 
   // --- Manual Validation ---
   function validateStep(currentStep = step) {
@@ -116,12 +140,10 @@ function AddExpensePopup({ onClose, onAdd }) {
       }
     }
     if (currentStep === maxStep) {
-      if (!isNonEmptyString(form.location)) {
+      if (!isNonEmptyString(form.location))
         errs.location = 'Location is required'
-      }
-      if (!isValidAttachment(form.attachment)) {
+      if (!isValidAttachment(form.attachment))
         errs.attachment = 'Only JPG, PNG, or PDF files under 5MB allowed'
-      }
     }
     return errs
   }
@@ -131,18 +153,37 @@ function AddExpensePopup({ onClose, onAdd }) {
     const validationErrors = validateStep(step)
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors)
+      setValidationFailCount((c) => c + 1)
+      logStepEvent({ step, action: 'validation_failed', form, maxStep })
       popupRef.current?.scrollTo?.({ top: 0, behavior: 'smooth' })
       return
     }
-    setErrors({})
+    logStepEvent({ step, action: 'next', form, maxStep })
+    setValidationFailCount(0)
+    setDirection(1)
     setStep((prev) => Math.min(prev + 1, maxStep))
     popupRef.current?.scrollTo?.({ top: 0, behavior: 'smooth' })
   }
-  const handleBack = () => setStep((prev) => Math.max(1, prev - 1))
+  const handleBack = () => {
+    logStepEvent({ step, action: 'back', form, maxStep })
+    setDirection(-1)
+    setStep((prev) => Math.max(1, prev - 1))
+    popupRef.current?.scrollTo?.({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleClose = () => {
+    logStepEvent({ step, action: 'close', form, maxStep })
+    onClose()
+  }
 
   const handleSaveDraft = () => {
-    localStorage.setItem('expenseDraft', JSON.stringify(form))
-    alert('Draft saved!')
+    if (typeof Storage !== 'undefined') {
+      localStorage.setItem('expenseDraft', JSON.stringify(form))
+      logStepEvent({ step, action: 'save_draft', form, maxStep })
+      alert('Draft saved!')
+    } else {
+      alert('Storage not available - cannot save draft')
+    }
   }
 
   const handleSubmit = (e) => {
@@ -150,9 +191,17 @@ function AddExpensePopup({ onClose, onAdd }) {
     const validationErrors = validateStep(maxStep)
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors)
+      setValidationFailCount((c) => c + 1)
+      logStepEvent({
+        step: maxStep,
+        action: 'validation_failed_submit',
+        form,
+        maxStep,
+      })
       popupRef.current?.scrollTo?.({ top: 0, behavior: 'smooth' })
       return
     }
+    logStepEvent({ step: maxStep, action: 'submit', form, maxStep })
     const participants = participantNames.filter((n) => n !== form.paidBy)
     const data = {
       ...form,
@@ -161,7 +210,9 @@ function AddExpensePopup({ onClose, onAdd }) {
       customSplits: { ...form.customSplits },
       attachment: form.attachment || null,
     }
-    localStorage.removeItem('expenseDraft')
+    if (typeof Storage !== 'undefined') {
+      localStorage.removeItem('expenseDraft')
+    }
     onAdd(data)
     onClose()
     setForm(defaultForm)
@@ -199,14 +250,35 @@ function AddExpensePopup({ onClose, onAdd }) {
     }))
   }
 
+  // --- Auto-help: Show special help if user struggles with splits ---
+  if (errors.customSplits && validationFailCount > 2) {
+    return (
+      <div className="expense-popup" ref={popupRef}>
+        <AutoHelpMessage message="Having trouble? Here's how to split expenses: Enter each participant's share and make sure the total matches the amount." />
+        <button onClick={() => setValidationFailCount(0)} className="save-btn">
+          Dismiss
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <div className="expense-overlay" role="dialog" aria-modal="true">
+    <div
+      className="expense-overlay"
+      role="dialog"
+      aria-modal="true"
+      tabIndex={-1}
+    >
       <div className="expense-popup" ref={popupRef}>
         <div className="expense-header">
           <h3>
             <FaUsers /> Add Expense
           </h3>
-          <button className="close-btn" onClick={onClose}>
+          <button
+            className="close-btn"
+            onClick={handleClose}
+            aria-label="Close"
+          >
             <FaTimes />
           </button>
         </div>
@@ -217,31 +289,63 @@ function AddExpensePopup({ onClose, onAdd }) {
           onSubmit={handleSubmit}
           autoComplete="off"
         >
-          {step === 1 && (
-            <ScrollableFieldsWithIndicator style={{ maxHeight: '52vh' }}>
-              <StepBasicFields
-                form={form}
-                errors={errors}
-                onChange={handleChange}
-              />
-            </ScrollableFieldsWithIndicator>
-          )}
-          {step === 2 && isGroup && (
-            <StepSplitGroup
-              form={form}
-              errors={errors}
-              onChange={handleChange}
-              onSplitChange={handleSplitChange}
-              participantNames={participantNames}
-            />
-          )}
-          {((step === 2 && !isGroup) || (step === 3 && isGroup)) && (
-            <StepFinalTouch
-              form={form}
-              errors={errors}
-              onChange={handleChange}
-            />
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            {step === 1 && (
+              <motion.div
+                key="step-1"
+                initial={{ x: direction > 0 ? 60 : -60, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: direction > 0 ? -60 : 60, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 370, damping: 30 }}
+                tabIndex={0}
+              >
+                <ScrollableFieldsWithIndicator style={{ maxHeight: '52vh' }}>
+                  <StepBasicFields
+                    form={form}
+                    errors={errors}
+                    onChange={handleChange}
+                    aiConfig={aiConfig?.step1}
+                  />
+                </ScrollableFieldsWithIndicator>
+              </motion.div>
+            )}
+            {step === 2 && isGroup && (
+              <motion.div
+                key="step-2"
+                initial={{ x: direction > 0 ? 60 : -60, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: direction > 0 ? -60 : 60, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 370, damping: 30 }}
+                tabIndex={0}
+              >
+                <StepSplitGroup
+                  form={form}
+                  errors={errors}
+                  onChange={handleChange}
+                  onSplitChange={handleSplitChange}
+                  participantNames={participantNames}
+                  aiConfig={aiConfig?.step2}
+                />
+              </motion.div>
+            )}
+            {((step === 2 && !isGroup) || (step === 3 && isGroup)) && (
+              <motion.div
+                key="step-3"
+                initial={{ x: direction > 0 ? 60 : -60, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: direction > 0 ? -60 : 60, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 370, damping: 30 }}
+                tabIndex={0}
+              >
+                <StepFinalTouch
+                  form={form}
+                  errors={errors}
+                  onChange={handleChange}
+                  aiConfig={aiConfig?.step3}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* --- ACTION BUTTONS --- */}
           <div className="actions">

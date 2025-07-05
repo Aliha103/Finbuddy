@@ -10,49 +10,71 @@
     <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="FinBuddy - Your Personal Finance Assistant"
+      content="FinBuddy - Your Personal Finance Assistant. Track expenses, set goals, and manage group finances seamlessly."
     />
     <meta
       name="keywords"
-      content="finance, personal finance, budgeting, investment"
+      content="finance, personal finance, budgeting, investment, expense tracker, FinBuddy"
     />
     <meta name="author" content="FinBuddy Team" />
+    <meta name="robots" content="index, follow" />
 
-    <!-- Open Graph -->
+    <!-- Open Graph (Facebook, LinkedIn) -->
     <meta
       property="og:title"
       content="FinBuddy - Your Personal Finance Assistant"
     />
     <meta
       property="og:description"
-      content="FinBuddy helps you manage your finances effortlessly."
+      content="FinBuddy helps you manage your finances effortlessly, both solo and in groups."
     />
     <meta
       property="og:image"
-      content="./public/assets/favicons/android-chrome-512x512.png"
+      content="/assets/favicons/android-chrome-512x512.png"
     />
     <meta property="og:url" content="https://aliha103.github.io/Finbuddy/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FinBuddy" />
     <meta property="og:locale" content="en_US" />
 
-    <!-- Theme + Favicons -->
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@FinBuddy" />
+    <meta
+      name="twitter:title"
+      content="FinBuddy - Your Personal Finance Assistant"
+    />
+    <meta
+      name="twitter:description"
+      content="Track expenses, set goals, and manage finances smarter with FinBuddy."
+    />
+    <meta
+      name="twitter:image"
+      content="/assets/favicons/android-chrome-512x512.png"
+    />
+
+    <!-- Theme and Manifest -->
     <meta name="theme-color" content="#0066FF" />
     <meta name="msapplication-TileColor" content="#da532c" />
-    <link rel="icon" href="./public/assets/favicons/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" href="./public/assets/favicons/favicon-16x16.png" sizes="16x16" />
+    <link rel="manifest" href="/assets/manifest.json" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/assets/favicons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" href="/assets/favicons/favicon-16x16.png" sizes="16x16" />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="./public/assets/favicons/apple-touch-icon.png"
+      href="/assets/favicons/apple-touch-icon.png"
     />
     <link
       rel="mask-icon"
-      href="./public/assets/favicons/safari-pinned-tab.svg"
+      href="/assets/favicons/safari-pinned-tab.svg"
       color="#5bbad5"
     />
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts Preconnect and Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap"
       rel="stylesheet"
@@ -62,6 +84,8 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
 
     <title>FinBuddy</title>
@@ -70,28 +94,29 @@
       /* Layout helper for footer + root */
       .page-container {
         display: flex;
-        min-height: 98vh;
+        height: 100vh;
         flex-direction: column;
         background-color: #f5f7fa;
         font-family: 'Lato', 'Open Sans', sans-serif;
-        color: #333;
+        color: #222;
       }
 
       .content {
-        flex: 1;
+        flex: 1 0 auto;
+
       }
 
       footer.site-footer {
-        background-color: #ffffff;
-        border-top: 1px solid #d4d4d4;
-        padding: 10px 20px;
-        font-size: 14px;
-        color: #555;
+        background-color: #fff;
+        border-top: 1px solid #e4e7eb;
+        padding: 14px 24px;
+        font-size: 15px;
+        color: #444;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         flex-wrap: wrap;
-        box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
       }
 
       .footer-content {
@@ -99,23 +124,26 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        max-width: 1200px;
+        gap: 5%;
+        padding-right: 3rem;
       }
 
       .footer-logo img {
-        width: 110px;
-        height: auto;
-        transition: transform 0.3s ease;
+        display: flex;
+        align-items: flex-start;
+        width: 108px;
+        height: 80px;
+        transition: transform 0.25s;
       }
 
-      .footer-logo img:hover {
-        transform: scale(1.1);
+      .footer-logo img[onerror] {
+        content: url('/assets/favicons/android-chrome-192x192.png');
       }
 
       .footer-info {
         flex: 1;
         display: flex;
-        gap: 20px;
+        gap: 18px;
         justify-content: center;
         flex-wrap: wrap;
       }
@@ -123,84 +151,92 @@
       .footer-info a {
         color: #0066ff;
         text-decoration: none;
-        transition: color 0.3s ease;
+        transition: color 0.2s;
+        font-weight: 500;
       }
-
-      .footer-info a:hover {
+      .footer-info a:hover,
+      .footer-info a:focus {
         color: #004bb5;
         text-decoration: underline;
       }
 
       .social-icons {
         display: flex;
-        gap: 15px;
+        gap: 14px;
       }
 
       .social-icons a {
         font-size: 18px;
-        color: #777;
-        transition: color 0.3s ease, transform 0.3s ease;
+        color: #666;
+        transition: color 0.2s, transform 0.2s;
       }
-
-      .social-icons a:hover {
+      .social-icons a:hover,
+      .social-icons a:focus {
         color: #0066ff;
-        transform: scale(1.2);
+        transform: scale(1.16);
+        outline: none;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 820px) {
         .footer-content {
           flex-direction: column;
-          gap: 12px;
+          gap: 16px;
           text-align: center;
         }
-
         .footer-info {
           justify-content: center;
         }
       }
     </style>
   </head>
-
   <body style="margin: 0">
     <div class="page-container">
-      <!-- React root -->
-      <main id="root" class="content"></main>
-
-      <!-- Footer -->
-      <footer class="site-footer">
+      <main id="root" class="content" tabindex="-1"></main>
+      <footer class="site-footer" role="contentinfo">
         <div class="footer-content">
           <div class="footer-logo">
             <img
-              src="./public/assets/finbuddy_loading_logo.png"
+              src="/assets/finbuddy_loading_logo.png"
               alt="FinBuddy Logo"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='/assets/favicons/android-chrome-192x192.png';"
+              width="108"
+              height="36"
             />
           </div>
-          <div class="footer-info">
-            <a href="/Finbuddy/privacy-policy.html">Privacy Policy</a>
-            <span>|</span>
-            <a href="/Finbuddy/terms-of-service.html">Terms of Service</a>
-            <span>|</span>
-            Contact: <a href="mailto:help@finbuddy.com">help@finbuddy.com</a>
-            <span>|</span>
-            &copy; 2025 FinBuddy
-          </div>
+          <nav class="footer-info" aria-label="Footer Navigation">
+            <a href="/Finbuddy/privacy-policy.html" rel="noopener"
+              >Privacy Policy</a
+            >
+            <span aria-hidden="true">|</span>
+            <a href="/Finbuddy/terms-of-service.html" rel="noopener"
+              >Terms of Service</a
+            >
+            <span aria-hidden="true">|</span>
+            <a href="mailto:help@finbuddy.com">Contact Support</a>
+            <span aria-hidden="true">|</span>
+            <span>&copy; <span id="year">2025</span> FinBuddy</span>
+          </nav>
           <div class="social-icons">
             <a
               href="https://twitter.com/FinBuddy"
               aria-label="Twitter"
               target="_blank"
+              rel="noopener"
               ><i class="fab fa-twitter"></i
             ></a>
             <a
               href="https://facebook.com/FinBuddy"
               aria-label="Facebook"
               target="_blank"
+              rel="noopener"
               ><i class="fab fa-facebook-f"></i
             ></a>
             <a
               href="https://instagram.com/FinBuddy"
               aria-label="Instagram"
               target="_blank"
+              rel="noopener"
               ><i class="fab fa-instagram"></i
             ></a>
           </div>
@@ -208,7 +244,19 @@
       </footer>
     </div>
 
-    <!-- Vite Injected Output -->
-    <script type="module" src="/src/main.jsx"></script>
+    <!-- Vite or React main bundle -->
+    <script type="module" src="/src/main.jsx" defer></script>
+    <script>
+      // Self-healing footer year
+      document.getElementById('year').textContent = new Date().getFullYear()
+    </script>
+    <!-- Optional: Register service worker for PWA support -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/service-worker.js').catch(() => {})
+        })
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,89 @@
+/* === Balance.css === */
+.balance-container {
+  margin: 3rem auto;
+  padding: 2rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.balance-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.balance-header h2 {
+  color: #3f51b5;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.balance-summary {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.balance-card {
+  flex: 1 1;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+}
+
+.balance-card h4 {
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.receivable_arrow {
+  color: #4caf50;
+}
+.payables_arrow {
+  color: #f44336;
+}
+.balance-chart {
+  margin-top: 2rem;
+}
+
+.balance-chart h4 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #3f51b5;
+  font-weight: 600;
+}
+
+/* Tooltip styling override */
+.recharts-default-tooltip {
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  background: #fff !important;
+  font-size: 0.9rem;
+  color: #333 !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .balance-summary {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .balance-card {
+    width: 100%;
+  }
+}

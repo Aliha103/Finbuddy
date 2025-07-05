@@ -1,0 +1,122 @@
+/* --- SPENDING HISTORY CHART WIDGET --- */
+.widget .insight-banner {
+  display: inline-block;
+  background: linear-gradient(97deg, #e5ffe3 60%, #e7f5ff 100%);
+  color: #15763b;
+  border-radius: 11px;
+  font-weight: 700;
+  font-size: 1.03rem;
+  padding: 6px 18px 5px 13px;
+  margin: 0 0 7px 0;
+  box-shadow: 0 1px 10px #1ee0b414;
+  letter-spacing: 0.02em;
+  transition: background 0.18s, color 0.15s;
+  border: none;
+}
+.widget .insight-banner.alert {
+  background: linear-gradient(98deg, #ffe9e9 60%, #f2f3ff 100%);
+  color: #ce4545;
+}
+.widget .insight-banner.warning {
+  background: linear-gradient(95deg, #fff9e2 60%, #fff7e7 100%);
+  color: #a3881b;
+}
+.widget .insight-banner.neutral {
+  background: linear-gradient(94deg, #e4effe 60%, #d9f4ff 100%);
+  color: #2469b6;
+}
+
+/* Empty state inside widget */
+.widget .widget-empty {
+  color: #b7bcc7;
+  font-weight: 500;
+  font-size: 1.05rem;
+  margin: 10px 0;
+  padding: 14px 0 0 0;
+  letter-spacing: 0.01em;
+}
+.widget .widget-empty span[role='img'] {
+  font-size: 25px;
+  opacity: 0.44;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Tooltip custom (for recharts) */
+.recharts-tooltip-wrapper {
+  z-index: 200 !important;
+}
+.futuristic-tooltip {
+  background: rgba(26, 34, 78, 0.95);
+  color: #fff;
+  border-radius: 13px;
+  padding: 11px 17px;
+  box-shadow: 0 4px 24px #02e4e755;
+  border: 1.5px solid #0fffd8;
+  min-width: 95px;
+  font-size: 1.06rem;
+  pointer-events: none;
+  transition: box-shadow 0.18s, border 0.13s;
+}
+.futuristic-tooltip strong {
+  font-size: 1.13rem;
+}
+
+/* Chart canvas area (optional extra padding) */
+.widget .recharts-responsive-container {
+  margin: 0 auto;
+  min-width: 0;
+}
+
+/* Max/Min markers (ReferenceDot labels) */
+.recharts-label {
+  font-family: inherit;
+  font-weight: 700;
+  opacity: 0.92;
+  letter-spacing: 0.015em;
+}
+
+/* AI/Brain microcopy */
+.widget .ai-brain {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6c8bbf;
+  font-size: 0.99rem;
+  font-weight: 500;
+  margin-top: 7px;
+}
+
+/* --- Responsive Styles --- */
+@media (max-width: 900px) {
+  .widget .insight-banner {
+    font-size: 0.98rem;
+    padding: 6px 9vw 4px 3vw;
+  }
+  .widget .widget-empty {
+    font-size: 0.98rem;
+    padding-top: 11px;
+  }
+  .futuristic-tooltip {
+    font-size: 0.97rem;
+    padding: 9px 10px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .widget .insight-banner {
+    font-size: 0.93rem;
+    padding: 4px 4vw 3px 2vw;
+    margin-bottom: 4px;
+    border-radius: 7px;
+  }
+  .widget .widget-empty {
+    font-size: 0.93rem;
+    padding-top: 7px;
+  }
+  .ai-brain {
+    font-size: 0.94rem;
+    margin-top: 4px;
+  }
+}
