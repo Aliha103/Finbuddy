@@ -134,17 +134,13 @@ export class MonitoringService {
     }
   }
 
-  // Performance monitoring
+  // Performance monitoring (disabled temporarily for compatibility)
   static startTransaction(name: string, description?: string): any {
     if (!this.isInitialized) return null
-
-    // Using Sentry hub for transaction creation
-    const hub = Sentry.getCurrentHub()
-    return hub.startTransaction({
-      name,
-      description,
-      op: 'navigation',
-    })
+    
+    // Log transaction start for debugging
+    console.log(`Starting transaction: ${name}`, description)
+    return null
   }
 
   // Set tags for filtering
