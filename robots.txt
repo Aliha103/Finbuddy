@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aliha103.github.io/Finbuddy/sitemap.xml
+
+# Block sensitive areas
+Disallow: /api/
+Disallow: /_vite/
+Disallow: /node_modules/
+Disallow: /.env*
+
+# Allow common crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
