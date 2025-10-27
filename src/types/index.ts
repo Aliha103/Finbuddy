@@ -73,6 +73,34 @@ export interface AnalyticsEvent {
   aiDropoffLikely: boolean
 }
 
+export interface Payment {
+  id: string
+  amount: number
+  currency: string
+  fromUserId: string
+  fromUserName: string
+  toUserId: string
+  toUserName: string
+  groupId?: string
+  description: string
+  status: 'completed' | 'pending' | 'cancelled'
+  date: string
+  createdAt: string
+}
+
+export interface ActivityItem {
+  id: string
+  type: 'expense' | 'group' | 'payment'
+  timestamp: string
+  title: string
+  category: string
+  amount?: number
+  currency?: string
+  metadata: string
+  icon: string
+  originalData: Expense | Group | Payment
+}
+
 // Component Props Types
 export interface ExpenseFormData {
   amount: string
