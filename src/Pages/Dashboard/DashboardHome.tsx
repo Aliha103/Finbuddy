@@ -46,17 +46,6 @@ function GroupList() {
   )
 }
 
-function RecentActivity() {
-  return (
-    <div className="dashboard-card dashboard-recent-activity">
-      <h2>Recent Activity</h2>
-      <div className="dashboard-placeholder" style={{ color: '#ea2626' }}>
-        No recent activity
-      </div>
-    </div>
-  )
-}
-
 function SuspenseFallback({ message = 'Loading...' }) {
   return (
     <div className="dashboard-loading">
