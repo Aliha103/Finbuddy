@@ -125,6 +125,25 @@ class ApiService {
   async getAISuggestions(step: number): Promise<any> {
     return this.request(`/ai/suggestions?step=${step}`)
   }
+
+  // Payments API
+  async getPayments(): Promise<Payment[]> {
+    return this.request('/payments')
+  }
+
+  async createPayment(payment: Omit<Payment, 'id' | 'createdAt'>): Promise<Payment> {
+    return this.request('/payments', {
+      method: 'POST',
+      body: JSON.stringify(payment),
+    })
+  }
+
+  async updatePaymentStatus(id: string, status: 'completed' | 'cancelled'): Promise<Payment> {
+    return this.request(`/payments/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    })
+  }
 }
 
 export const apiService = new ApiService()
