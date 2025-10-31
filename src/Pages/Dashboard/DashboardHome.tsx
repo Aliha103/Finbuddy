@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import BalanceChart from '../../Components/balanceChart/balanceChart'
 import { useAIAssistant } from '../../hooks/useAIAssistant'
 import AIAssistantBanner from '../../Components/AIAssistantBanner/AIAssistantBanner'
+import RecentActivity from '../../Components/RecentActivity/RecentActivity'
 import './DashboardHome.scss'
 import { atom, useRecoilState } from 'recoil'
 
@@ -41,17 +42,6 @@ function GroupList() {
     <div className="dashboard-card dashboard-group-list">
       <h2>Group List</h2>
       <div className="dashboard-placeholder">GROUP LIST</div>
-    </div>
-  )
-}
-
-function RecentActivity() {
-  return (
-    <div className="dashboard-card dashboard-recent-activity">
-      <h2>Recent Activity</h2>
-      <div className="dashboard-placeholder" style={{ color: '#ea2626' }}>
-        No recent activity
-      </div>
     </div>
   )
 }
