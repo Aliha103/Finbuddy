@@ -12,7 +12,7 @@ function LogIn() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!email || !password) {
@@ -21,7 +21,12 @@ function LogIn() {
     }
 
     setError('')
-    login() // authenticate user via context
+    login({
+      id: '1',
+      name: 'User',
+      email: 'user@example.com',
+      token: 'dummy-token'
+    }) // authenticate user via context
     navigate('/dashboard') // redirect to protected route
   }
 
@@ -30,11 +35,11 @@ function LogIn() {
       <NavBar />
       <div className="login-page">
         <div className="login-container">
-          <form onSubmit={handleSubmit} className="login-form">
+          <form onSubmit={handleSubmit} className="login-form" aria-label="login-form">
             <h2>Welcome Back</h2>
             <p className="login-subtitle">Login to your FinBuddy account</p>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className="error-message" data-testid="error-message">{error}</div>}
 
             <label htmlFor="email">Email</label>
             <input

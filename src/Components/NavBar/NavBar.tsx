@@ -8,14 +8,14 @@ function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(window.scrollY)
   const [visible, setVisible] = useState(true)
-  const menuRef = useRef()
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const toggleMenu = () => setMenuOpen((prev) => !prev)
 
   // Close menu on click outside
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false)
       }
     }

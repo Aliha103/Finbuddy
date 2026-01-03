@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { BalanceData } from '../types'
-
-interface RawBalanceData {
-  month: string
-  receivables: number
-  payables: number
-}
+import { apiService } from '../services/api'
 
 interface BalanceTotals {
   receivables: number
@@ -18,21 +13,6 @@ interface UseBalanceDataReturn {
   totals: BalanceTotals
   loading: boolean
   error: string | null
-}
-
-const fetchFinancialData = async (): Promise<RawBalanceData[]> => {
-  // TODO: Replace with actual API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        { month: '2024-01', receivables: 900, payables: 300 },
-        { month: '2024-02', receivables: 500, payables: 400 },
-        { month: '2024-03', receivables: 1200, payables: 250 },
-        { month: '2024-04', receivables: 200, payables: 600 },
-        { month: '2024-05', receivables: 1300, payables: 300 },
-      ])
-    }, 100)
-  })
 }
 
 export function useBalanceData(): UseBalanceDataReturn {
@@ -49,14 +29,17 @@ export function useBalanceData(): UseBalanceDataReturn {
         setLoading(true)
         setError(null)
         
-        const rawData = await fetchFinancialData()
+        // Fetch data from API
+        const rawData = await apiService.getBalanceData()
         
         if (!mounted) return
 
+        // Process data: ensure net and label exist if the API doesn't provide them fully
+        // or if we want to ensure client-side formatting consistency.
         const enriched: BalanceData[] = rawData.map((item) => ({
           ...item,
-          net: item.receivables - item.payables,
-          label: new Date(item.month + '-01').toLocaleString('default', {
+          net: (item.net !== undefined) ? item.net : (item.receivables - item.payables),
+          label: (item.label !== undefined) ? item.label : new Date(item.month + '-01').toLocaleString('default', {
             month: 'short',
             year: '2-digit',
           }),
