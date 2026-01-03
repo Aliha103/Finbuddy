@@ -4,7 +4,8 @@ export interface User {
   email: string
   name: string
   avatar?: string
-  createdAt: string
+  createdAt?: string
+  token?: string
 }
 
 export interface Expense {

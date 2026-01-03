@@ -15,8 +15,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(userData)
     setIsAuthenticated(true)
     // Store auth token if provided
-    if ('token' in userData) {
-      localStorage.setItem('authToken', (userData as any).token)
+    if (userData.token) {
+      localStorage.setItem('authToken', userData.token)
     }
   }
 

@@ -4,6 +4,13 @@ import { useAuth } from '../../context/AuthContext'
 import NavBar from '../../Components/NavBar/NavBar'
 import './SignUp.css'
 
+interface FormErrors {
+  name?: string
+  email?: string
+  password?: string
+  confirmPassword?: string
+}
+
 function SignUp() {
   const [form, setForm] = useState({
     name: '',
@@ -12,18 +19,18 @@ function SignUp() {
     confirmPassword: '',
   })
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<FormErrors>({})
   const [generalError, setGeneralError] = useState('')
 
   const { login } = useAuth() // we call login to simulate "authenticated" state
   const navigate = useNavigate()
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
   const validate = () => {
-    const errs = {}
+    const errs: FormErrors = {}
     if (!form.name.trim()) errs.name = 'Name is required'
     if (!form.email.includes('@')) errs.email = 'Valid email required'
     if (form.password.length < 6)
@@ -33,7 +40,7 @@ function SignUp() {
     return errs
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const validationErrors = validate()
     setErrors(validationErrors)
@@ -42,7 +49,12 @@ function SignUp() {
       if (form.email === 'test@fail.com') {
         setGeneralError('Email already exists. Please try logging in.')
       } else {
-        login() // mark user as authenticated
+        login({
+          id: '1',
+          name: form.name,
+          email: form.email,
+          token: 'dummy-token'
+        }) // mark user as authenticated
         navigate('/dashboard') // redirect to dashboard
       }
     }
@@ -52,7 +64,7 @@ function SignUp() {
     <>
       <NavBar />
       <div className="signup-container">
-        <form className="signup-form" onSubmit={handleSubmit}>
+        <form className="signup-form" onSubmit={handleSubmit} aria-label="signup-form">
           <h2>Create Your Account</h2>
 
           {generalError && (
