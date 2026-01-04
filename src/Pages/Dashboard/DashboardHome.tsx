@@ -9,7 +9,12 @@ import { useAIAssistant } from '../../hooks/useAIAssistant'
 import AIAssistantBanner from '../../Components/AIAssistantBanner/AIAssistantBanner'
 import RecentActivity from '../../Components/RecentActivity/RecentActivity'
 import './DashboardHome.scss'
-import { atom, useRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
+import {
+  modalState,
+  recentExpenseState,
+  MODAL,
+} from '../../state/dashboardAtoms'
 
 // Lazy-loaded components
 const Balance = lazy(() => import('../../Components/Balance/Balance'))
@@ -19,22 +24,6 @@ const AddExpensePopup = lazy(
 const CreateGroup = lazy(
   () => import('../../Components/PopUp/CreateGroup/CreateGroup'),
 )
-
-const MODAL = Object.freeze({
-  NONE: null,
-  ADD_EXPENSE: 'add-expense',
-  CREATE_GROUP: 'create-group',
-})
-
-const modalState = atom({
-  key: 'modalState',
-  default: MODAL.NONE,
-})
-
-const recentExpenseState = atom({
-  key: 'recentExpenseState',
-  default: null,
-})
 
 // --- LAYOUT COMPONENTS ---
 function GroupList() {

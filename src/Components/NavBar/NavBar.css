@@ -2,7 +2,7 @@
   --primary-color: #3f51b5;
   --primary-hover: #303f9f;
   --text-color: #1a1a2e;
-  --bg-color: rgba(255, 255, 255, 0.85);
+  --bg-color: rgba(255, 255, 255, 0.95); /* More opaque for cleaner look */
   --search-border: #e0e6ed;
 }
 
@@ -11,18 +11,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 40px;
+  padding: 16px 40px;
   background-color: var(--bg-color);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  /* No bottom border for cleaner "floating" look, just subtle shadow */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
   font-family: "Poppins", sans-serif;
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
-  transition: top 0.4s ease, background-color 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 /* Scroll behavior */
@@ -36,7 +36,7 @@
 
 /* Logo */
 .navbar-logo {
-  height: 40px;
+  height: 32px; /* Sleeker, smaller logo */
   width: auto;
   transition: transform 0.2s ease;
 }
@@ -61,19 +61,20 @@
 .navbar-search input {
   width: 100%;
   padding: 10px 16px 10px 40px;
-  border: 1px solid var(--search-border);
-  border-radius: 50px;
+  border: 1px solid transparent; /* No border by default */
+  border-radius: 12px; /* More rectangular but rounded */
   font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #f3f4f6; /* Light gray background like standard inputs */
   transition: all 0.3s ease;
   color: var(--text-color);
+  font-family: "Inter", sans-serif;
 }
 
 .navbar-search input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
   background-color: white;
+  border-color: rgba(63, 81, 181, 0.2);
+  box-shadow: 0 0 0 4px rgba(63, 81, 181, 0.05);
 }
 
 .search-icon {
@@ -81,7 +82,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #9aa2b1;
+  color: #9ca3af;
   font-size: 0.9rem;
 }
 
@@ -89,49 +90,48 @@
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 /* Buttons */
 .btn {
-  padding: 8px 20px;
-  font-size: 0.95rem;
+  padding: 10px 24px;
+  font-size: 0.9rem;
   text-decoration: none;
-  border-radius: 50px;
-  font-weight: 500;
-  transition: all 0.25s ease;
+  border-radius: 12px; /* Consistent corner radius */
+  font-weight: 600;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
 }
 
 .btn-outline {
-  border: 1px solid #d1d5db;
+  border: none;
   color: #4b5563;
   background-color: transparent;
 }
 
 .btn-outline:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-  background-color: rgba(63, 81, 181, 0.05);
+  color: #111827;
+  background-color: #f3f4f6;
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: #1a1a2e; /* Dark theme button for contrast */
   color: #fff;
-  border: 1px solid var(--primary-color);
-  box-shadow: 0 4px 10px rgba(63, 81, 181, 0.2);
+  border: 1px solid #1a1a2e;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
-  border-color: var(--primary-hover);
+  background-color: #3f51b5; /* Brand color on hover */
+  border-color: #3f51b5;
   transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(63, 81, 181, 0.3);
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.25);
 }
 
 /* Menu Toggle */
@@ -168,7 +168,7 @@
     order: 3;
     width: 100%;
     margin-top: 12px;
-    display: none; /* Hide search on mobile for cleaner header, or show via toggle */
+    display: none;
   }
 
   .navbar-links {

@@ -6,9 +6,8 @@ import FeatureCarousel from "../../Components/FeatureCarousel/FeatureCarousel";
 import AppPromo from "../../Components/AppPromo/AppPromo";
 import WhyChoose from "../../Components/WhyChoose/WhyChoose";
 import Testimonials from "../../Components/Testimonials/Testimonials";
+import Footer from "../../Components/Footer/Footer";
 
-// @ts-expect-error - No types for this data file yet
-import features from "../../data/features/features";
 // @ts-expect-error - No types for this data file yet
 import testimonials from "../../data/testimonials/testimonials";
 
@@ -37,9 +36,8 @@ function HomePage() {
       <HeroSection />
 
       {/* === FEATURES CAROUSEL === */}
-      {/* Note: FeatureCarousel currently ignores props and uses internal import, but we keep passing them for now */}
-      {/* @ts-expect-error - FeatureCarousel props mismatch */}
-      <FeatureCarousel features={features} visibleCards={3} />
+      {/* FeatureCarousel now uses internal data import, so props are optional/ignored but we can leave clean */}
+      <FeatureCarousel />
 
       {/* === WHY CHOOSE US === */}
       <WhyChoose />
@@ -50,6 +48,9 @@ function HomePage() {
 
       {/* === MOBILE APP PROMO === */}
       <AppPromo />
+
+      {/* === FOOTER === */}
+      <Footer />
     </div>
   );
 }
