@@ -1,34 +1,47 @@
 import { useEffect, useState, useRef } from 'react'
 
+export interface DropoffEvent {
+  step: number
+  action: string
+  [key: string]: any
+}
+
+interface HelpStats {
+  shown: number
+  lastStep: number | null
+  totalMs: number
+}
+
+interface UseAIDropoffHelpOptions {
+  autoTimeout?: number
+}
+
 /**
  * useAIDropoffHelp (Pro)
  * AI-powered help hook for drop-off prevention with learning and analytics.
- *
- * Returns:
- * - showHelp (bool): Should you show the help UI?
- * - dropoffEvent (object): Analytics event that triggered help.
- * - dismissHelp (function): Hide the help.
- * - helpStats (object): Stats about help frequency and timing.
  */
-export function useAIDropoffHelp({ autoTimeout = 12000 } = {}) {
+export function useAIDropoffHelp({ autoTimeout = 12000 }: UseAIDropoffHelpOptions = {}) {
   const [showHelp, setShowHelp] = useState(false)
-  const [dropoffEvent, setDropoffEvent] = useState(null)
-  const [helpStats, setHelpStats] = useState(() => ({
+  const [dropoffEvent, setDropoffEvent] = useState<DropoffEvent | null>(null)
+  const [helpStats, setHelpStats] = useState<HelpStats>(() => ({
     shown: 0,
     lastStep: null,
     totalMs: 0,
   }))
-  const helpTimer = useRef()
-  const helpStart = useRef(null)
-  const learnedSteps = useRef(new Set()) // Steps where help was dismissed
+  const helpTimer = useRef<NodeJS.Timeout | undefined>(undefined)
+  const helpStart = useRef<number | null>(null)
+  const learnedSteps = useRef(new Set<string>())
 
   // Listen for AI dropoff event
   useEffect(() => {
-    function onHelpEvent(e) {
-      const event = e.detail
+    function onHelpEvent(e: Event) {
+      const customEvent = e as CustomEvent<DropoffEvent>
+      const event = customEvent.detail
+
       // If already dismissed for this step, do NOT show again unless step/action changes
       const key = `${event.step}:${event.action}`
       if (learnedSteps.current.has(key)) return
+
       setDropoffEvent(event)
       setShowHelp(true)
       setHelpStats((prev) => ({
@@ -37,17 +50,18 @@ export function useAIDropoffHelp({ autoTimeout = 12000 } = {}) {
         lastStep: event.step,
       }))
       helpStart.current = Date.now()
+
       if (autoTimeout) {
         clearTimeout(helpTimer.current)
         helpTimer.current = setTimeout(dismissHelp, autoTimeout)
       }
     }
+
     window.addEventListener('finbuddy-ai-help', onHelpEvent)
     return () => {
       window.removeEventListener('finbuddy-ai-help', onHelpEvent)
       clearTimeout(helpTimer.current)
     }
-    // eslint-disable-next-line
   }, [autoTimeout])
 
   // Dismiss and learn from user action

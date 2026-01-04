@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react'
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react'
 import type { User, AuthContextType } from '../types'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -8,8 +8,20 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return !!localStorage.getItem('authToken')
+  })
   const [user, setUser] = useState<User | undefined>(undefined)
+
+  // Restore session on mount
+  useEffect(() => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      setIsAuthenticated(true)
+      // Ideally fetch user profile here or parse from storage
+      // For now we assume valid session
+    }
+  }, [])
 
   const login = (userData: User) => {
     setUser(userData)

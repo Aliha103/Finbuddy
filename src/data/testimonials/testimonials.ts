@@ -1,4 +1,11 @@
-const testimonials = [
+export interface TestimonialData {
+  quote: string
+  name: string
+  title: string
+  emoji: string
+}
+
+export const testimonials: TestimonialData[] = [
   {
     quote: "It finally made sense of my messy expenses.",
     name: "Marco",
@@ -35,6 +42,6 @@ const testimonials = [
     title: "Retired",
     emoji: "🧓",
   },
-];
+]
 
-export default testimonials;
+export default testimonials

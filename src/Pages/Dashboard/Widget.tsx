@@ -1,6 +1,12 @@
 import React from 'react'
 import './Widget.css'
 
+interface WidgetProps extends React.HTMLAttributes<HTMLElement> {
+  title?: string
+  children: React.ReactNode
+  actions?: React.ReactNode
+}
+
 /**
  * Widget: A highly reusable, accessible dashboard card
  * - title: Widget title (shown in h3)
@@ -9,7 +15,7 @@ import './Widget.css'
  * - className: Additional CSS classes for custom styling
  * - ...props: Extra props (id, tabIndex, aria-*, etc.)
  */
-function Widget({ title, children, actions, className = '', ...props }) {
+function Widget({ title, children, actions, className = '', ...props }: WidgetProps) {
   // Ensure a unique id for ARIA (if needed for headings)
   const headingId = props.id ? `${props.id}-heading` : undefined
 

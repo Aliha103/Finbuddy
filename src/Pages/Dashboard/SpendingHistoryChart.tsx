@@ -12,8 +12,20 @@ import {
 import Widget from './Widget'
 import './SpendingHistoryChart.css'
 
+interface SpendingData {
+  date: string
+  amount: number
+  category?: string
+}
+
+interface Insight {
+  type: 'good' | 'warning' | 'alert' | 'neutral'
+  msg: string
+  icon: string
+}
+
 // --- Utility for insights ---
-function analyzeTrend(data) {
+function analyzeTrend(data: SpendingData[]): Insight | null {
   if (!data || data.length < 2) return null
 
   // Calculate trend slope
@@ -53,7 +65,7 @@ function analyzeTrend(data) {
   }
 }
 
-function FuturisticTooltip({ active, payload, label }) {
+function FuturisticTooltip({ active, payload, label }: any) {
   if (active && payload && payload.length) {
     return (
       <div
@@ -81,7 +93,11 @@ function FuturisticTooltip({ active, payload, label }) {
   return null
 }
 
-function SpendingHistoryChart({ data }) {
+interface SpendingHistoryChartProps {
+  data: SpendingData[]
+}
+
+function SpendingHistoryChart({ data }: SpendingHistoryChartProps) {
   const insight = useMemo(() => analyzeTrend(data), [data])
 
   if (!data || data.length < 2)
