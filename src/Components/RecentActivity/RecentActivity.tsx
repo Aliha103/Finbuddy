@@ -1,17 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { useRecoilState } from 'recoil'
-import { atom } from 'recoil'
 import { useRecentActivity } from '../../hooks/useRecentActivity'
 import { ActivityItem } from './ActivityItem'
+import { recentExpenseState } from '../../state/dashboardAtoms'
 import './RecentActivity.scss'
-
-// Import the existing recentExpenseState atom from DashboardHome
-// We need to reference it but it's already defined there
-// For now, we'll create a local reference
-const recentExpenseState = atom({
-  key: 'recentExpenseState',
-  default: null,
-})
 
 const LoadingSpinner: React.FC<{ small?: boolean }> = ({ small = false }) => (
   <div className={`activity-loading ${small ? 'activity-loading-small' : ''}`}>

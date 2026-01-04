@@ -15,6 +15,7 @@ import {
   recentExpenseState,
   MODAL,
 } from '../../state/dashboardAtoms'
+import { Expense } from '../../types'
 
 // Lazy-loaded components
 const Balance = lazy(() => import('../../Components/Balance/Balance'))
@@ -25,17 +26,14 @@ const CreateGroup = lazy(
   () => import('../../Components/PopUp/CreateGroup/CreateGroup'),
 )
 
-// --- LAYOUT COMPONENTS ---
-function GroupList() {
-  return (
-    <div className="dashboard-card dashboard-group-list">
-      <h2>Group List</h2>
-      <div className="dashboard-placeholder">GROUP LIST</div>
-    </div>
-  )
+// Import the shared GroupList component (not lazy-loaded for LCP)
+import GroupList from '../../Components/GroupList/GroupList'
+
+interface SuspenseFallbackProps {
+  message?: string
 }
 
-function SuspenseFallback({ message = 'Loading...' }) {
+function SuspenseFallback({ message = 'Loading...' }: SuspenseFallbackProps) {
   return (
     <div className="dashboard-loading">
       <span role="img" aria-label="Loading" style={{ marginRight: 12 }}>
@@ -46,13 +44,20 @@ function SuspenseFallback({ message = 'Loading...' }) {
   )
 }
 
+interface DashboardHomeSectionProps {
+  onOpenAddExpense: () => void
+  onOpenCreateGroup: () => void
+  recentExpense: Expense | null
+  systemStatusBanner: React.ReactNode
+}
+
 // --- Dashboard Home Section with LLM Assistant ---
 function DashboardHomeSection({
   onOpenAddExpense,
   onOpenCreateGroup,
   recentExpense,
   systemStatusBanner,
-}) {
+}: DashboardHomeSectionProps) {
   const { data, totals } = useBalanceData()
   const { getTip } = useAIAssistant()
 
@@ -112,7 +117,9 @@ function DashboardHomeSection({
               €{totals.net.toLocaleString()}
             </div>
           </Link>
-          <GroupList />
+          <div className="dashboard-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <GroupList onCreateGroup={onOpenCreateGroup} />
+          </div>
         </div>
         {/* Center Column */}
         <div className="dashboard-center-col">
@@ -161,7 +168,7 @@ function Dashboard() {
   const location = useLocation()
   const [modal, setModal] = useRecoilState(modalState)
   const [recentExpense, setRecentExpense] = useRecoilState(recentExpenseState)
-  const { totals } = useBalanceData()
+  // const { totals } = useBalanceData() // Unused
 
   const routeKey =
     location.pathname === '/dashboard' || location.pathname === '/dashboard/'
@@ -171,7 +178,7 @@ function Dashboard() {
       : 'other'
 
   const handleAddExpense = useCallback(
-    (expense) => {
+    (expense: Expense) => {
       setRecentExpense(expense)
       setTimeout(() => setRecentExpense(null), 2200)
       setModal(MODAL.NONE)
@@ -183,7 +190,7 @@ function Dashboard() {
     setModal(MODAL.NONE)
   }, [setModal])
 
-  const openModal = (type) => setModal(type)
+  const openModal = (type: string) => setModal(type)
 
   return (
     <>

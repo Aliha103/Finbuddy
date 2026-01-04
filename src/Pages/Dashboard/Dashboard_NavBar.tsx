@@ -19,8 +19,8 @@ function DashboardNavBar() {
   const [visible, setVisible] = useState(true)
 
   const prevScrollPos = useRef(window.scrollY)
-  const menuRef = useRef()
-  const profileRef = useRef()
+  const menuRef = useRef<HTMLDivElement>(null)
+  const profileRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
   const toggleMenu = () => setMenuOpen((prev) => !prev)
@@ -33,9 +33,13 @@ function DashboardNavBar() {
 
   // Close menus on outside click
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!menuRef.current?.contains(e.target)) setMenuOpen(false)
-      if (!profileRef.current?.contains(e.target)) setProfileOpen(false)
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false)
+      }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
