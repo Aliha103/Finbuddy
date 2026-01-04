@@ -4,12 +4,58 @@
 :root {
   --primary-color: #3f51b5;
   --primary-hover: #303f9f;
+  --accent-blue: #246bf7;
   --background-light: #f7f9fc;
-  --text-dark: #1e1e1e;
+  --background-white: #ffffff;
+  --text-dark: #1a1a2e;
   --text-muted: #6b7280;
   --font-main: "Poppins", sans-serif;
-  --font-secondary: "Inter", sans-serif;
+  --font-secondary: "Open Sans", sans-serif;
   --radius: 16px;
+}
+
+/* Global Reset Tweaks */
+body {
+  background-color: var(--background-white);
+  color: var(--text-dark);
+  font-family: var(--font-secondary);
+  overflow-x: hidden;
+}
+
+/* ========================
+   🏠 HOME PAGE LAYOUT
+   ======================== */
+.homepage {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--background-white);
+}
+
+/* Background Decorations (Blobs) */
+.homepage::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(63, 81, 181, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.homepage::after {
+  content: '';
+  position: absolute;
+  top: 40%;
+  left: -10%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(36, 107, 247, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* ========================
@@ -20,90 +66,95 @@
   font-weight: 700;
   font-size: clamp(2rem, 4vw, 2.8rem);
   text-align: center;
-  margin-bottom: 2rem;
-  color: var(--primary-color);
+  margin-bottom: 3rem;
+  color: var(--text-dark);
+  position: relative;
+  display: inline-block;
 }
+
+/* Underline decoration */
+/* .section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--primary-color);
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+} */
 
 /* ========================
    💬 TESTIMONIALS SECTION
    ======================== */
 .testimonials {
-  background-color: var(--background-light);
-  padding: 5rem 2rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+  padding: 6rem 2rem;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
-.testimonials h2 {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
-  margin-bottom: 3rem;
-  color: var(--text-dark);
-}
-
-/* 🧱 Grid container for testimonials */
 .testimonial-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* 🧾 Individual testimonial card */
 .testimonial-card {
   background-color: #ffffff;
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
-  position: relative;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
   text-align: left;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .testimonial-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  border-color: rgba(63, 81, 181, 0.1);
 }
 
-/* Decorative quote icon */
 .testimonial-card .quote-icon {
-  font-size: 3.5rem;
-  color: var(--primary-color);
-  line-height: 1;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  color: #e0e6ed;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
 }
 
-/* Quote body */
 .testimonial-card p {
-  font-style: italic;
+  font-style: normal;
   font-size: 1.05rem;
+  line-height: 1.7;
   color: var(--text-dark);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
-/* Attribution */
 .testimonial-card span {
+  display: block;
   font-size: 0.95rem;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
 /* ========================
    🔄 RESPONSIVE TWEAKS
    ======================== */
 @media (max-width: 768px) {
+  .section-title {
+    margin-bottom: 2rem;
+  }
+
   .testimonial-card {
-    padding: 1.5rem;
-  }
-
-  .testimonial-card .quote-icon {
-    font-size: 3rem;
-  }
-
-  .testimonial-card p {
-    font-size: 1rem;
-  }
-
-  .testimonial-card span {
-    font-size: 0.9rem;
+    padding: 2rem;
   }
 }
