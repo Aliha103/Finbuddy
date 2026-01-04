@@ -1,34 +1,20 @@
 import React from "react";
 import Slider from "react-slick";
 import "./FeatureCarousel.css";
-// @ts-expect-error - No types for this data file yet
-import features from "../../data/features/features";
-
-interface Feature {
-  title: string;
-  description: string;
-  image: string;
-}
-
-// If features were typed, we wouldn't need to define Feature here potentially, but for now...
-// The props passed in HomePage are `features` and `visibleCards`, but FeatureCarousel definition doesn't use props currently.
-// It imports `features` directly.
-// However, `HomePage` passes `features={features}`.
-// I should update FeatureCarousel to accept props to be cleaner, or just ignore them if it uses import.
-// Looking at HomePage: `<FeatureCarousel features={features} visibleCards={3} />`
-// Looking at FeatureCarousel: `function FeatureCarousel() { ... }` (it ignores props)
-// I will keep it as is but type the component.
+import features, { FeatureItem } from "../../data/features/features";
 
 const FeatureCarousel: React.FC = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 600,
+    speed: 800,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 4000,
     arrows: false,
+    pauseOnHover: true,
+    cssEase: "cubic-bezier(0.87, 0, 0.13, 1)",
     responsive: [
       {
         breakpoint: 1024,
@@ -36,31 +22,37 @@ const FeatureCarousel: React.FC = () => {
       },
       {
         breakpoint: 768,
-        settings: { slidesToShow: 1 },
+        settings: { slidesToShow: 1, centerMode: true, centerPadding: '20px' },
       },
     ],
   };
 
   return (
     <section className="feature-slider">
-      <h2 className="section-title">Everything You Need</h2>
+      <div className="feature-header">
+        <h2 className="section-title">Everything You Need</h2>
+        <p className="section-subtitle">Powerful tools to manage your financial life</p>
+      </div>
+
       <Slider {...settings}>
-        {features.map((feature: Feature, index: number) => (
-          <div key={index}>
-            <div className="feature-slide-inner">
-              <img
-                src={feature.image}
-                alt={feature.title}
-                className="feature-bg"
-                loading="lazy"
-              />
-              <div className="feature-overlay-text">
+        {features.map((feature: FeatureItem, index: number) => {
+          const Icon = feature.icon;
+          return (
+            <div key={index} className="feature-slide-wrapper">
+              <div className="feature-card">
+                <div
+                  className="feature-icon-wrapper"
+                  style={{ backgroundColor: `${feature.color}15`, color: feature.color }}
+                >
+                  <Icon className="feature-icon" />
+                </div>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
+                <div className="feature-card-decoration" style={{ backgroundColor: feature.color }}></div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </Slider>
     </section>
   );
