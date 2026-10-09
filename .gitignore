@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Arena tournament runs (design direction competitions)
+.arena/
+# Impeccable local-only state
+.impeccable/config.local.json
+.impeccable/review/
