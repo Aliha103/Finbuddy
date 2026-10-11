@@ -36,7 +36,6 @@ export function PrivacySettings() {
         <Row
           title={persistent ? 'Changes stay only until the app closes' : 'Changes won\'t be saved on this device'}
           subtitle="Some private browsing modes, a full disk or a restricted profile can stop the app from writing to storage. FinBuddy keeps working from memory and tells you so with the amber bar on Home and here, instead of failing quietly."
-          lines={6}
         />
       </ListSection>
     </Screen>
