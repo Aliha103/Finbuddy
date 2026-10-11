@@ -25,13 +25,16 @@ export interface RowProps {
   /** Shows a chevron (iOS convention for navigation rows). Default: when onPress is set, on iOS only. */
   chevron?: boolean;
   sample?: boolean;
-  /** The subtitle wraps to as many lines as it needs (default 2). */
+  /**
+   * Caps the subtitle at this many lines. Default: no cap. Titles and subtitles carry amounts
+   * ("You paid US$198.50 · your share US$49.63"), and an amount is never truncated, at any text size.
+   */
   lines?: number;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
-export function Row({ title, titleSpoken, subtitle, detail, leading, trailing, onPress, accessibilityHint, chevron, sample, lines = 2, style, testID }: RowProps) {
+export function Row({ title, titleSpoken, subtitle, detail, leading, trailing, onPress, accessibilityHint, chevron, sample, lines, style, testID }: RowProps) {
   const theme = useTheme();
   const c = theme.colors;
   const showChevron = chevron ?? (!!onPress && theme.platform === 'ios');
@@ -50,7 +53,7 @@ export function Row({ title, titleSpoken, subtitle, detail, leading, trailing, o
       {leading ? <View style={styles.leading}>{leading}</View> : null}
       <View style={styles.text}>
         <View style={styles.titleLine}>
-          <Text role="body" color="label" accessibilityLabel={titleSpoken} style={styles.title} numberOfLines={2}>
+          <Text role="body" color="label" accessibilityLabel={titleSpoken} style={styles.title}>
             {title}
           </Text>
           {sample ? <SampleChip /> : null}

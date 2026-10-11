@@ -5,12 +5,11 @@
 // its group. Home's five recent rows and the Activity feed share these.
 import type { Expense, Settlement } from '@finbuddy/shared';
 import { router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { useGroups, useToday, type ActivityItem } from '@/data';
-import { Icon, Readout, Row, SPACE, Text, useTheme } from '@/design';
-import { settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
-import { cleanName } from '@/features/home/formatter';
+import { Icon, Readout, Row, StatusChip, useTheme } from '@/design';
+import { cleanName, settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
 
 /** "Personal" for expenses outside a group, else the group's name without the sample suffix. */
 export function useGroupName(): (groupId: string | null) => string {
@@ -65,12 +64,11 @@ export function ExpenseRow({ f, expense, showGroup = true, testID }: { f: Format
   const paid = paidSummary(f, expense);
   const subtitle = [`${shortDate(expense.occurredOn)}${where} · ${f.category(expense.categoryId)}`];
   if (!isPlainPersonal(f, expense)) subtitle.push(paid.text);
-  // The paid line carries an amount, so it may take a third line rather than be cut short.
+  // The paid line carries an amount, so it takes as many lines as it needs rather than be cut short.
   return (
     <Row
       title={expense.description || f.category(expense.categoryId)}
       subtitle={subtitle}
-      lines={3}
       detail={<Readout money={expense.total} locale={f.locale} role="readoutS" inline />}
       leading={<Icon name="receipt" size={22} color={colors.labelSecondary} />}
       sample={expense.isSample === true}
@@ -83,16 +81,9 @@ export function ExpenseRow({ f, expense, showGroup = true, testID }: { f: Format
 }
 
 /** "Pending" (amber, not counted in balances) or "Confirmed": the status in words, then colour. */
-export function StatusChip({ status }: { status: Settlement['status'] }) {
-  const { colors } = useTheme();
+export function SettlementStatus({ status }: { status: Settlement['status'] }) {
   const pending = status === 'pending';
-  return (
-    <View style={[styles.chip, { backgroundColor: pending ? colors.attentionWash : colors.surfaceAlt }]} accessible accessibilityLabel={pending ? 'Pending, not counted in balances yet' : 'Confirmed'}>
-      <Text role="caption" style={{ color: pending ? colors.attention : colors.labelSecondary, fontWeight: '600' }} importantForAccessibility="no">
-        {pending ? 'Pending' : 'Confirmed'}
-      </Text>
-    </View>
-  );
+  return <StatusChip label={pending ? 'Pending' : 'Confirmed'} tone={pending ? 'attention' : 'neutral'} accessibilityLabel={pending ? 'Pending, not counted in balances yet' : 'Confirmed'} style={styles.status} />;
 }
 
 export function SettlementRow({ f, settlement, showGroup = true, testID }: { f: Formatter; settlement: Settlement; showGroup?: boolean; testID?: string }) {
@@ -108,7 +99,7 @@ export function SettlementRow({ f, settlement, showGroup = true, testID }: { f: 
       title={sentence.text}
       titleSpoken={sentence.spoken}
       subtitle={`${shortDate(settlement.occurredOn)}${where}${pending ? ' · Not counted in balances yet' : ''}`}
-      detail={<StatusChip status={settlement.status} />}
+      detail={<SettlementStatus status={settlement.status} />}
       leading={<Icon name="payment" size={22} color={colors.labelSecondary} />}
       sample={settlement.isSample === true}
       onPress={groupId ? () => openGroup(groupId) : undefined}
@@ -124,5 +115,5 @@ export function ActivityRow({ f, item, showGroup, testID }: { f: Formatter; item
 }
 
 const styles = StyleSheet.create({
-  chip: { borderRadius: 999, paddingHorizontal: SPACE.s + 2, paddingVertical: 3, alignSelf: 'flex-end' },
+  status: { alignSelf: 'flex-end' },
 });

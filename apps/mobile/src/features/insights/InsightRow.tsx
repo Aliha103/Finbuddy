@@ -7,12 +7,11 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { Icon, SPACE, Text, useTheme } from '@/design';
+import { Icon, LinkButton, SPACE, Text, useTheme } from '@/design';
 import type { Formatter } from '@/features/common/format';
 
 import { BasisRows, useBasisMotion } from './Basis';
 import { insightCopy, severityLabel } from './copy';
-import { LinkButton } from './LinkButton';
 import { severityStyle } from './severity';
 
 /** Kinds whose sentence already names the category, so the row skips the "Category: …" line (the detail keeps it). */

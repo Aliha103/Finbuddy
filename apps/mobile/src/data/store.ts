@@ -144,8 +144,3 @@ export function startDataStore(): Promise<void> {
 export function resetSampleData(): Promise<void> {
   return applySnapshot(freshSampleData());
 }
-
-/** Clears the one-time notice shown under a screen title. */
-export function dismissNotice(): void {
-  useDataStore.setState({ notice: null });
-}

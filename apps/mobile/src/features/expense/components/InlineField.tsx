@@ -4,9 +4,9 @@
 // "%" beside the digits, tabular figures, a danger outline when the row has a problem. The row
 // prints the problem in words; the outline is never the only signal.
 import { useState } from 'react';
-import { Platform, StyleSheet, TextInput, View, type TextInputProps, type TextStyle } from 'react-native';
+import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
-import { RADIUS, SPACE, TYPE, Text, useTheme } from '@/design';
+import { INPUT_RESET, RADIUS, SPACE, TYPE, Text, focusRing, useTheme } from '@/design';
 
 export interface InlineFieldProps extends Omit<TextInputProps, 'style'> {
   accessibilityLabel: string;
@@ -22,7 +22,7 @@ export function InlineField({ prefix, suffix, invalid, width = 136, editable = t
   const [focused, setFocused] = useState(false);
   const borderColor = invalid ? c.danger : focused ? c.tint : 'transparent';
   return (
-    <View style={[styles.box, { backgroundColor: c.fill, borderColor, minHeight: theme.minTouch, width, opacity: editable ? 1 : 0.45 }]}>
+    <View style={[styles.box, { backgroundColor: c.fill, borderColor, minHeight: theme.minTouch, width, opacity: editable ? 1 : 0.45 }, focused ? focusRing(c.tint) : null]}>
       {prefix ? (
         <Text role="body" color="labelSecondary" importantForAccessibility="no" accessibilityElementsHidden>
           {prefix}
@@ -46,7 +46,7 @@ export function InlineField({ prefix, suffix, invalid, width = 136, editable = t
           onBlur?.(e);
         }}
         // The input fills the whole 44-point box, so a tap anywhere on it focuses the field.
-        style={[styles.input, { color: c.label, fontSize: TYPE.body.size, fontVariant: ['tabular-nums'], minHeight: theme.minTouch - 3 }, Platform.OS === 'web' ? NO_OUTLINE : null]}
+        style={[styles.input, { color: c.label, fontSize: TYPE.body.size, fontVariant: ['tabular-nums'], minHeight: theme.minTouch - 3 }, INPUT_RESET]}
       />
       {suffix ? (
         <Text role="body" color="labelSecondary" importantForAccessibility="no" accessibilityElementsHidden>
@@ -56,9 +56,6 @@ export function InlineField({ prefix, suffix, invalid, width = 136, editable = t
     </View>
   );
 }
-
-/** The web preview's browser focus ring; the field's own tint border already marks focus. */
-export const NO_OUTLINE: TextStyle = { outlineWidth: 0 };
 
 const styles = StyleSheet.create({
   box: { flexDirection: 'row', alignItems: 'center', gap: SPACE.xs, borderRadius: RADIUS.input, borderWidth: 1.5, paddingHorizontal: SPACE.m },

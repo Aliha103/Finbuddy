@@ -1,26 +1,46 @@
 // apps/mobile/src/features/common/Fab.tsx
 // The one Material floating action button a screen may carry (Android and the web preview):
 // an extended FAB, bottom-trailing, with the only shadow in the app. iOS never renders it; its
-// primary action lives in the navigation bar (or the iOS 26 bottom accessory).
+// primary action lives in the navigation bar or the iOS 26 bottom accessory ("Add expense" above
+// the tab bar). Whatever floats over a screen's bottom edge, the screen's content inset clears it
+// (useFloatingInset), so the last row can always scroll out from under it.
+import { createContext, use } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Icon, SHADOW, SPACE, SPRING, Text, useHaptic, useTheme, type IconName } from '@/design';
+import { Icon, SHADOW, SPACE, SPRING, Text, TOUCH, useHaptic, useTheme, type IconName } from '@/design';
 
 export interface FabProps {
   label: string;
   icon?: IconName;
   onPress: () => void;
-  /** Lifts the FAB above a tab bar the layout does not already inset for. */
-  bottomOffset?: number;
   testID?: string;
 }
 
-/** Height of the extended FAB plus its margin: screens add this to their bottom padding. */
-export const FAB_SPACE = 56 + SPACE.l * 2;
+/** The extended FAB's height (Material 3). */
+export const FAB_HEIGHT = 56;
+/** Its distance from the screen's bottom edge (above the safe area) and from the trailing edge. */
+export const FAB_MARGIN = SPACE.l;
+/** The iOS 26 bottom accessory: a 44-point capsule with the system's spacing above the tab bar. */
+const ACCESSORY_HEIGHT = TOUCH.min + SPACE.s;
 
-export function Fab({ label, icon = 'add', onPress, bottomOffset = 0, testID }: FabProps) {
+/** True inside the tabs while the iOS bottom accessory floats above the tab bar (set by the tabs layout). */
+export const BottomAccessoryContext = createContext(false);
+
+/**
+ * The bottom space, above the safe area, that keeps a screen's last content clear of what floats
+ * over its bottom edge: the FAB (height plus its margin) on Material when the screen shows one, the
+ * bottom accessory on iOS 26 on every tab screen. Screens add their own breathing room on top.
+ */
+export function useFloatingInset(fab: boolean): number {
+  const { platform } = useTheme();
+  const accessory = use(BottomAccessoryContext);
+  if (platform === 'ios') return accessory ? ACCESSORY_HEIGHT : 0;
+  return fab ? FAB_HEIGHT + FAB_MARGIN : 0;
+}
+
+export function Fab({ label, icon = 'add', onPress, testID }: FabProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const haptic = useHaptic();
@@ -28,7 +48,7 @@ export function Fab({ label, icon = 'add', onPress, bottomOffset = 0, testID }: 
   const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
   if (theme.platform === 'ios') return null;
   return (
-    <View pointerEvents="box-none" style={[styles.anchor, { bottom: insets.bottom + SPACE.l + bottomOffset }]}>
+    <View pointerEvents="box-none" style={[styles.anchor, { bottom: insets.bottom + FAB_MARGIN }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={label}
@@ -54,6 +74,6 @@ export function Fab({ label, icon = 'add', onPress, bottomOffset = 0, testID }: 
 }
 
 const styles = StyleSheet.create({
-  anchor: { position: 'absolute', right: SPACE.l },
-  fab: { flexDirection: 'row', alignItems: 'center', gap: SPACE.m, height: 56, paddingLeft: SPACE.l, paddingRight: SPACE.xl, borderRadius: 16 },
+  anchor: { position: 'absolute', right: FAB_MARGIN },
+  fab: { flexDirection: 'row', alignItems: 'center', gap: SPACE.m, height: FAB_HEIGHT, paddingLeft: SPACE.l, paddingRight: SPACE.xl, borderRadius: 16 },
 });

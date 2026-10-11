@@ -197,6 +197,13 @@ export type ReadoutRole = Extract<TypeRole, 'readoutXL' | 'readoutL' | 'readoutM
 export const READOUT_MAX_SCALE = 1.6;
 /** At and above this font scale, rows that put a readout beside text stack vertically. */
 export const STACK_FONT_SCALE = 1.35;
+/**
+ * Layout width, in text units (points / font scale), below which rows stack as they do at
+ * STACK_FONT_SCALE: the room a 390-point phone has at 1.35 (289). A narrower phone at a slightly
+ * smaller scale, and the web preview zoomed to 135% (the browser scales everything and reports a
+ * font scale of 1), get the same layout instead of squeezing names to two letters.
+ */
+export const COMPACT_TEXT_WIDTH = 290;
 
 /** 4-point grid. */
 export const SPACE = { xs: 4, s: 8, m: 12, l: 16, xl: 24, xxl: 32, xxxl: 48, gutter: 16 } as const;
@@ -206,6 +213,13 @@ export const RADIUS = { card: 12, row: 12, input: 10, tile: 8, sheetIOS: 20, she
 
 /** Touch targets: HIG 44 pt, Material 48 dp. */
 export const TOUCH = { min: 44, minAndroid: 48, gap: 8 } as const;
+
+/**
+ * Keyboard focus on the web preview (devices draw their own): a ring in the tint, outside the
+ * control so it never covers its border or text. The browser's default outline is turned off only
+ * where this ring replaces it.
+ */
+export const FOCUS = { width: 2, offset: 2 } as const;
 
 /** Elevation. iOS draws none (grouped surfaces + hairlines); Android uses tonal surfaces; the FAB alone casts a shadow. */
 export const SHADOW = {

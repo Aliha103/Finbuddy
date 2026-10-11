@@ -1,6 +1,7 @@
 // apps/mobile/src/features/groups/GroupsList.tsx
 // The Groups tab: a stack of fare cards, one per group, archived ones last. New group is the
-// toolbar button on iOS (wired in the stack layout) and the FAB on Android and the web.
+// toolbar button on iOS (wired in the stack layout) and the FAB on Android and the web, except while
+// the list is empty, where the empty card's own New group button is the one primary action.
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
@@ -9,22 +10,22 @@ import { Card, SPACE, Text, lineColorFor } from '@/design';
 
 import { DataGate } from '../common/DataGate';
 import { EmptyState } from '../common/EmptyState';
-import { Fab, FAB_SPACE } from '../common/Fab';
+import { Fab } from '../common/Fab';
+import { useFormat } from '../common/format';
 import { Screen } from '../common/Screen';
-import { useGroupFormat } from './format';
 import { GroupCard } from './GroupCard';
 import { useLineColorOverrides } from './lineColors';
 
 export function GroupsList() {
   const groups = useGroups();
   const people = usePeople();
-  const f = useGroupFormat();
+  const f = useFormat();
   const overrides = useLineColorOverrides();
   const openNew = () => router.push('/(tabs)/(groups)/new');
   const archived = groups.filter((g) => g.group.archived).length;
   return (
     <DataGate>
-      <Screen bottomSpace={FAB_SPACE} testID="groups">
+      <Screen fab={groups.length > 0} testID="groups">
         {groups.length === 0 ? (
           <Card tone="outlined" testID="groups-empty">
             <EmptyState
@@ -55,7 +56,8 @@ export function GroupsList() {
           </View>
         )}
       </Screen>
-      <Fab label="New group" onPress={openNew} testID="fab-new-group" />
+      {/* While there are no groups the empty card carries New group; a FAB beside it would be a second copy of the same filled action. */}
+      {groups.length ? <Fab label="New group" onPress={openNew} testID="fab-new-group" /> : null}
     </DataGate>
   );
 }

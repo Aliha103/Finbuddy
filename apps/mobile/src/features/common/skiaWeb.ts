@@ -9,3 +9,17 @@ export function startSkiaWeb(): Promise<void> {
 export function useSkiaReady(): boolean {
   return true;
 }
+
+/** The web's deferred Skia module (skiaWeb.web.ts); on a device the module loads on first use. */
+export function deferSkiaModule<M>(load: () => M, unavailable: string): () => M | null {
+  let loaded: M | null = null;
+  return function useSkiaModule() {
+    if (loaded) return loaded;
+    try {
+      loaded = load();
+    } catch (error) {
+      console.warn(unavailable, error);
+    }
+    return loaded;
+  };
+}

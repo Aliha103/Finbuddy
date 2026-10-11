@@ -12,8 +12,9 @@ import { useActivity, useGroups, type ActivityItem } from '@/data';
 import { Chip, ChipRow, RADIUS, SPACE, Skeleton, SkeletonText, Text, useTheme } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
+import { useFloatingInset } from '@/features/common/Fab';
+import { cleanName, useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
-import { cleanName, useFormatter } from '@/features/home/formatter';
 
 import { ActivityRow } from './ActivityRow';
 import { filterActivity, groupByMonth, type ActivityFilter } from './grouping';
@@ -33,7 +34,8 @@ function ActivityFeed() {
   const c = theme.colors;
   const ios = theme.platform === 'ios';
   const insets = useSafeAreaInsets();
-  const f = useFormatter();
+  const floating = useFloatingInset(false);
+  const f = useFormat();
   const activity = useActivity();
   const groups = useGroups();
   const [filterKey, setFilterKey] = useState<string>('all');
@@ -74,7 +76,7 @@ function ActivityFeed() {
     <SectionList
       testID="activity"
       style={[styles.flex, { backgroundColor: c.ground }]}
-      contentContainerStyle={{ paddingTop: SPACE.s, paddingBottom: insets.bottom + SPACE.xxl }}
+      contentContainerStyle={{ paddingTop: SPACE.s, paddingBottom: insets.bottom + floating + SPACE.xxl }}
       contentInsetAdjustmentBehavior="automatic"
       sections={sections}
       keyExtractor={(item) => item.id}

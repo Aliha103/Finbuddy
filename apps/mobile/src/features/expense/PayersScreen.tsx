@@ -7,18 +7,17 @@ import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Icon, ListSection, SPACE, Text, useTheme } from '@/design';
+import { Icon, ListSection, SPACE, Segmented, Text, bestOn, useTheme } from '@/design';
 import { EmptyState } from '@/features/common/EmptyState';
+import { PersonRow } from '@/features/common/PersonRow';
 import { Screen } from '@/features/common/Screen';
 import { useGroupLineColor } from '@/features/groups/lineColors';
 
 import { InlineField } from './components/InlineField';
-import { PersonRow } from './components/PersonRow';
-import { Segments } from './components/Segments';
 import { withPayerMode } from './form';
-import { personName, possessive, useExpenseModel, type ExpenseModel } from './model';
+import { possessive, useExpenseModel, type ExpenseModel } from './model';
 import { useExpenseSession } from './session';
-import { bestOn, moneyFormatSpec, shareColour } from './splitMath';
+import { moneyFormatSpec, shareColour } from './splitMath';
 
 const INK = '#1A1420';
 const MODES = [
@@ -51,7 +50,7 @@ function Payers({ model, groupId }: { model: ExpenseModel; groupId: string }) {
 
   return (
     <Screen automaticallyAdjustKeyboardInsets testID="payers">
-      <Segments label="How many people paid" options={MODES} value={form.payerMode} onChange={(mode) => setForm((s) => withPayerMode(s, mode, members, result.total, f.locale))} testID="payer-mode" />
+      <Segmented label="How many people paid" options={MODES} value={form.payerMode} onChange={(mode) => setForm((s) => withPayerMode(s, mode, members, result.total, f.locale))} testID="payer-mode" />
 
       {form.payerMode === 'single' ? (
         <ListSection header="Who paid" style={styles.flushList}>
@@ -60,7 +59,7 @@ function Payers({ model, groupId }: { model: ExpenseModel; groupId: string }) {
             return (
               <PersonRow
                 key={id}
-                name={personName(f, id)}
+                name={f.name(id)}
                 avatarFill={colour(i)}
                 avatarOn={bestOn(colour(i), ['#FFFFFF', INK])}
                 control={selected ? <Icon name="check" size={22} color={c.tint} /> : <View style={styles.checkSpace} />}
@@ -70,7 +69,7 @@ function Payers({ model, groupId }: { model: ExpenseModel; groupId: string }) {
                 }}
                 accessibilityRole="radio"
                 accessibilityState={{ selected, checked: selected }}
-                accessibilityLabel={`${personName(f, id)} paid`}
+                accessibilityLabel={`${f.name(id)} paid`}
                 testID={`payer-${id}`}
               />
             );
@@ -82,7 +81,7 @@ function Payers({ model, groupId }: { model: ExpenseModel; groupId: string }) {
             {members.map((id: PersonId, i) => (
               <PersonRow
                 key={id}
-                name={personName(f, id)}
+                name={f.name(id)}
                 avatarFill={colour(i)}
                 avatarOn={bestOn(colour(i), ['#FFFFFF', INK])}
                 error={result.payerErrors[id] ?? null}
@@ -113,11 +112,13 @@ function Payers({ model, groupId }: { model: ExpenseModel; groupId: string }) {
               </Text>
             )}
             {result.total
-              ? result.payerGeneral.map((m) => (
-                  <Text key={m} role="footnote" color="danger" accessibilityRole="alert">
-                    {m}
-                  </Text>
-                ))
+              ? result.payerGeneral
+                  .filter((m) => m !== result.payerSumMessage)
+                  .map((m) => (
+                    <Text key={m} role="footnote" color="danger" accessibilityRole="alert">
+                      {m}
+                    </Text>
+                  ))
               : null}
           </View>
         </>

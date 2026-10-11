@@ -8,20 +8,30 @@ import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { addPerson, archiveGroup, updateGroup, useDeviceLocale, useGroup, usePeople, useProfile, type GroupUpdateResult } from '@/data';
-import { Button, Field, HoldToConfirm, ListSection, Row, SPACE, Text, useTheme } from '@/design';
+import { Button, Field, HoldToConfirm, ListSection, Row, SPACE, Text, gateUsesDialog, useTheme } from '@/design';
 
 import { CurrencyPicker } from '../common/CurrencyPicker';
 import { currencyNames } from '../common/currency';
+import { DataGate } from '../common/DataGate';
 import { EmptyState } from '../common/EmptyState';
 import { Screen } from '../common/Screen';
-import { cleanName, peopleCount, useGroupFormat } from './format';
+import { cleanName, useFormat } from '../common/format';
+import { peopleCount } from './format';
 import { LineColorPicker } from './LineColorPicker';
 import { MemberEditor } from './MemberEditor';
 import { setGroupLineColor, useGroupLineColor } from './lineColors';
 
 export function GroupSettings({ groupId }: { groupId: string }) {
+  return (
+    <DataGate>
+      <GroupSettingsBody groupId={groupId} />
+    </DataGate>
+  );
+}
+
+function GroupSettingsBody({ groupId }: { groupId: string }) {
   const theme = useTheme();
-  const f = useGroupFormat();
+  const f = useFormat();
   const locale = useDeviceLocale();
   const detail = useGroup(groupId);
   const people = usePeople();
@@ -127,35 +137,41 @@ export function GroupSettings({ groupId }: { groupId: string }) {
         )}
       </View>
 
-      <ListSection header={`Members · ${peopleCount(members.length)}`} footer="Someone who is still in an expense stays until that expense is edited or deleted.">
-        {members.map((person) => {
-          const count = inExpenses(person.id);
-          const creator = person.id === group.createdBy;
-          const me = f.isMe(person.id);
-          return (
-            <Row
-              key={person.id}
-              title={me && cleanName(person.displayName) !== 'You' ? `You (${cleanName(person.displayName)})` : f.name(person.id)}
-              subtitle={creator ? 'Created the group' : count ? `In ${count} ${count === 1 ? 'expense' : 'expenses'}` : 'Not in any expense yet'}
-              sample={person.isSample === true}
-              trailing={
-                creator ? undefined : (
-                  <Button
-                    label="Remove"
-                    size="small"
-                    variant="plain"
-                    onPress={() => removeMember(person.id)}
-                    disabled={busy || count > 0}
-                    accessibilityLabel={`Remove ${f.name(person.id)}`}
-                    testID={`remove-${person.id}`}
-                  />
-                )
-              }
-              testID={`member-row-${person.id}`}
-            />
-          );
-        })}
-      </ListSection>
+      {/* The same section title as Line colour, Currency and Add members above and below it, not a list-group caption. */}
+      <View style={styles.section}>
+        <Text role="headline" accessibilityRole="header">
+          {`Members · ${peopleCount(members.length)}`}
+        </Text>
+        <ListSection footer="Someone who is still in an expense stays until that expense is edited or deleted.">
+          {members.map((person) => {
+            const count = inExpenses(person.id);
+            const creator = person.id === group.createdBy;
+            const me = f.isMe(person.id);
+            return (
+              <Row
+                key={person.id}
+                title={me && cleanName(person.displayName) !== 'You' ? `You (${cleanName(person.displayName)})` : f.name(person.id)}
+                subtitle={creator ? 'Created the group' : count ? `In ${count} ${count === 1 ? 'expense' : 'expenses'}` : 'Not in any expense yet'}
+                sample={person.isSample === true}
+                trailing={
+                  creator ? undefined : (
+                    <Button
+                      label="Remove"
+                      size="small"
+                      variant="plain"
+                      onPress={() => removeMember(person.id)}
+                      disabled={busy || count > 0}
+                      accessibilityLabel={`Remove ${f.name(person.id)}`}
+                      testID={`remove-${person.id}`}
+                    />
+                  )
+                }
+                testID={`member-row-${person.id}`}
+              />
+            );
+          })}
+        </ListSection>
+      </View>
 
       <View style={styles.section}>
         <Text role="headline" accessibilityRole="header">
@@ -191,7 +207,7 @@ export function GroupSettings({ groupId }: { groupId: string }) {
               testID="archive-group"
             />
             <Text role="footnote" style={{ color: theme.colors.labelTertiary }}>
-              Hold until the ring closes. Nothing is deleted.
+              {gateUsesDialog(theme) ? 'Asks you to confirm first. Nothing is deleted.' : 'Hold until the ring closes. Nothing is deleted.'}
             </Text>
           </>
         )}

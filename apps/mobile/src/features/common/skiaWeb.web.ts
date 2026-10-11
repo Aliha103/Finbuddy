@@ -49,3 +49,29 @@ export function useSkiaReady(): boolean {
   }, []);
   return state;
 }
+
+/**
+ * A Skia drawing module for the web, where it must not run before CanvasKit has loaded:
+ * @shopify/react-native-skia builds its web API from the CanvasKit global when its module first
+ * runs. `load` is a synchronous require written at the call site, so Metro keeps the module in the
+ * one web bundle (no split chunk to resolve from a sub-path) while deferring its evaluation.
+ * Returns a hook that gives null until CanvasKit is ready, or if the module cannot load on this
+ * browser (the caller keeps its plain fallback), and the module after that.
+ */
+export function deferSkiaModule<M>(load: () => M, unavailable: string): () => M | null {
+  let loaded: M | null = null;
+  let failed = false;
+  const get = (): M | null => {
+    if (loaded || failed) return loaded;
+    try {
+      loaded = load();
+    } catch (error) {
+      failed = true;
+      console.warn(unavailable, error);
+    }
+    return loaded;
+  };
+  return function useSkiaModule() {
+    return useSkiaReady() ? get() : null;
+  };
+}

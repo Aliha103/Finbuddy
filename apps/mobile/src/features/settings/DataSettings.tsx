@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { deleteAllData, exportData, removeSampleData, resetSampleData, useDataStatus, useDataStore } from '@/data';
-import { Button, HoldToConfirm, ListSection, Row, SPACE, Text, useTheme } from '@/design';
+import { Button, HoldToConfirm, ListSection, Row, SPACE, Text, gateUsesDialog, useTheme } from '@/design';
 
 import { Screen } from '../common/Screen';
 import { shareExport } from './exportFile';
@@ -73,7 +73,7 @@ export function DataSettings() {
             testID="delete-all"
           />
           <Text role="footnote" style={{ color: c.labelTertiary }}>
-            Hold until the ring closes. Nothing happens on a tap.
+            {gateUsesDialog(theme) ? 'Asks you to confirm first. Nothing is deleted until you do.' : 'Hold until the ring closes. Nothing happens on a tap.'}
           </Text>
         </View>
       </ListSection>

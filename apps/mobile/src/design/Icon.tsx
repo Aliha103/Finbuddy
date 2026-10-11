@@ -1,7 +1,9 @@
 // apps/mobile/src/design/Icon.tsx
 // One icon component, each OS its native set: SF Symbols on iOS, Material Symbols on Android (the
 // font ships inside expo-symbols' dependency, no network). The web preview draws the Material glyph
-// from the same bundled font; `fallback` covers a platform with neither.
+// from the same bundled font; `fallback` covers a platform with neither. CategoryIcon draws the
+// drawn icon for each of the engine's default categories from the same pairs.
+import { FALLBACK_CATEGORY_ID, type CategoryId } from '@finbuddy/shared';
 import { SymbolView, type SymbolViewProps, type SymbolWeight } from 'expo-symbols';
 import type { ReactNode } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
@@ -11,6 +13,7 @@ import { useTheme } from './theme';
 type Names = Extract<SymbolViewProps['name'], object>;
 type SF = NonNullable<Names['ios']>;
 type MD = NonNullable<Names['android']>;
+type SymbolPair = { readonly ios: SF; readonly android: MD };
 
 /** Verified pairs (typed against sf-symbols-typescript and expo-symbols' Android catalogue). */
 export const ICONS = {
@@ -23,6 +26,7 @@ export const ICONS = {
   activity: { ios: 'clock', android: 'history' },
   activityFill: { ios: 'clock.fill', android: 'history' },
   add: { ios: 'plus', android: 'add' },
+  minus: { ios: 'minus', android: 'remove' },
   check: { ios: 'checkmark', android: 'check' },
   close: { ios: 'xmark', android: 'close' },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right' },
@@ -50,9 +54,33 @@ export const ICONS = {
   appearance: { ios: 'circle.lefthalf.filled', android: 'contrast' },
   motion: { ios: 'figure.walk.motion', android: 'animation' },
   lock: { ios: 'lock', android: 'lock' },
-} as const satisfies Record<string, { ios: SF; android: MD }>;
+} as const satisfies Record<string, SymbolPair>;
 
 export type IconName = keyof typeof ICONS;
+
+/** One drawn icon per default category (the engine's DEFAULT_CATEGORIES ids), verified like ICONS. */
+export const CATEGORY_ICONS = {
+  food: { ios: 'fork.knife', android: 'restaurant' },
+  groceries: { ios: 'cart', android: 'shopping_cart' },
+  transport: { ios: 'bus', android: 'directions_bus' },
+  housing: { ios: 'house', android: 'home' },
+  utilities: { ios: 'bolt', android: 'bolt' },
+  entertainment: { ios: 'ticket', android: 'confirmation_number' },
+  shopping: { ios: 'bag', android: 'shopping_bag' },
+  travel: { ios: 'airplane', android: 'flight' },
+  healthcare: { ios: 'cross.case', android: 'medical_services' },
+  education: { ios: 'book', android: 'school' },
+  personal_care: { ios: 'scissors', android: 'content_cut' },
+  subscriptions: { ios: 'arrow.triangle.2.circlepath', android: 'autorenew' },
+  gifts: { ios: 'gift', android: 'redeem' },
+  fees: { ios: 'percent', android: 'percent' },
+  other: { ios: 'ellipsis.circle', android: 'more_horiz' },
+} as const satisfies Record<string, SymbolPair>;
+
+/** The pair for a category id; a custom or unknown category draws the fallback category's icon. */
+export function categoryIconFor(categoryId: CategoryId): SymbolPair {
+  return (CATEGORY_ICONS as Record<string, SymbolPair>)[categoryId] ?? CATEGORY_ICONS[FALLBACK_CATEGORY_ID as keyof typeof CATEGORY_ICONS];
+}
 
 export interface IconProps {
   name: IconName;
@@ -66,9 +94,21 @@ export interface IconProps {
   accessibilityLabel?: string;
 }
 
-export function Icon({ name, size = 24, color, weight = 'medium', fallback, style, accessibilityLabel }: IconProps) {
+export function Icon({ name, ...rest }: IconProps) {
+  return <Glyph pair={ICONS[name]} {...rest} />;
+}
+
+export interface CategoryIconProps extends Omit<IconProps, 'name'> {
+  categoryId: CategoryId;
+}
+
+/** A category's drawn icon. Decorative unless given an accessibilityLabel: the row names the category. */
+export function CategoryIcon({ categoryId, size = 22, ...rest }: CategoryIconProps) {
+  return <Glyph pair={categoryIconFor(categoryId)} size={size} {...rest} />;
+}
+
+function Glyph({ pair, size = 24, color, weight = 'medium', fallback, style, accessibilityLabel }: Omit<IconProps, 'name'> & { pair: SymbolPair }) {
   const { colors } = useTheme();
-  const pair = ICONS[name];
   const tint = color ?? colors.label;
   return (
     <View

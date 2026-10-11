@@ -11,18 +11,27 @@ import { Fragment, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useBudgets, useDataStore, useDeviceLocale, useInsights, useProfile, useSpending } from '@/data';
-import { Card, Chip, ChipRow, Icon, ListSection, Readout, Row, SPACE, SampleChip, Text, useHaptic, useTheme } from '@/design';
+import { Card, Chip, ChipRow, Icon, ListSection, Readout, Row, SPACE, SampleChip, TYPE, Text, useHaptic, useTheme } from '@/design';
+import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
-import { categoryLabel, useFormat, type Formatter, type Spoken } from '@/features/common/format';
+import { categoryLabel, changeInWords, monthName, useFormat, type Formatter, type Spoken } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
 import { findPace } from './budgetPace';
 import { BudgetRow } from './BudgetRow';
 import { CategoryRow } from './CategoryRow';
-import { changeInWords, excludedNote, monthName } from './copy';
+import { excludedNote } from './copy';
 import { MonthBars } from './MonthBars';
 
 export function SpendingScreen() {
+  return (
+    <DataGate>
+      <SpendingBody />
+    </DataGate>
+  );
+}
+
+function SpendingBody() {
   const theme = useTheme();
   const f = useFormat();
   const locale = useDeviceLocale();
@@ -111,7 +120,13 @@ export function SpendingScreen() {
                 {`Your own share, personal and group, in ${currencyName}.`}
               </Text>
               {theme.screenReader ? null : (
-                <Pressable accessibilityRole="button" hitSlop={8} onPress={() => setAsList(!asList)} testID="spending-months-toggle">
+                // A full 44/48-point target that reaches into the card's padding, so the foot keeps its height.
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setAsList(!asList)}
+                  style={({ pressed }) => [styles.toggle, { minHeight: theme.minTouch, marginVertical: -(theme.minTouch - TYPE.footnote.lineHeight) / 2, opacity: pressed ? 0.6 : 1 }]}
+                  testID="spending-months-toggle"
+                >
                   <Text role="footnote" color="tint" style={styles.link}>
                     {asList ? 'Show the chart' : 'Months as a list'}
                   </Text>
@@ -246,6 +261,7 @@ const styles = StyleSheet.create({
   cardFoot: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: SPACE.m, marginTop: SPACE.xs },
   grow: { flex: 1 },
   link: { fontWeight: '600' },
+  toggle: { justifyContent: 'center' },
   list: { marginHorizontal: -SPACE.l },
   listRow: { paddingVertical: SPACE.s + 2 },
   separator: { height: StyleSheet.hairlineWidth, marginLeft: SPACE.l },

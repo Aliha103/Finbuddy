@@ -3,7 +3,7 @@
 import { Stack, router } from 'expo-router';
 import { Platform } from 'react-native';
 
-import { HeaderButton } from '@/features/common/HeaderButton';
+import { HeaderBack, HeaderButton } from '@/features/common/HeaderButton';
 import { useStackOptions } from '@/features/common/navigation';
 
 export default function SettingsLayout() {
@@ -16,7 +16,12 @@ export default function SettingsLayout() {
         name="index"
         options={{
           title: 'Settings',
-          headerLeft: ios ? undefined : ({ canGoBack }) => (canGoBack ? undefined : <HeaderButton label="Back" icon="back" onPress={close} testID="settings-back" />),
+          // Android keeps the native stack's own back when there is one; the web preview draws HeaderBack
+          // (a full-size target), which a function returning nothing would otherwise leave out.
+          headerLeft: ios
+            ? undefined
+            : ({ canGoBack, label }) =>
+                canGoBack ? (Platform.OS === 'web' ? <HeaderBack canGoBack label={label} onPress={close} /> : undefined) : <HeaderButton label="Back" icon="back" onPress={close} testID="settings-back" />,
           headerRight: ios ? () => <HeaderButton label="Done" emphasis onPress={close} testID="settings-done" /> : undefined,
         }}
       />

@@ -7,9 +7,8 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, ReduceMotion } from 'react-native-reanimated';
 
-import { DURATION, Readout, SPACE, Text, useTheme } from '@/design';
+import { DURATION, Readout, SPACE, Text, useLayoutTransition, useTheme } from '@/design';
 import type { Formatter } from '@/features/common/format';
-import { useLayoutTransition } from '@/features/home/motion';
 
 import { basisRows } from './copy';
 

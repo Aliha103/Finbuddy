@@ -5,10 +5,9 @@ import { DEFAULT_CATEGORIES } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Icon, RADIUS, SPACE, Text, useHaptic, useTheme } from '@/design';
+import { CategoryIcon, Icon, RADIUS, SPACE, Text, useHaptic, useTheme } from '@/design';
 import { Screen } from '@/features/common/Screen';
 
-import { CategoryIcon } from './components/CategoryIcon';
 import { useExpenseModel } from './model';
 import { useExpenseSession } from './session';
 

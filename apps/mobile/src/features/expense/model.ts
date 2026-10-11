@@ -10,16 +10,9 @@ import { useFormat, type Formatter, type Spoken } from '@/features/common/format
 import { SPLIT_METHODS, evaluate, type Evaluation, type FormState, type SplitMethod } from './form';
 import { useExpenseSession } from './session';
 
-/** Sample people and groups carry "(sample)" in their names; the Sample chip says it instead. */
-export const plainName = (name: string): string => name.replace(/ \(sample\)$/, '');
-
-export function personName(f: Formatter, id: PersonId): string {
-  return plainName(f.name(id));
-}
-
 /** "Your amount", never "You's amount". */
 export function possessive(f: Formatter, id: PersonId): string {
-  return f.isMe(id) ? 'Your' : `${personName(f, id)}'s`;
+  return f.isMe(id) ? 'Your' : `${f.name(id)}'s`;
 }
 
 export interface ExpenseModel {
@@ -102,7 +95,7 @@ export function splitSummary(model: ExpenseModel): Spoken {
 export function payerSummary(f: Formatter, payers: readonly PersonId[]): string {
   if (payers.length > 1) return 'Several people';
   const id = payers[0];
-  return id ? personName(f, id) : 'Nobody yet';
+  return id ? f.name(id) : 'Nobody yet';
 }
 
 /** The stored split in words: "Split equally between 3 people", "Split by percentage: 40, 30, 30". */

@@ -14,11 +14,11 @@ import { Button, Card, Icon, ListSection, Readout, Row, SPACE, Text, useTheme } 
 
 import { DataGate } from '../common/DataGate';
 import { EmptyState } from '../common/EmptyState';
-import { Fab, FAB_SPACE } from '../common/Fab';
-import { memberNetSentence, settlementSentence, type Formatter, type Spoken } from '../common/format';
+import { Fab } from '../common/Fab';
+import { cleanName, memberNetSentence, planSentence, settlementSentence, useFormat, type Formatter, type Spoken } from '../common/format';
 import { HeaderButton } from '../common/HeaderButton';
 import { Screen } from '../common/Screen';
-import { cleanName, paidSummary, planSentence, useGroupFormat } from './format';
+import { paidSummary } from './format';
 import { GroupCard } from './GroupCard';
 import { useGroupLineColor } from './lineColors';
 import { SettleMap, type SettleMapMode } from './SettleMap';
@@ -37,7 +37,7 @@ function balanceWords(f: Formatter, personId: string, net: Money): string {
 export function GroupDetail({ groupId }: { groupId: string }) {
   const theme = useTheme();
   const c = theme.colors;
-  const f = useGroupFormat();
+  const f = useFormat();
   const detail = useGroup(groupId);
   const line = useGroupLineColor(groupId);
   const snapshot = useDataStore((s) => s.snapshot);
@@ -98,7 +98,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
           ),
         }}
       />
-      <Screen bottomSpace={FAB_SPACE} testID="group-detail">
+      <Screen fab testID="group-detail">
         <GroupCard summary={detail} line={line} memberNames={members.map((m) => m.displayName)} f={f} variant="header" testID="group-header" />
 
         <ListSection header="Balances" footer={multiCurrency ? 'This group has expenses in more than one currency. Each currency is settled on its own.' : undefined}>
@@ -153,7 +153,6 @@ export function GroupDetail({ groupId }: { groupId: string }) {
                     line={line}
                     money={f.money}
                     sentence={(t) => planSentence(f, t)}
-                    onSelect={openSettle}
                     testID={`settle-map-${currency}`}
                   />
                 </View>

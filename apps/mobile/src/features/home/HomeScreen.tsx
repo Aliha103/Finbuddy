@@ -11,19 +11,19 @@ import { Icon, ListSection, Row, SPACE, useTheme } from '@/design';
 import { ActivityRow } from '@/features/activity/ActivityRow';
 import { SampleBanner, StorageBar } from '@/features/common/Banners';
 import { DataGate } from '@/features/common/DataGate';
-import { Fab, FAB_SPACE } from '@/features/common/Fab';
+import { Fab } from '@/features/common/Fab';
+import { useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
+import { SectionEmpty } from '@/features/common/SectionEmpty';
 import { INSIGHTS_EMPTY } from '@/features/insights/copy';
 import { useDismissedInsights } from '@/features/insights/dismissed';
 import { InsightRow } from '@/features/insights/InsightRow';
 import { openInsight } from '@/features/insights/InsightsScreen';
 
 import { FinBuddyCard } from './FinBuddyCard';
-import { useFormatter } from './formatter';
 import { HomeSkeleton } from './HomeSkeleton';
 import { NeedsSettling } from './NeedsSettling';
 import { PendingPayments } from './PendingPayments';
-import { SectionEmpty } from './SectionEmpty';
 import { ThisMonth } from './ThisMonth';
 
 const INSIGHT_ROWS = 2;
@@ -40,7 +40,7 @@ export function HomeScreen() {
 
 function HomeBody() {
   const { colors } = useTheme();
-  const f = useFormatter();
+  const f = useFormat();
   const locale = useDeviceLocale();
   const profile = useProfile();
   const overview = useOverview();
@@ -53,7 +53,7 @@ function HomeBody() {
   const recent = activity.slice(0, ACTIVITY_ROWS);
 
   return (
-    <Screen flush bottomSpace={FAB_SPACE} testID="home">
+    <Screen flush fab testID="home">
       <View style={styles.gutter}>
         <StorageBar />
         <SampleBanner />

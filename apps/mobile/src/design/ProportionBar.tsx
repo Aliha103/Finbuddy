@@ -1,11 +1,11 @@
-// apps/mobile/src/features/spending/ProportionBar.tsx
+// apps/mobile/src/design/ProportionBar.tsx
 // A flat horizontal bar: a track in the fill colour and a portion in the tint (attention when a
 // budget runs ahead of pace, danger once it is exceeded), with an optional tick for a reference point
 // ("where an even pace would be today") set off from the fill by a hairline of the surface colour.
 // Decorative: the row's words carry the figures and the state.
 import { StyleSheet, View } from 'react-native';
 
-import { useTheme } from '@/design';
+import { useTheme } from './theme';
 
 export interface ProportionBarProps {
   /** 0..1 of the track; clamped. */

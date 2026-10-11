@@ -9,9 +9,10 @@
 import { formatMoney, formatMoneyToParts, type Money } from '@finbuddy/shared';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, Text as RNText, View, type LayoutChangeEvent, type TextStyle, type ViewStyle } from 'react-native';
-import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 
 import { readoutFamilyFor, readoutWeightFor } from './fonts';
+import { useLayoutTransition } from './motion';
 import { scaledType } from './Text';
 import { textStyle, useTheme } from './theme';
 import { SPRING, TIMING, TYPE, type ColorRole, type ReadoutRole } from './tokens';
@@ -108,10 +109,13 @@ export function Readout({ money, locale, role = 'readoutL', signDisplay = 'auto'
   const fit = !inline && available > 0 && natural > available ? available / natural : 1;
   const onOuterLayout = (e: LayoutChangeEvent) => setAvailable(e.nativeEvent.layout.width);
   const onInnerLayout = (e: LayoutChangeEvent) => setNatural(e.nativeEvent.layout.width);
+  // The row's width follows the figure (a column leaves when £185.92 rolls to £0.00). Native only:
+  // on the web the transition scales from the previous box, which is 0x0 while the screen is hidden.
+  const layout = useLayoutTransition();
 
   const row = (
     <Animated.View
-      layout={theme.reduceMotion ? undefined : LinearTransition.duration(TIMING.standard.duration ?? 240)}
+      layout={layout}
       onLayout={inline ? undefined : onInnerLayout}
       style={[
         styles.row,

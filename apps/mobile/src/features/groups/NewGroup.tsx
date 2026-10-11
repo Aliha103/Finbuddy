@@ -4,14 +4,15 @@
 // name); the colour choice is app-local. Create sits in the navigation bar on iOS and at the end
 // of the form on Android and the web.
 import { Stack, router } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { StyleSheet, View, type TextInput } from 'react-native';
 
 import { createGroup, useDeviceLocale, useGroups, usePeople, useProfile } from '@/data';
 import { Button, Card, Field, LINE_COLORS, SPACE, Text, lineColorFor, useTheme, type LineColorId } from '@/design';
 
 import { CurrencyPicker } from '../common/CurrencyPicker';
 import { currencyNames, minorUnitsLabel } from '../common/currency';
+import { DataGate } from '../common/DataGate';
 import { HeaderButton } from '../common/HeaderButton';
 import { Screen } from '../common/Screen';
 import { LineColorPicker } from './LineColorPicker';
@@ -19,6 +20,14 @@ import { MemberEditor } from './MemberEditor';
 import { setGroupLineColor, useLineColorOverrides } from './lineColors';
 
 export function NewGroup() {
+  return (
+    <DataGate>
+      <NewGroupForm />
+    </DataGate>
+  );
+}
+
+function NewGroupForm() {
   const theme = useTheme();
   const locale = useDeviceLocale();
   const profile = useProfile();
@@ -33,6 +42,7 @@ export function NewGroup() {
   const [saving, setSaving] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const nameOf = useMemo(() => currencyNames(locale), [locale]);
+  const nameField = useRef<TextInput>(null);
 
   // The first line colour no existing group wears, so new cards stay telling-apart-able.
   const suggested = useMemo<LineColorId>(() => {
@@ -49,7 +59,12 @@ export function NewGroup() {
 
   const create = () => {
     setTouched(true);
-    if (!trimmed || saving) return;
+    if (!trimmed) {
+      // The error sits under the name field at the top of a long form: take the person to it.
+      nameField.current?.focus();
+      return;
+    }
+    if (saving) return;
     setSaving(true);
     setFailure(null);
     void createGroup({ name: trimmed, currency, memberIds, newMemberNames: newNames })
@@ -78,6 +93,7 @@ export function NewGroup() {
           autoCapitalize="sentences"
           autoFocus
           returnKeyType="done"
+          ref={nameField}
           testID="group-name"
         />
 
@@ -86,7 +102,7 @@ export function NewGroup() {
             Members
           </Text>
           <Text role="footnote" color="labelSecondary">
-            {`You and ${memberCount - 1} ${memberCount - 1 === 1 ? 'other' : 'others'}. People without the app can be added by name.`}
+            {`${memberCount === 1 ? 'Just you so far' : `You and ${memberCount - 1} ${memberCount - 1 === 1 ? 'other' : 'others'}`}. People without the app can be added by name.`}
           </Text>
           <MemberEditor
             candidates={candidates}
@@ -115,7 +131,7 @@ export function NewGroup() {
               {`${minorUnitsLabel(currency)}. New expenses default to it; balances are kept per currency and never converted.`}
             </Text>
           </Card>
-          <CurrencyPicker locale={locale} value={currency} onChange={setCurrency} suggested={[profile?.defaultCurrency ?? 'USD', 'EUR', 'USD', 'GBP', 'JPY']} limit={6} />
+          <CurrencyPicker locale={locale} value={currency} onChange={setCurrency} suggested={[profile?.defaultCurrency ?? 'USD', 'EUR', 'USD', 'GBP', 'JPY']} limit={0} />
         </View>
 
         {failure ? (

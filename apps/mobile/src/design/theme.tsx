@@ -8,7 +8,8 @@ import { AccessibilityInfo, Appearance as RNAppearance, Platform, useColorScheme
 import { useReducedMotion } from 'react-native-reanimated';
 
 import { TABULAR } from './fonts';
-import { DARK, LIGHT, RADIUS, READOUT_MAX_SCALE, STACK_FONT_SCALE, TOUCH, TYPE, type ColorRole, type SemanticColors, type TypeRole } from './tokens';
+import { appWidthFor } from './frame';
+import { COMPACT_TEXT_WIDTH, DARK, LIGHT, RADIUS, READOUT_MAX_SCALE, STACK_FONT_SCALE, TOUCH, TYPE, type ColorRole, type SemanticColors, type TypeRole } from './tokens';
 
 export type Appearance = 'system' | 'light' | 'dark';
 
@@ -39,7 +40,11 @@ export interface Theme {
   readonly fontScale: number;
   /** The multiplier readouts actually use: fontScale capped at 1.6. */
   readonly readoutScale: number;
-  /** True at font scale >= 1.35: rows with a readout beside text stack vertically. */
+  /**
+   * True at font scale >= 1.35, or when the layout is narrower than COMPACT_TEXT_WIDTH in text
+   * units (the same room a 390-point phone has at 1.35): rows with a readout beside text stack
+   * vertically, controls drop under the names they belong to, segmented options stack.
+   */
   readonly largeText: boolean;
   readonly minTouch: number;
   readonly sheetRadius: number;
@@ -74,7 +79,8 @@ function applyAppearance(appearance: Appearance): void {
 export function ThemeProvider({ children, initialAppearance = 'system' }: { children: ReactNode; initialAppearance?: Appearance }) {
   const system = useColorScheme();
   const osReduceMotion = useReducedMotion();
-  const { fontScale } = useWindowDimensions();
+  const { fontScale, width } = useWindowDimensions();
+  const textWidth = appWidthFor(width) / fontScale;
   const [appearance, setAppearanceState] = useState<Appearance>(initialAppearance);
   const [motionOverride, setMotionOverride] = useState(false);
   const [confirmWithDialog, setConfirmWithDialogState] = useState(false);
@@ -150,7 +156,7 @@ export function ThemeProvider({ children, initialAppearance = 'system' }: { chil
       haptics,
       fontScale,
       readoutScale: Math.min(fontScale, READOUT_MAX_SCALE),
-      largeText: fontScale >= STACK_FONT_SCALE,
+      largeText: fontScale >= STACK_FONT_SCALE || textWidth < COMPACT_TEXT_WIDTH,
       minTouch: platform === 'ios' ? TOUCH.min : TOUCH.minAndroid,
       sheetRadius: platform === 'ios' ? RADIUS.sheetIOS : RADIUS.sheetM3,
       setAppearance,
@@ -158,7 +164,7 @@ export function ThemeProvider({ children, initialAppearance = 'system' }: { chil
       setConfirmWithDialog,
       setHaptics,
     };
-  }, [appearance, system, osReduceMotion, motionOverride, screenReader, confirmWithDialog, haptics, fontScale, setAppearance, setReduceMotionOverride, setConfirmWithDialog, setHaptics]);
+  }, [appearance, system, osReduceMotion, motionOverride, screenReader, confirmWithDialog, haptics, fontScale, textWidth, setAppearance, setReduceMotionOverride, setConfirmWithDialog, setHaptics]);
 
   return <ThemeContext value={value}>{children}</ThemeContext>;
 }

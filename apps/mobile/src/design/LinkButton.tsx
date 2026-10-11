@@ -1,10 +1,14 @@
-// apps/mobile/src/features/insights/LinkButton.tsx
+// apps/mobile/src/design/LinkButton.tsx
 // A quiet text link with an icon ("Why am I seeing this", "Hide why"): subhead weight in the tint,
 // a full 44/48-point target, and the expanded state for disclosures. Lighter than a plain Button,
 // whose headline-sized label would outweigh the row it sits in.
 import { Pressable, StyleSheet } from 'react-native';
 
-import { Icon, SPACE, Text, useHaptic, useTheme, type IconName } from '@/design';
+import { useHaptic } from './haptics';
+import { Icon, type IconName } from './Icon';
+import { Text } from './Text';
+import { useTheme } from './theme';
+import { SPACE } from './tokens';
 
 export interface LinkButtonProps {
   label: string;

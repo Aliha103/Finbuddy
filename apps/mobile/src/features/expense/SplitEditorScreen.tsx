@@ -8,23 +8,22 @@
 import { allocateMinor, formatMoneyForInput, parseMoneyInput, participantsOf, type Money, type PersonId } from '@finbuddy/shared';
 import { Stack, router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { Card, ListSection, Readout, SPACE, SampleChip, Text, useHaptic, useTheme } from '@/design';
+import { Card, INPUT_RESET, Icon, ListSection, Readout, SPACE, SampleChip, Segmented, Text, bestOn, focusRing, useHaptic, useTheme } from '@/design';
 import { EmptyState } from '@/features/common/EmptyState';
+import { cleanName } from '@/features/common/format';
 import { HeaderButton } from '@/features/common/HeaderButton';
+import { CheckMark, PersonRow } from '@/features/common/PersonRow';
 import { Screen } from '@/features/common/Screen';
 import { useGroupLineColor } from '@/features/groups/lineColors';
 
-import { ExtraIcon } from './components/CategoryIcon';
-import { InlineField, NO_OUTLINE } from './components/InlineField';
-import { CheckMark, PersonRow } from './components/PersonRow';
-import { Segments } from './components/Segments';
+import { InlineField } from './components/InlineField';
 import { MAX_DRAG_PEOPLE, SplitBar, type SplitBarPerson } from './components/SplitBar';
 import { SPLIT_METHODS, normaliseNumber, withMethod, type SplitMethod } from './form';
-import { personName, plainName, possessive, useExpenseModel, type ExpenseModel } from './model';
+import { possessive, useExpenseModel, type ExpenseModel } from './model';
 import { useExpenseSession } from './session';
-import { bestOn, moneyFormatSpec, remainderCarriers, shareColour } from './splitMath';
+import { moneyFormatSpec, remainderCarriers, shareColour } from './splitMath';
 
 const INK = '#1A1420';
 
@@ -82,11 +81,12 @@ function SplitEditor({ model, groupId }: { model: ExpenseModel; groupId: string 
   const resolvedList = result.resolved && total ? participantsOf(result.spec).map((personId) => ({ personId, amount: result.resolved?.[personId] ?? ({ amountMinor: 0, currency } as Money) })) : null;
   const carriers = resolvedList && total ? remainderCarriers(result.spec, resolvedList, total.amountMinor) : new Set<PersonId>();
   const excluded = (id: PersonId) => (form.method === 'equal' || form.method === 'adjustment') && form.included[id] === false;
-  const people: SplitBarPerson[] = members.map((id, i) => ({ id, name: personName(f, id), amountMinor: parts[i] ?? 0, remainder: carriers.has(id), excluded: excluded(id) }));
+  const people: SplitBarPerson[] = members.map((id, i) => ({ id, name: f.name(id), amountMinor: parts[i] ?? 0, remainder: carriers.has(id), excluded: excluded(id) }));
   const colours = members.map((_, i) => shareColour(line.fill, i, theme.scheme));
   const [dragging, setDragging] = useState(false);
 
-  const problems = [...result.splitGeneral, ...members.map((id) => result.splitErrors[id]).filter((m): m is string => !!m)];
+  // The running line above already states a sum that is off ("£70.00 of £100.00 assigned"), so the same fact is not repeated in red.
+  const problems = [...result.splitGeneral.filter((m) => m !== result.splitSumMessage), ...members.map((id) => result.splitErrors[id]).filter((m): m is string => !!m)];
   const first = total ? problems[0] : 'Enter the amount first: the split needs a total.';
   const done = result.resolved !== null && total !== null;
 
@@ -106,7 +106,7 @@ function SplitEditor({ model, groupId }: { model: ExpenseModel; groupId: string 
       <View style={styles.head}>
         <View style={styles.headLine}>
           <Text role="subhead" color="labelSecondary" style={styles.flex}>
-            {`Splitting in ${plainName(group?.group.name ?? '')}`}
+            {`Splitting in ${cleanName(group?.group.name ?? '')}`}
           </Text>
           {group?.group.isSample ? <SampleChip /> : null}
         </View>
@@ -114,7 +114,7 @@ function SplitEditor({ model, groupId }: { model: ExpenseModel; groupId: string 
       </View>
 
       <View style={styles.block}>
-        <Segments label="Split method" options={SPLIT_METHODS} value={form.method} onChange={setMethod} testID="split-method" />
+        <Segmented label="Split method" options={SPLIT_METHODS} value={form.method} onChange={setMethod} testID="split-method" />
         {method ? (
           <Text role="footnote" color="labelSecondary">
             {method.description}
@@ -126,7 +126,7 @@ function SplitEditor({ model, groupId }: { model: ExpenseModel; groupId: string 
         <View style={styles.cardBody}>
           <SplitBar people={people} totalMinor={total?.amountMinor ?? null} currency={currency} locale={f.locale} line={line} draggable={form.method === 'exact'} onCommit={commitExact} onDragChange={setDragging} testID="split-bar" />
           <View style={[styles.rule, { backgroundColor: c.separator }]} />
-          <Text role="subhead" color="label" accessibilityLabel={progressLine(model).spoken} testID="split-progress">
+          <Text role="subhead" color="label" accessibilityLabel={progressLine(model).spoken} accessibilityLiveRegion="polite" testID="split-progress">
             {progressLine(model).text}
           </Text>
           {leftovers > 0 && total && !dragging ? (
@@ -206,8 +206,9 @@ function MethodRow({
   onSet: (key: 'exact' | 'percent' | 'shares' | 'adjustment', id: PersonId, value: string) => void;
   onToggle: (id: PersonId) => void;
 }) {
+  const { minTouch } = useTheme();
   const { f, form, result } = model;
-  const name = personName(f, id);
+  const name = f.name(id);
   const whose = possessive(f, id);
   const error = result.splitErrors[id] ?? null;
   const avatar = { avatarFill: colour, avatarOn: bestOn(colour, ['#FFFFFF', INK]) };
@@ -280,7 +281,7 @@ function MethodRow({
           name={name}
           {...avatar}
           leading={
-            <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: included }} aria-checked={included} accessibilityLabel={`${name}, shares this`} onPress={() => onToggle(id)} hitSlop={10} testID={`split-include-${id}`}>
+            <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: included }} aria-checked={included} accessibilityLabel={`${name}, shares this`} onPress={() => onToggle(id)} style={[styles.includeTarget, { width: minTouch, height: minTouch, marginHorizontal: -(minTouch - CHECK_SIZE) / 2 }]} testID={`split-include-${id}`}>
               <CheckMark checked={included} />
             </Pressable>
           }
@@ -329,7 +330,7 @@ function SharesStepper({ whose, who, value, onChange, invalid, locale, testID }:
       style={({ pressed }) => [styles.stepButton, { width: theme.minTouch, height: theme.minTouch, backgroundColor: pressed ? c.pressed : c.fill, opacity: disabled ? 0.4 : 1 }]}
       testID={testID ? `${testID}-${kind}` : undefined}
     >
-      <ExtraIcon name={kind} size={18} color={c.label} />
+      <Icon name={kind === 'plus' ? 'add' : 'minus'} size={18} color={c.label} />
     </Pressable>
   );
   return (
@@ -346,7 +347,7 @@ function SharesStepper({ whose, who, value, onChange, invalid, locale, testID }:
         selectionColor={c.tint}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        style={[styles.stepValue, { color: c.label, borderColor: invalid ? c.danger : focused ? c.tint : 'transparent', minHeight: theme.minTouch }, Platform.OS === 'web' ? NO_OUTLINE : null]}
+        style={[styles.stepValue, { color: c.label, borderColor: invalid ? c.danger : focused ? c.tint : 'transparent', minHeight: theme.minTouch }, INPUT_RESET, focused ? focusRing(c.tint) : null]}
         testID={testID}
       />
       {button('plus', `One share more for ${who}`, false)}
@@ -354,8 +355,12 @@ function SharesStepper({ whose, who, value, onChange, invalid, locale, testID }:
   );
 }
 
+/** The checkbox mark's size (CheckMark); its target is the platform's minimum touch size around it. */
+const CHECK_SIZE = 24;
+
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  includeTarget: { alignItems: 'center', justifyContent: 'center' },
   head: { gap: SPACE.xs },
   headLine: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s },
   block: { gap: SPACE.s },

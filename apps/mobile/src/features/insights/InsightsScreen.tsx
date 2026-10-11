@@ -10,8 +10,8 @@ import { useInsights } from '@/data';
 import { Button, ListSection, Row, SPACE } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
+import { useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
-import { useFormatter } from '@/features/home/formatter';
 
 import { INSIGHTS_EMPTY, INSIGHTS_FOOTER } from './copy';
 import { restoreInsight, useDismissedInsights } from './dismissed';
@@ -22,7 +22,7 @@ export function openInsight(insightId: string): void {
 }
 
 export function InsightsScreen() {
-  const f = useFormatter();
+  const f = useFormat();
   const insights = useInsights();
   const { dismissed } = useDismissedInsights();
   const [showDismissed, setShowDismissed] = useState(false);

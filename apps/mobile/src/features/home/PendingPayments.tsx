@@ -8,11 +8,9 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { confirmSettlement, useGroups, useMyPendingSettlements, useToday } from '@/data';
-import { Button, DURATION, ListSection, Readout, Row, SPACE, Text, confirmDialog, useHaptic, useTheme } from '@/design';
-import { settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
+import { Button, DURATION, ListSection, Readout, Row, SPACE, Text, confirmDialog, useHaptic, useLayoutTransition, useTheme } from '@/design';
+import { cleanName, settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
 
-import { cleanName } from './formatter';
-import { useLayoutTransition } from './motion';
 
 /** The pending sentence without its amount: "Devon is paying you", "You're paying Casey". */
 export function pendingWords(f: Formatter, s: Settlement): Spoken {
