@@ -6,7 +6,8 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <Stack />
+        {/* The preview draws its own banner and tab bar, so the stack header stays hidden. */}
+        <Stack screenOptions={{ headerShown: false }} />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
