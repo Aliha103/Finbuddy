@@ -4,7 +4,9 @@
 // first, readoutM for the rest), the Sample chip while the data is sample, "All settled up" or
 // "Nothing to settle" when there is nothing to show. The readouts roll when balances change; a
 // currency that reaches zero rolls down to 0 before it leaves (Roll to Zero). While Home is covered
-// (the settle sheet, a pushed screen) the card holds what it showed, so the roll plays on return.
+// (the settle sheet, a pushed screen) the card holds what it showed, and it keeps holding through
+// the return transition: Home fades back in with every label and figure laid out where it was, and
+// only once Home is in front does the roll start, so the whole roll is seen.
 import type { Money } from '@finbuddy/shared';
 import { useIsFocused } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -24,18 +26,20 @@ export interface FinBuddyCardProps {
   locale: string;
 }
 
-/** The value while the screen is focused; the last focused value while it is covered. */
-function useHeldWhileCovered<T>(value: T): T {
-  const focused = useIsFocused();
+/**
+ * The value once the screen has settled in front; the last settled value while it is covered and
+ * through the return transition, so a change made elsewhere (a settle-up) rolls in view.
+ */
+function useHeldUntilSettled<T>(value: T, settled: boolean): T {
   const [held, setHeld] = useState(value);
-  if (focused && held !== value) setHeld(value);
-  return focused ? value : held;
+  if (settled && held !== value) setHeld(value);
+  return settled ? value : held;
 }
 
 /**
- * Layout transitions only once the screen has been in front for one slow beat. A covered screen can
- * report a zero size (the web preview hides it), and a layout transition would animate from that
- * on return; the readouts' roll is a transform and plays either way.
+ * True once the screen has been in front for one slow beat (the return transition). A covered
+ * screen can report a zero size (the web preview hides it), so layout transitions wait for this,
+ * and the card holds its figures until then. On first mount the screen is already settled.
  */
 function useSettledFocus(): boolean {
   const focused = useIsFocused();
@@ -49,23 +53,25 @@ function useSettledFocus(): boolean {
 
 export function FinBuddyCard(props: FinBuddyCardProps) {
   const { reduceMotion } = useTheme();
-  const animate = useSettledFocus() && !reduceMotion;
+  const settled = useSettledFocus();
+  const animate = settled && !reduceMotion;
   const layout = useLayoutTransition(animate);
   return (
     <Animated.View layout={layout}>
       <Card tone="tint" testID="home-card">
-        <CardBody {...props} animate={animate} />
+        <CardBody {...props} settled={settled} animate={animate} />
       </Card>
     </Animated.View>
   );
 }
 
-function CardBody({ nets, hasEntries, sample, locale, animate }: FinBuddyCardProps & { animate: boolean }) {
+function CardBody({ nets, hasEntries, sample, locale, settled, animate }: FinBuddyCardProps & { settled: boolean; animate: boolean }) {
   const theme = useTheme();
   const card = useCardColors();
   const on = card?.on ?? theme.colors.onTint;
   const muted = card?.onMuted ?? theme.colors.onTint;
-  const shownNets = useHeldWhileCovered(nets);
+  const shownNets = useHeldUntilSettled(nets, settled);
+  const shownEntries = useHeldUntilSettled(hasEntries, settled);
   const readouts = useCardReadouts(shownNets);
   const layout = useLayoutTransition(animate);
   const longest = Math.max(0, ...readouts.map((r) => String(Math.abs(r.money.amountMinor)).length));
@@ -82,10 +88,10 @@ function CardBody({ nets, hasEntries, sample, locale, animate }: FinBuddyCardPro
       {readouts.length === 0 ? (
         <View style={styles.empty}>
           <Text role="title" style={{ color: on }} accessibilityRole="header">
-            {hasEntries ? 'All settled up' : 'Nothing to settle'}
+            {shownEntries ? 'All settled up' : 'Nothing to settle'}
           </Text>
           <Text role="subhead" style={{ color: muted }}>
-            {hasEntries ? 'Nobody owes anybody, in any currency.' : 'Your balances, one per currency, read here once you share a cost.'}
+            {shownEntries ? 'Nobody owes anybody, in any currency.' : 'Your balances, one per currency, read here once you share a cost.'}
           </Text>
         </View>
       ) : (

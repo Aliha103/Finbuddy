@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "app.finbuddy.mobile",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "icon": {
         "light": "./assets/icon.png",
         "dark": "./assets/icon-dark.png",

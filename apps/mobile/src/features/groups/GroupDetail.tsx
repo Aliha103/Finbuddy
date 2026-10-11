@@ -1,6 +1,6 @@
 // apps/mobile/src/features/groups/GroupDetail.tsx
-// One group: its card as the header (the same card as on the list), balances in words with a
-// readout per member and currency, the settle map with its "All debts | Fewest payments" toggle,
+// One group: its card as the header (the same card as on the list), which states your own position
+// in every currency; then everyone else's balance in words with a readout per currency, the settle map with its "All debts | Fewest payments" toggle,
 // the settle-up plan with a Settle up control on every step, pending payments with Confirm, and
 // the expenses newest first. Add expense is the FAB on Android and the web; iOS gets a row (the
 // iOS 26 bottom accessory and the "+" in the bar also open it).
@@ -67,6 +67,9 @@ export function GroupDetail({ groupId }: { groupId: string }) {
   const orderedPlan = [...plan].sort((a, b) => Number(mine(b)) - Number(mine(a)));
   const settled = plan.length === 0 && pairwise.length === 0;
   const mapMembers = members.map((m) => ({ id: m.id, label: f.name(m.id), isMe: f.isMe(m.id) }));
+  // Your own position is the header card's readout; Balances lists everyone else, so the first
+  // viewport holds one readout for it.
+  const others = members.filter((m) => !f.isMe(m.id));
 
   const openSettle = (t: Transfer) => router.push({ pathname: '/settle', params: { groupId: group.id, from: t.from, to: t.to, currency: t.amount.currency } });
   const openAdd = () => router.push({ pathname: '/add', params: { groupId: group.id } });
@@ -101,28 +104,30 @@ export function GroupDetail({ groupId }: { groupId: string }) {
       <Screen fab testID="group-detail">
         <GroupCard summary={detail} line={line} memberNames={members.map((m) => m.displayName)} f={f} variant="header" testID="group-header" />
 
-        <ListSection header="Balances" footer={multiCurrency ? 'This group has expenses in more than one currency. Each currency is settled on its own.' : undefined}>
-          {members.flatMap((person) =>
-            (balances.length ? balances : [{ currency: group.currency, balances: [] }]).map((cb) => {
-              const net = cb.balances.find((b) => b.personId === person.id)?.net ?? { amountMinor: 0, currency: cb.currency };
-              const sentence = memberNetSentence(f, person.id, net);
-              return (
-                <Row
-                  key={`${person.id}:${cb.currency}`}
-                  title={balanceWords(f, person.id, net)}
-                  titleSpoken={sentence.spoken}
-                  subtitle={multiCurrency ? f.currencyName(cb.currency) : undefined}
-                  detail={
-                    net.amountMinor === 0 ? undefined : (
-                      <Readout money={abs(net)} locale={f.locale} role="readoutS" color={net.amountMinor > 0 ? 'credit' : 'label'} inline testID={`balance-${person.id}-${cb.currency}`} />
-                    )
-                  }
-                  testID={`balance-row-${person.id}-${cb.currency}`}
-                />
-              );
-            }),
-          )}
-        </ListSection>
+        {others.length ? (
+          <ListSection header="Balances" footer={multiCurrency ? 'This group has expenses in more than one currency. Each currency is settled on its own.' : undefined}>
+            {others.flatMap((person) =>
+              (balances.length ? balances : [{ currency: group.currency, balances: [] }]).map((cb) => {
+                const net = cb.balances.find((b) => b.personId === person.id)?.net ?? { amountMinor: 0, currency: cb.currency };
+                const sentence = memberNetSentence(f, person.id, net);
+                return (
+                  <Row
+                    key={`${person.id}:${cb.currency}`}
+                    title={balanceWords(f, person.id, net)}
+                    titleSpoken={sentence.spoken}
+                    subtitle={multiCurrency ? f.currencyName(cb.currency) : undefined}
+                    detail={
+                      net.amountMinor === 0 ? undefined : (
+                        <Readout money={abs(net)} locale={f.locale} role="readoutS" color={net.amountMinor > 0 ? 'credit' : 'label'} inline testID={`balance-${person.id}-${cb.currency}`} />
+                      )
+                    }
+                    testID={`balance-row-${person.id}-${cb.currency}`}
+                  />
+                );
+              }),
+            )}
+          </ListSection>
+        ) : null}
 
         <Card testID="settle-card">
           <View style={styles.cardBody}>

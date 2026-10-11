@@ -1,16 +1,20 @@
 // apps/mobile/src/features/home/NeedsSettling.tsx
 // "Needs settling": one row per step of a settle-up plan that involves you, across every group.
-// The words carry the direction ("You owe Blake", "Avery owes you"); the amount is a readout, in
-// credit green when it comes to you and in ink when you pay; Settle up opens the settle sheet.
+// The words carry the direction ("You owe Blake", "Avery owes you"); the amount is a readout on the
+// same line, in credit green when it comes to you and in ink when you pay; under them the group,
+// marked in its line colour (the colour of its card's band). A compact Settle up control beside
+// the two lines opens the settle sheet, so a row is one two-line row high. At large text sizes the
+// readout and the control move under the words.
 import type { Transfer } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { useGroups, useMySettleUps, type SettleUpItem } from '@/data';
-import { Button, DURATION, ListSection, Readout, Row, SPACE, useLayoutTransition, useTheme } from '@/design';
+import { Button, DURATION, ListSection, Readout, Row, SPACE, SampleChip, Text, lineColorFor, useLayoutTransition, useTheme, type LineColor } from '@/design';
 import { cleanName, transferSentence, type Formatter, type Spoken } from '@/features/common/format';
 import { SectionEmpty } from '@/features/common/SectionEmpty';
+import { useLineColorOverrides } from '@/features/groups/lineColors';
 
 /** Rows beyond this many hand over to Groups, which lists every plan in full. */
 const MAX_ROWS = 5;
@@ -34,6 +38,7 @@ export function NeedsSettling({ f }: { f: Formatter }) {
   const theme = useTheme();
   const groups = useGroups();
   const settleUps = useMySettleUps();
+  const overrides = useLineColorOverrides();
   const layout = useLayoutTransition();
 
   if (groups.length === 0) {
@@ -63,31 +68,9 @@ export function NeedsSettling({ f }: { f: Formatter }) {
       <ListSection header="Needs settling" footer="Settle up records a payment for the exact amount; once confirmed, the balance rolls to zero.">
         {shown.map((item) => {
           const group = groups.find((g) => g.group.id === item.groupId);
-          const words = transferWords(f, item.transfer);
-          const sentence = transferSentence(f, item.transfer);
-          const toMe = f.isMe(item.transfer.to);
           return (
             <Animated.View key={settleKey(item)} layout={layout} exiting={theme.reduceMotion ? undefined : FadeOut.duration(DURATION.quick)}>
-              <Row
-                title={words.text}
-                titleSpoken={words.spoken}
-                subtitle={group ? cleanName(group.group.name) : undefined}
-                sample={group?.group.isSample === true}
-                detail={
-                  <View style={styles.detail}>
-                    <Readout money={item.transfer.amount} locale={f.locale} role="readoutS" color={toMe ? 'credit' : 'debit'} inline />
-                    <Button
-                      label="Settle up"
-                      variant="tonal"
-                      onPress={() => openSettle(item)}
-                      accessibilityLabel={`Settle up. ${sentence.spoken}`}
-                      accessibilityHint="Opens Settle up for this exact amount"
-                      testID={`settle-${settleKey(item)}`}
-                    />
-                  </View>
-                }
-                testID={`needs-settling-${settleKey(item)}`}
-              />
+              <SettleRow item={item} f={f} groupName={group ? cleanName(group.group.name) : null} line={lineColorFor(item.groupId, overrides)} sample={group?.group.isSample === true} />
             </Animated.View>
           );
         })}
@@ -99,12 +82,84 @@ export function NeedsSettling({ f }: { f: Formatter }) {
   );
 }
 
+interface SettleRowProps {
+  item: SettleUpItem;
+  f: Formatter;
+  groupName: string | null;
+  line: LineColor;
+  sample: boolean;
+}
+
+/** One transfer: the words and the readout on one line, the group under them, Settle up beside both. */
+function SettleRow({ item, f, groupName, line, sample }: SettleRowProps) {
+  const theme = useTheme();
+  const stacked = theme.largeText;
+  const words = transferWords(f, item.transfer);
+  const sentence = transferSentence(f, item.transfer);
+  const key = settleKey(item);
+  const readout = <Readout money={item.transfer.amount} locale={f.locale} role="readoutS" color={directionColor(f.isMe(item.transfer.to))} inline />;
+  const settle = (
+    <Button
+      label="Settle up"
+      size="small"
+      variant="tonal"
+      onPress={() => openSettle(item)}
+      accessibilityLabel={`Settle up. ${sentence.spoken}`}
+      accessibilityHint="Opens Settle up for this exact amount"
+      testID={`settle-${key}`}
+    />
+  );
+  return (
+    <View style={[styles.base, { minHeight: theme.minTouch }]} testID={`needs-settling-${key}`}>
+      <View style={styles.row}>
+        <View style={styles.text}>
+          <View style={styles.firstLine}>
+            <Text role="body" color="label" accessibilityLabel={words.spoken} style={styles.words}>
+              {words.text}
+            </Text>
+            {stacked ? null : readout}
+          </View>
+          {groupName || sample ? (
+            <View style={styles.groupLine}>
+              {groupName ? <View style={[styles.mark, { backgroundColor: line.fill }]} importantForAccessibility="no" accessibilityElementsHidden /> : null}
+              {groupName ? (
+                <Text role="subhead" color="labelSecondary" style={styles.groupName}>
+                  {groupName}
+                </Text>
+              ) : null}
+              {sample ? <SampleChip /> : null}
+            </View>
+          ) : null}
+          {stacked ? (
+            <View style={styles.stackedActions}>
+              {readout}
+              {settle}
+            </View>
+          ) : null}
+        </View>
+        {stacked ? null : settle}
+      </View>
+    </View>
+  );
+}
+
 /** Two words a sentence can use elsewhere: the credit role when the money comes to you. */
 export function directionColor(toMe: boolean): 'credit' | 'debit' {
   return toMe ? 'credit' : 'debit';
 }
 
+/** The group's line-colour mark: a small swatch with the card's corner. */
+const MARK = 10;
+
 const styles = StyleSheet.create({
   gutter: { paddingHorizontal: SPACE.gutter },
-  detail: { alignItems: 'flex-end', gap: SPACE.s },
+  base: { paddingHorizontal: SPACE.l, paddingVertical: SPACE.m, justifyContent: 'center' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: SPACE.m },
+  text: { flex: 1, gap: 2 },
+  firstLine: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.s },
+  words: { flexShrink: 1 },
+  groupLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: SPACE.s - 2, rowGap: 2 },
+  mark: { width: MARK, height: MARK, borderRadius: 3 },
+  groupName: { flexShrink: 1 },
+  stackedActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: SPACE.s, marginTop: SPACE.xs },
 });

@@ -1,7 +1,8 @@
 // apps/mobile/src/features/insights/InsightRow.tsx
-// One insight as a list row: the severity in words (then its icon and colour), the title, the
-// filled sentence, any context line, and, where the list allows it, a "Why" disclosure that expands
-// the basis rows inline. The row itself opens the detail screen.
+// One insight as a list row: the severity as the leading icon (its shape and colour, spoken as
+// "Warning", "Worth a look" or "For your information"), the title, the filled sentence, any context
+// line, and, where the list allows it, a "Why" disclosure that expands the basis rows inline. The
+// row itself opens the detail screen.
 import type { Insight } from '@finbuddy/shared';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -11,7 +12,7 @@ import { Icon, LinkButton, SPACE, Text, useTheme } from '@/design';
 import type { Formatter } from '@/features/common/format';
 
 import { BasisRows, useBasisMotion } from './Basis';
-import { insightCopy, severityLabel } from './copy';
+import { insightCopy } from './copy';
 import { severityStyle } from './severity';
 
 /** Kinds whose sentence already names the category, so the row skips the "Category: …" line (the detail keeps it). */
@@ -40,12 +41,9 @@ export function InsightRow({ insight, f, onPress, expandable, trailing, testID }
   const content = (
     <View style={[styles.row, { minHeight: theme.minTouch }]}>
       <View style={styles.leading}>
-        <Icon name={sev.icon} size={22} color={sev.color} />
+        <Icon name={sev.icon} size={22} color={sev.color} accessibilityLabel={sev.label} />
       </View>
       <View style={styles.text}>
-        <Text role="caption" style={[styles.severity, { color: sev.color }]}>
-          {severityLabel(insight.severity)}
-        </Text>
         <Text role="headline" color="label">
           {copy.title}
         </Text>
@@ -98,7 +96,6 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.m },
   leading: { minWidth: 28, alignItems: 'center', paddingTop: 2 },
   text: { flex: 1, gap: 2 },
-  severity: { fontWeight: '600', letterSpacing: 0.2 },
   why: { alignSelf: 'flex-start' },
   basis: { marginHorizontal: SPACE.l, marginBottom: SPACE.m, borderRadius: 10, overflow: 'hidden' },
 });
