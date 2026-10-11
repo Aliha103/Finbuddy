@@ -55,7 +55,7 @@ export function Segmented({ values, selectedIndex, onChange, label, testID }: Se
             ]}
           >
             {selected ? <Icon name="check" size={16} color={c.onTintWash} /> : null}
-            <Text role="subhead" style={{ color: selected ? c.onTintWash : c.label, fontWeight: selected ? '600' : '400' }} numberOfLines={1}>
+            <Text role="subhead" align="center" style={[styles.label, { color: selected ? c.onTintWash : c.label, fontWeight: selected ? '600' : '400' }]} numberOfLines={2}>
               {value}
             </Text>
           </Pressable>
@@ -67,5 +67,6 @@ export function Segmented({ values, selectedIndex, onChange, label, testID }: Se
 
 const styles = StyleSheet.create({
   group: { flexDirection: 'row', borderWidth: 1, borderRadius: 999, overflow: 'hidden', alignSelf: 'stretch' },
-  segment: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACE.xs + 2, paddingHorizontal: SPACE.m },
+  segment: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACE.xs, paddingHorizontal: SPACE.xs, paddingVertical: SPACE.xs },
+  label: { flexShrink: 1 },
 });

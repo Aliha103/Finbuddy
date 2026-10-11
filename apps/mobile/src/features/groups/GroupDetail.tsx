@@ -49,7 +49,12 @@ export function GroupDetail({ groupId }: { groupId: string }) {
   if (!detail) {
     return (
       <Screen testID="group-missing">
-        <EmptyState title="This group no longer exists" message="It may have been removed when the data on this phone was reset." icon="groups" action={{ label: 'Back to Groups', onPress: () => router.replace('/(tabs)/(groups)') }} />
+        <EmptyState
+          title="This group no longer exists"
+          message="It may have been removed when the data on this phone was reset."
+          icon="groups"
+          action={{ label: 'Back to Groups', onPress: () => router.replace('/(tabs)/(groups)') }}
+        />
       </Screen>
     );
   }
@@ -107,8 +112,11 @@ export function GroupDetail({ groupId }: { groupId: string }) {
                   title={balanceWords(f, person.id, net)}
                   titleSpoken={sentence.spoken}
                   subtitle={multiCurrency ? f.currencyName(cb.currency) : undefined}
-                  sample={person.isSample === true}
-                  detail={net.amountMinor === 0 ? undefined : <Readout money={abs(net)} locale={f.locale} role="readoutS" color={net.amountMinor > 0 ? 'credit' : 'label'} inline testID={`balance-${person.id}-${cb.currency}`} />}
+                  detail={
+                    net.amountMinor === 0 ? undefined : (
+                      <Readout money={abs(net)} locale={f.locale} role="readoutS" color={net.amountMinor > 0 ? 'credit' : 'label'} inline testID={`balance-${person.id}-${cb.currency}`} />
+                    )
+                  }
                   testID={`balance-row-${person.id}-${cb.currency}`}
                 />
               );
@@ -165,7 +173,9 @@ export function GroupDetail({ groupId }: { groupId: string }) {
                   title={sentence.text}
                   titleSpoken={sentence.spoken}
                   subtitle={mine(t) ? undefined : 'Between two other members'}
-                  trailing={<Button label="Settle up" size="small" variant="tonal" onPress={() => openSettle(t)} accessibilityLabel={`Settle up. ${sentence.spoken}`} testID={`settle-${t.from}-${t.to}`} />}
+                  trailing={
+                    <Button label="Settle up" size="small" variant="tonal" onPress={() => openSettle(t)} accessibilityLabel={`Settle up. ${sentence.spoken}`} testID={`settle-${t.from}-${t.to}`} />
+                  }
                   testID={`plan-${t.from}-${t.to}`}
                 />
               );
@@ -184,7 +194,18 @@ export function GroupDetail({ groupId }: { groupId: string }) {
                   titleSpoken={sentence.spoken}
                   subtitle={s.dueOn ? `Due ${f.date(s.dueOn)}` : `Recorded ${f.date(s.occurredOn)}`}
                   sample={s.isSample === true}
-                  trailing={<Button label="Confirm" size="small" variant="tonal" onPress={() => confirm(s)} loading={busy === s.id} disabled={busy !== null} accessibilityLabel={`Confirm payment. ${sentence.spoken}`} testID={`confirm-${s.id}`} />}
+                  trailing={
+                    <Button
+                      label="Confirm"
+                      size="small"
+                      variant="tonal"
+                      onPress={() => confirm(s)}
+                      loading={busy === s.id}
+                      disabled={busy !== null}
+                      accessibilityLabel={`Confirm payment. ${sentence.spoken}`}
+                      testID={`confirm-${s.id}`}
+                    />
+                  }
                   testID={`pending-${s.id}`}
                 />
               );
@@ -221,7 +242,6 @@ export function GroupDetail({ groupId }: { groupId: string }) {
               <Text role="body" color="labelSecondary">
                 Nothing shared yet. The first expense starts the balances.
               </Text>
-              {ios ? null : <Button label="Add expense" icon="add" variant="tonal" size="small" onPress={openAdd} testID="add-expense-empty" />}
             </View>
           )}
         </ListSection>

@@ -1,8 +1,9 @@
 // apps/mobile/src/features/spending/BudgetsScreen.tsx
 // Budgets: a monthly limit per category (or for all spending) in one currency, with its pace from the
-// engine's budget_pace insight. Set or change one in an inline editor (the amount parsed by the
-// engine, errors in its words); remove one behind the Gate in its destructive intent. Spending in
-// another currency is never counted towards a budget, and the screen says so.
+// engine's budget_pace insight. Set or change one in an editor that takes the list's place while it
+// is open (so it is never below the fold), with the amount parsed by the engine and errors in its
+// words; remove one behind the Gate in its destructive intent. Spending in another currency is never
+// counted towards a budget, and the screen says so.
 import { DEFAULT_CATEGORIES, formatMoneyForInput, parseMoneyInput, type Budget, type BudgetId, type CategoryId, type CurrencyCode } from '@finbuddy/shared';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -14,7 +15,7 @@ import { Screen } from '@/features/common/Screen';
 
 import { findPace } from './budgetPace';
 import { BudgetRow, budgetLabel } from './BudgetRow';
-import { excludedNote } from './copy';
+import { excludedNote, paceSentence, type BudgetPace } from './copy';
 
 export interface BudgetsScreenProps {
   /** The currency to open on (the one Spending was showing). */
@@ -51,23 +52,24 @@ export function BudgetsScreen({ initialCurrency }: BudgetsScreenProps) {
     .concat('.')
     .replace(/\.\./g, '.');
 
+  if (editing && (editing.kind === 'new' || editingBudget)) {
+    const pace = editingBudget ? (paces.find((p) => p.budget.id === editingBudget.id)?.pace ?? null) : null;
+    return (
+      <Screen flush={theme.platform !== 'ios'} testID="budgets">
+        <View style={styles.gutter}>
+          <BudgetEditor key={editing.kind === 'edit' ? editing.id : 'new'} currency={currency} budget={editingBudget} pace={pace} taken={taken} onDone={() => setEditing(null)} />
+        </View>
+      </Screen>
+    );
+  }
+
   return (
     <Screen flush={theme.platform !== 'ios'} testID="budgets">
       {currencies.length > 1 ? (
         <View style={styles.gutter}>
           <ChipRow label="Currency">
             {currencies.map((code) => (
-              <Chip
-                key={code}
-                label={code}
-                selected={code === currency}
-                accessibilityLabel={f.currencyName(code)}
-                onPress={() => {
-                  setPickedCurrency(code);
-                  setEditing(null);
-                }}
-                testID={`budgets-currency-${code}`}
-              />
+              <Chip key={code} label={code} selected={code === currency} accessibilityLabel={f.currencyName(code)} onPress={() => setPickedCurrency(code)} testID={`budgets-currency-${code}`} />
             ))}
           </ChipRow>
         </View>
@@ -80,8 +82,7 @@ export function BudgetsScreen({ initialCurrency }: BudgetsScreenProps) {
             budget={budget}
             pace={pace}
             f={f}
-            highlighted={editing?.kind === 'edit' && editing.id === budget.id}
-            onPress={() => setEditing(editing?.kind === 'edit' && editing.id === budget.id ? null : { kind: 'edit', id: budget.id })}
+            onPress={() => setEditing({ kind: 'edit', id: budget.id })}
             accessibilityHint="Opens this budget to change or remove it"
             testID={`budget-${budget.id}`}
           />
@@ -91,18 +92,12 @@ export function BudgetsScreen({ initialCurrency }: BudgetsScreenProps) {
             title="Set a budget"
             subtitle={mine.length ? undefined : `A monthly limit for one category, or for everything, in ${currency}`}
             leading={<Icon name="add" size={22} color={c.tint} />}
-            onPress={() => setEditing(editing?.kind === 'new' ? null : { kind: 'new' })}
+            onPress={() => setEditing({ kind: 'new' })}
             chevron={false}
             testID="budget-add"
           />
         )}
       </ListSection>
-
-      {editing && (editing.kind === 'new' || editingBudget) ? (
-        <View style={styles.gutter}>
-          <BudgetEditor key={editing.kind === 'edit' ? editing.id : 'new'} currency={currency} budget={editingBudget} taken={taken} onDone={() => setEditing(null)} />
-        </View>
-      ) : null}
     </Screen>
   );
 }
@@ -111,12 +106,14 @@ interface BudgetEditorProps {
   currency: CurrencyCode;
   /** The budget being changed, or null for a new one. */
   budget: Budget | null;
+  /** Its pace this month, shown for context while it is changed. */
+  pace: BudgetPace | null;
   /** Category keys already budgeted in this currency ('*' for all spending). */
   taken: ReadonlySet<string>;
   onDone: () => void;
 }
 
-function BudgetEditor({ currency, budget, taken, onDone }: BudgetEditorProps) {
+function BudgetEditor({ currency, budget, pace, taken, onDone }: BudgetEditorProps) {
   const theme = useTheme();
   const f = useFormat();
   const locale = useDeviceLocale();
@@ -163,9 +160,16 @@ function BudgetEditor({ currency, budget, taken, onDone }: BudgetEditorProps) {
   return (
     <Card testID="budget-editor">
       <View style={styles.editor}>
-        <Text role="headline" accessibilityRole="header">
-          {budget ? `Change the ${budgetLabel(budget).toLowerCase()} budget` : 'Set a budget'}
-        </Text>
+        <View style={styles.titleBlock}>
+          <Text role="headline" accessibilityRole="header">
+            {budget ? `Change the ${budgetLabel(budget).toLowerCase()} budget` : `Set a budget in ${currency}`}
+          </Text>
+          {budget ? (
+            <Text role="subhead" color="labelSecondary" accessibilityLabel={pace ? paceSentence(f, pace).spoken : undefined} testID="budget-editor-pace">
+              {pace ? `This month: ${paceSentence(f, pace).text}` : `${f.money(budget.amount)} a month. Pace shows once this month has spending`}
+            </Text>
+          ) : null}
+        </View>
         <View style={styles.block}>
           <Text role="subhead" color="labelSecondary">
             Category
@@ -224,6 +228,7 @@ function BudgetEditor({ currency, budget, taken, onDone }: BudgetEditorProps) {
 const styles = StyleSheet.create({
   gutter: { paddingHorizontal: SPACE.gutter, gap: SPACE.l },
   editor: { gap: SPACE.l },
+  titleBlock: { gap: SPACE.xs },
   block: { gap: SPACE.s },
   actions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: SPACE.s },
 });

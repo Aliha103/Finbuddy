@@ -1,8 +1,8 @@
 // apps/mobile/src/features/spending/BudgetRow.tsx
 // One monthly budget: its category (or "All spending"), the pace in words from the engine's
 // budget_pace insight ("£159.50 of £200.00, 20 days left, ahead of pace") and a bar of spent against
-// the limit with a tick where an even pace would be today. The words carry the state; red appears
-// only when the budget is exceeded. Built here because the design system's Row has no bar.
+// the limit with a tick where an even pace would be today. The words carry the state; the bar adds
+// attention amber when ahead of pace and red only once the budget is exceeded. Built here because the design system's Row has no bar.
 import type { Budget } from '@finbuddy/shared';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -61,7 +61,7 @@ export function BudgetRow({ budget, pace, f, onPress, accessibilityHint, highlig
         </View>
         {theme.platform === 'ios' ? <Icon name="chevronRight" size={16} color={c.labelTertiary} /> : null}
       </View>
-      {pace ? <ProportionBar fraction={fraction} marker={marker} tone={pace.status === 'over' ? 'danger' : 'tint'} /> : null}
+      {pace ? <ProportionBar fraction={fraction} marker={marker} tone={pace.status === 'over' ? 'danger' : pace.status === 'ahead' ? 'attention' : 'tint'} /> : null}
     </Pressable>
   );
 }

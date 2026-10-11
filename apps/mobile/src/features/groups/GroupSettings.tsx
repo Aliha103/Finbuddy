@@ -41,12 +41,18 @@ export function GroupSettings({ groupId }: { groupId: string }) {
   if (!detail) {
     return (
       <Screen testID="group-settings-missing">
-        <EmptyState title="This group no longer exists" message="It may have been removed when the data on this phone was reset." icon="groups" action={{ label: 'Back to Groups', onPress: () => router.replace('/(tabs)/(groups)') }} />
+        <EmptyState
+          title="This group no longer exists"
+          message="It may have been removed when the data on this phone was reset."
+          icon="groups"
+          action={{ label: 'Back to Groups', onPress: () => router.replace('/(tabs)/(groups)') }}
+        />
       </Screen>
     );
   }
   const { group, members, expenses } = detail;
-  const currentName = name ?? group.name;
+  const storedName = cleanName(group.name);
+  const currentName = name ?? storedName;
   const inExpenses = (personId: string) => expenses.filter((e) => peopleInExpense(e).includes(personId)).length;
 
   const apply = (task: () => Promise<GroupUpdateResult>, okText: string) => {
@@ -64,16 +70,13 @@ export function GroupSettings({ groupId }: { groupId: string }) {
       setStatus({ tone: 'error', text: 'Give the group a name.' });
       return;
     }
-    if (trimmed === group.name) return;
+    if (trimmed === storedName) return;
     apply(() => updateGroup(group.id, { name: trimmed }), `Renamed to ${cleanName(trimmed)}.`);
   };
 
   const addMember = (personId: string) => apply(() => updateGroup(group.id, { memberIds: [...group.memberIds, personId] }), `${f.name(personId)} is in the group.`);
   const addByName = (displayName: string) =>
-    apply(
-      () => addPerson({ displayName }).then((person) => updateGroup(group.id, { memberIds: [...group.memberIds, person.id] })),
-      `${displayName} is in the group.`,
-    );
+    apply(() => addPerson({ displayName }).then((person) => updateGroup(group.id, { memberIds: [...group.memberIds, person.id] })), `${displayName} is in the group.`);
   const removeMember = (personId: string) => apply(() => updateGroup(group.id, { memberIds: group.memberIds.filter((id) => id !== personId) }), `${f.name(personId)} left the group.`);
 
   const archive = () =>
@@ -132,10 +135,22 @@ export function GroupSettings({ groupId }: { groupId: string }) {
           return (
             <Row
               key={person.id}
-              title={me ? `${f.name(person.id)} (${cleanName(person.displayName)})` : f.name(person.id)}
+              title={me && cleanName(person.displayName) !== 'You' ? `You (${cleanName(person.displayName)})` : f.name(person.id)}
               subtitle={creator ? 'Created the group' : count ? `In ${count} ${count === 1 ? 'expense' : 'expenses'}` : 'Not in any expense yet'}
               sample={person.isSample === true}
-              trailing={creator ? undefined : <Button label="Remove" size="small" variant="plain" onPress={() => removeMember(person.id)} disabled={busy || count > 0} accessibilityLabel={`Remove ${f.name(person.id)}`} testID={`remove-${person.id}`} />}
+              trailing={
+                creator ? undefined : (
+                  <Button
+                    label="Remove"
+                    size="small"
+                    variant="plain"
+                    onPress={() => removeMember(person.id)}
+                    disabled={busy || count > 0}
+                    accessibilityLabel={`Remove ${f.name(person.id)}`}
+                    testID={`remove-${person.id}`}
+                  />
+                )
+              }
               testID={`member-row-${person.id}`}
             />
           );
@@ -168,7 +183,13 @@ export function GroupSettings({ groupId }: { groupId: string }) {
           </>
         ) : (
           <>
-            <HoldToConfirm label="Archive group" summary={`Moves ${cleanName(group.name)} to the end of the list. Its expenses and payments stay.`} onConfirm={archive} disabled={busy} testID="archive-group" />
+            <HoldToConfirm
+              label="Archive group"
+              summary={`Moves ${cleanName(group.name)} to the end of the list. Its expenses and payments stay.`}
+              onConfirm={archive}
+              disabled={busy}
+              testID="archive-group"
+            />
             <Text role="footnote" style={{ color: theme.colors.labelTertiary }}>
               Hold until the ring closes. Nothing is deleted.
             </Text>
