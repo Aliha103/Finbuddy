@@ -86,9 +86,20 @@ export function CategoryScreen({ categoryId, currency }: CategoryScreenProps) {
               </Text>
               {sampleLabel ? <SampleChip label={sampleLabel} /> : null}
             </View>
-            <Readout money={selected.current} locale={locale} role="readoutL" live testID="category-readout" />
-            <Text role="subhead" color="labelSecondary" accessibilityLabel={change ? `${expenseCount(inMonth)}. ${change.spoken}` : undefined} testID="category-caption">
-              {inMonth === 0 ? (isCurrent ? `Nothing in ${label} yet this month` : `Nothing in ${label} in ${monthName(locale, selectedMonth)}`) : change ? `${expenseCount(inMonth)} · ${change.text}` : expenseCount(inMonth)}
+            <Readout money={selected.current} locale={locale} role="readoutL" live style={styles.readout} testID="category-readout" />
+            <Text role="subhead" color="labelSecondary" testID="category-caption">
+              {inMonth === 0 ? (isCurrent ? `Nothing in ${label} yet this month` : `Nothing in ${label} in ${monthName(locale, selectedMonth)}`) : expenseCount(inMonth)}
+            </Text>
+            {/* The change line keeps its slot while scrubbing, so the chart under the finger stays put. */}
+            <Text
+              role="subhead"
+              color="labelSecondary"
+              accessibilityLabel={change?.spoken}
+              importantForAccessibility={change ? 'auto' : 'no'}
+              style={{ minHeight: Math.round(20 * theme.fontScale) }}
+              testID="category-change"
+            >
+              {change?.text ?? ''}
             </Text>
             <View style={styles.chart}>
               <MonthBars months={series} currentMonth={thisMonth} selected={selectedMonth} onSelect={setPickedMonth} locale={locale} spokenSelected={spokenSelected} height={72} testID="category-chart" />
@@ -131,7 +142,8 @@ export function CategoryScreen({ categoryId, currency }: CategoryScreenProps) {
 
 const styles = StyleSheet.create({
   gutter: { paddingHorizontal: SPACE.gutter, gap: SPACE.l },
-  cardBody: { gap: SPACE.s },
+  cardBody: { gap: SPACE.xs },
   cardHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.s },
-  chart: { marginTop: SPACE.s },
+  readout: { marginVertical: SPACE.xs },
+  chart: { marginTop: SPACE.m },
 });

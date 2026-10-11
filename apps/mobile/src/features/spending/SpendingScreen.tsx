@@ -88,11 +88,10 @@ export function SpendingScreen() {
               {sampleLabel ? <SampleChip label={sampleLabel} /> : null}
             </View>
             <Readout money={selected.current} locale={locale} role="readoutXL" live testID="spending-readout" />
-            {/* A fixed one-line slot, so scrubbing never moves the chart under the finger. */}
+            {/* Always present (at least one line), so scrubbing past a month with no change line does not move the chart; never truncated, it carries an amount. */}
             <Text
               role="subhead"
               color="labelSecondary"
-              numberOfLines={1}
               accessibilityLabel={caption?.spoken}
               importantForAccessibility={caption ? 'auto' : 'no'}
               style={{ minHeight: Math.round(20 * theme.fontScale) }}
