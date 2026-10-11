@@ -51,6 +51,37 @@
 
 ---
 
+## Repository layout
+
+This repo is an npm workspaces monorepo:
+
+| Path | What it is |
+| --- | --- |
+| `apps/mobile` | The FinBuddy app for iOS and Android (Expo / React Native, TypeScript, Expo Router). |
+| `apps/web` | The website (Vite + React). It is a standalone npm project, outside the workspaces for now. |
+| `packages/shared` | Shared TypeScript domain code (types, money logic, data layer), consumed as source by the apps. |
+
+Requires Node.js 20.19 or newer (22 recommended).
+
+### Run the mobile app
+
+```bash
+npm install        # once, at the repo root
+npm run mobile     # starts the Expo dev server
+```
+
+Scan the QR code with Expo Go on your phone (iOS or Android), or press `w` to open the web preview. Root scripts: `npm run typecheck`, `npm run lint`, `npm test`.
+
+### Run the website
+
+```bash
+npm run web:install   # npm ci in apps/web
+npm run web:dev       # Vite dev server
+npm run web:build     # production build into apps/web/dist
+```
+
+---
+
 ## Quick Start
 
 ### 1. Clone the Repository
