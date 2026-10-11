@@ -12,6 +12,9 @@ import {
   simplifyDebts,
   spendingByCategory,
   spendingByMonth,
+  spendingRecords,
+  type Budget,
+  type CategoryId,
   type CategorySpending,
   type CurrencyBalances,
   type CurrencyCode,
@@ -30,6 +33,7 @@ import {
   type PersonalOverview,
   type Profile,
   type Settlement,
+  type SpendingRecord,
   type Transfer,
 } from '@finbuddy/shared';
 
@@ -228,4 +232,25 @@ export function selectSpending(snapshot: DataSnapshot, today: LocalDate, monthCo
       })),
     };
   });
+}
+
+/** Budgets, the all-spending budget first, then by category id. */
+export function selectBudgets(snapshot: DataSnapshot): readonly Budget[] {
+  return cached(snapshot, 'budgets', () =>
+    [...snapshot.budgets].sort((a, b) => (a.categoryId === null ? -1 : b.categoryId === null ? 1 : a.categoryId < b.categoryId ? -1 : a.categoryId > b.categoryId ? 1 : 0)),
+  );
+}
+
+/**
+ * The profile owner's own share of every expense in one category and currency, newest first
+ * (the category screen). `categoryId` null means every category.
+ */
+export function selectCategoryRecords(snapshot: DataSnapshot, categoryId: CategoryId | null, currency: CurrencyCode): readonly SpendingRecord[] {
+  const profile = selectProfile(snapshot);
+  if (!profile) return [];
+  return cached(snapshot, `categoryRecords:${categoryId ?? '*'}:${currency}`, () =>
+    spendingRecords(snapshot.expenses, { personId: profile.personId, currency, ...(categoryId === null ? {} : { categoryId }) })
+      .slice()
+      .sort((a, b) => newestFirst(a.expense, b.expense)),
+  );
 }

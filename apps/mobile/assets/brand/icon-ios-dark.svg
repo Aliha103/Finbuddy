@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- iOS 18 dark appearance: transparent ground (the system supplies its dark gradient), bars in the dark-mode tint (light graphite). -->
+  <rect x="224" y="336" width="576" height="128" rx="64" fill="#CFC8D6"/>
+  <rect x="224" y="560" width="256" height="128" rx="64" fill="#CFC8D6"/>
+  <rect x="544" y="560" width="256" height="128" rx="64" fill="#CFC8D6"/>
+</svg>

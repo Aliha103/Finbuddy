@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- iOS app icon, light appearance. No corner rounding: the system masks it. The mark's 64-unit geometry scaled 16x. -->
+  <rect width="1024" height="1024" fill="#4A4652"/>
+  <rect x="224" y="336" width="576" height="128" rx="64" fill="#FFFFFF"/>
+  <rect x="224" y="560" width="256" height="128" rx="64" fill="#FFFFFF"/>
+  <rect x="544" y="560" width="256" height="128" rx="64" fill="#FFFFFF"/>
+</svg>

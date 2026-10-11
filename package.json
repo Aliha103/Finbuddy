@@ -21,9 +21,12 @@
     "web:install": "npm --prefix apps/web ci",
     "web:dev": "npm --prefix apps/web run dev",
     "web:test": "npm --prefix apps/web test -- --run",
-    "web:build": "npm --prefix apps/web ci && npm --prefix apps/web run build"
+    "web:build": "npm --prefix apps/web ci && npm --prefix apps/web run build",
+    "brand:icons": "node scripts/render-icons.mjs",
+    "brand:fonts": "node scripts/sync-fonts.mjs"
   },
   "devDependencies": {
+    "sharp": "0.35.5",
     "typescript": "~6.0.3"
   },
   "overrides": {

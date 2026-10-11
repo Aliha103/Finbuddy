@@ -16,7 +16,7 @@ import {
   type SettleUpItem,
 } from '@/data';
 
-import { settlementSentence, transferSentence, useFormat, type Spoken } from '../format';
+import { settlementSentence, transferSentence, useFormat, type Spoken } from '@/features/common/format';
 import { useNavigation } from '../navigation';
 import { ActivityRow } from '../rows';
 import { Button, Note, Row, SampleTag, Screen, Section, SpokenText, T, styles } from '../ui';

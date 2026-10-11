@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="1024" height="1024">
+  <!-- Single colour; the launcher tints it. Same geometry as the foreground layer. -->
+  <rect x="28.8" y="38.6" width="50.4" height="11.2" rx="5.6" fill="#FFFFFF"/>
+  <rect x="28.8" y="58.2" width="22.4" height="11.2" rx="5.6" fill="#FFFFFF"/>
+  <rect x="56.8" y="58.2" width="22.4" height="11.2" rx="5.6" fill="#FFFFFF"/>
+</svg>

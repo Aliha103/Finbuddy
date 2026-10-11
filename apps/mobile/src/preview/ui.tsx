@@ -15,7 +15,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import type { Spoken } from './format';
+import type { Spoken } from '@/features/common/format';
 import { MIN_TOUCH, list, space, textSize, useLargeText, usePalette } from './theme';
 
 /**

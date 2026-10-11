@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { useSpending } from '@/data';
 
-import { useFormat, type Formatter, type Spoken } from '../format';
+import { useFormat, type Formatter, type Spoken } from '@/features/common/format';
 import { Bar, Chip, ChipRow, Note, Row, Screen, Section } from '../ui';
 
 /** "Up 68% (£829.50) from September 2026" / "Down 18% ..." / "Same as ..." in words. */

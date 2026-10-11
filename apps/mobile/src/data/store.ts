@@ -64,12 +64,8 @@ function refresh(): void {
 }
 repository.subscribe(refresh);
 
-function hasProfile(snapshot: DataSnapshot | null): snapshot is DataSnapshot {
-  return snapshot !== null && snapshot.profiles.length > 0;
-}
-
 /** Sample data built around today, so "this month" figures and reminders have something to show. */
-function freshSampleData(): DataSnapshot {
+export function freshSampleData(): DataSnapshot {
   return createSampleData({ anchor: todayLocal() });
 }
 
@@ -81,33 +77,51 @@ function persist(): void {
   });
 }
 
-async function boot(): Promise<void> {
-  try {
-    let stored: DataSnapshot | null = null;
-    let notice: string | null = null;
-    try {
-      stored = await loadSnapshot(deviceStorage, DEFAULT_STORAGE_KEY);
-    } catch {
-      notice = 'Saved data could not be read, so the sample data was restored.';
-    }
-    if (hasProfile(stored)) {
-      await repository.replaceAll(stored);
-      persist();
-    } else {
-      // First launch (or unreadable data): persist first so the seeded sample data is saved.
-      persist();
-      await repository.replaceAll(freshSampleData());
-      await persistence?.flush();
-    }
-    const snapshot = await repository.snapshot();
+function publish(extra: Partial<Pick<DataState, 'notice' | 'error'>> = {}): Promise<void> {
+  return repository.snapshot().then((snapshot) => {
     useDataStore.setState((state) => ({
       status: 'ready',
       snapshot,
       version: state.version + 1,
       persistent: isStoragePersistent(),
-      notice,
       error: null,
+      ...extra,
     }));
+  });
+}
+
+/**
+ * Replaces everything with `snapshot`, saves it, and marks the store ready. Used by the actions
+ * that start over: startFresh, keepSampleData / resetSampleData, deleteAllData. Also the way
+ * out of a failed load: the store is usable again once a readable snapshot is in place.
+ */
+export async function applySnapshot(snapshot: DataSnapshot, options: { notice?: string | null } = {}): Promise<void> {
+  persist();
+  useDataStore.setState({ today: todayLocal() });
+  await repository.replaceAll(snapshot);
+  await persistence?.flush();
+  await publish({ notice: options.notice ?? null });
+}
+
+/**
+ * Loads what this device has saved. Nothing saved means a first launch: the store becomes ready
+ * on an empty snapshot and the index route sends the person to onboarding, where sample data is
+ * an explicit choice ("Look around with sample data"), never something that greets every new user.
+ * Saved data that cannot be read is left in place and reported as an error, so nothing is
+ * overwritten without the person choosing to (Reset sample data, or starting fresh).
+ */
+async function boot(): Promise<void> {
+  try {
+    let stored: DataSnapshot | null;
+    try {
+      stored = await loadSnapshot(deviceStorage, DEFAULT_STORAGE_KEY);
+    } catch (error) {
+      useDataStore.setState({ status: 'error', error: error instanceof Error ? error.message : String(error) });
+      return;
+    }
+    if (stored) await repository.replaceAll(stored);
+    persist();
+    await publish({ notice: null });
   } catch (error) {
     useDataStore.setState({ status: 'error', error: error instanceof Error ? error.message : String(error) });
   }
@@ -116,7 +130,7 @@ async function boot(): Promise<void> {
 let started: Promise<void> | null = null;
 let dayTimer: ReturnType<typeof setInterval> | null = null;
 
-/** Loads saved data, or seeds sample data on first launch. Safe to call more than once. */
+/** Loads saved data (an empty store stays empty). Safe to call more than once. */
 export function startDataStore(): Promise<void> {
   dayTimer ??= setInterval(() => {
     const today = todayLocal();
@@ -126,18 +140,12 @@ export function startDataStore(): Promise<void> {
   return started;
 }
 
-/** Replaces everything with fresh sample data (the "Reset sample data" action). */
-export async function resetSampleData(): Promise<void> {
-  persist();
-  useDataStore.setState({ today: todayLocal(), notice: null });
-  await repository.replaceAll(freshSampleData());
-  await persistence?.flush();
-  // Also the way out of a failed load: the store is usable again once sample data is in place.
-  const snapshot = await repository.snapshot();
-  useDataStore.setState((state) => ({ status: 'ready', error: null, snapshot, version: state.version + 1, persistent: isStoragePersistent() }));
+/** Replaces everything with fresh sample data (the "Reset sample data" action, and the way out of a failed load). */
+export function resetSampleData(): Promise<void> {
+  return applySnapshot(freshSampleData());
 }
 
-/** Clears the one-time notice shown under the preview banner. */
+/** Clears the one-time notice shown under a screen title. */
 export function dismissNotice(): void {
   useDataStore.setState({ notice: null });
 }

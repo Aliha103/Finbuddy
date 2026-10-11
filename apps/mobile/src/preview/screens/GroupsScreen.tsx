@@ -1,6 +1,6 @@
 import { useGroups, type GroupSummary } from '@/data';
 
-import { myNetSentence, useFormat, type Formatter, type Spoken } from '../format';
+import { myNetSentence, useFormat, type Formatter, type Spoken } from '@/features/common/format';
 import { useNavigation } from '../navigation';
 import { Note, Row, Screen, Section } from '../ui';
 

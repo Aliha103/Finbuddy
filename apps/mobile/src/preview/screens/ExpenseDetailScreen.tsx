@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { useExpense } from '@/data';
 
-import { useFormat, type Formatter } from '../format';
+import { useFormat, type Formatter } from '@/features/common/format';
 import { useBackLabel, useNavigation } from '../navigation';
 import { useGroupName } from '../rows';
 import { Note, Row, SampleTag, Screen, Section, T, styles } from '../ui';

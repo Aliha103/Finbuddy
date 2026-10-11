@@ -1,7 +1,7 @@
 import { useInsights } from '@/data';
 
-import { useFormat } from '../format';
-import { basisRows, insightCopy, severityLabel } from '../insightCopy';
+import { useFormat } from '@/features/common/format';
+import { basisRows, insightCopy, severityLabel } from '@/features/insights/copy';
 import { useBackLabel, useNavigation } from '../navigation';
 import { Note, Row, Screen, Section, SpokenText } from '../ui';
 

@@ -2,7 +2,7 @@ import type { Expense, Settlement } from '@finbuddy/shared';
 
 import { useGroups, type ActivityItem } from '@/data';
 
-import { settlementSentence, type Formatter, type Spoken } from './format';
+import { settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
 import { useNavigation } from './navigation';
 import { Row } from './ui';
 

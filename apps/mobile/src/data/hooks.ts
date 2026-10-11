@@ -1,7 +1,9 @@
-import type { Expense, Insight, LocalDate, Person, PersonId, PersonalOverview, Profile } from '@finbuddy/shared';
+import type { Budget, CategoryId, CurrencyCode, Expense, Insight, LocalDate, Person, PersonId, PersonalOverview, Profile, SpendingRecord } from '@finbuddy/shared';
 
 import {
   selectActivity,
+  selectBudgets,
+  selectCategoryRecords,
   selectExpense,
   selectGroup,
   selectGroups,
@@ -95,4 +97,14 @@ export function useSpending(monthCount = 6): SpendingSummary | null {
   const snapshot = useDataStore((s) => s.snapshot);
   const today = useDataStore((s) => s.today);
   return selectSpending(snapshot, today, monthCount);
+}
+
+/** Monthly budgets (the all-spending budget first). */
+export function useBudgets(): readonly Budget[] {
+  return selectBudgets(useDataStore((s) => s.snapshot));
+}
+
+/** The profile owner's own share of each expense in one category and currency, newest first. */
+export function useCategoryRecords(categoryId: CategoryId | null, currency: CurrencyCode): readonly SpendingRecord[] {
+  return selectCategoryRecords(useDataStore((s) => s.snapshot), categoryId, currency);
 }
