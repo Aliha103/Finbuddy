@@ -23,7 +23,7 @@ AppInitService.initialize().then(() => {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RecoilRoot>
-      <BrowserRouter basename="/Finbuddy">
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <App />
       </BrowserRouter>
     </RecoilRoot>

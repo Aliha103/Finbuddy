@@ -1,4 +1,4 @@
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1ed1aba7-7f6a-4989-af4e-b4e6838542e6/deploy-status)](https://app.netlify.com/projects/finbuddych/deploys)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
 ![Platform](https://img.shields.io/badge/platform-Web,%20Mobile-lightgrey)
