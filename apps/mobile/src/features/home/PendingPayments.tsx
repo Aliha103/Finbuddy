@@ -5,13 +5,14 @@
 import { daysBetween, type Settlement } from '@finbuddy/shared';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { FadeOut, LinearTransition } from 'react-native-reanimated';
+import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { confirmSettlement, useGroups, useMyPendingSettlements, useToday } from '@/data';
 import { Button, DURATION, ListSection, Readout, Row, SPACE, Text, confirmDialog, useHaptic, useTheme } from '@/design';
 import { settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
 
 import { cleanName } from './formatter';
+import { useLayoutTransition } from './motion';
 
 /** The pending sentence without its amount: "Devon is paying you", "You're paying Casey". */
 export function pendingWords(f: Formatter, s: Settlement): Spoken {
@@ -38,7 +39,7 @@ export function PendingPayments({ f }: { f: Formatter }) {
   const today = useToday();
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
-  const layout = theme.reduceMotion ? undefined : LinearTransition.duration(DURATION.standard);
+  const layout = useLayoutTransition();
   if (pending.length === 0) return null;
 
   const confirm = async (s: Settlement) => {

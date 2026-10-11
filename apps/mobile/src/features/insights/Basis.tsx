@@ -5,10 +5,11 @@
 import { isMoney, zero, type Insight, type Money } from '@finbuddy/shared';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, LinearTransition, ReduceMotion } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, ReduceMotion } from 'react-native-reanimated';
 
 import { DURATION, Readout, SPACE, Text, useTheme } from '@/design';
 import type { Formatter } from '@/features/common/format';
+import { useLayoutTransition } from '@/features/home/motion';
 
 import { basisRows } from './copy';
 
@@ -26,12 +27,12 @@ export function RollingReadout({ money, locale, testID }: { money: Money; locale
   return <Readout money={shown} locale={locale} role="readoutS" inline testID={testID} />;
 }
 
-/** The expand/collapse transitions: layout slides unless Reduce Motion, when only opacity moves. */
+/** The expand/collapse transitions: layout travels (native) unless Reduce Motion, when only opacity moves. */
 export function useBasisMotion() {
   const { reduceMotion } = useTheme();
   const fade = reduceMotion ? FadeIn.duration(DURATION.standard).reduceMotion(ReduceMotion.Never) : FadeIn.duration(DURATION.standard);
   const fadeOut = reduceMotion ? FadeOut.duration(DURATION.quick).reduceMotion(ReduceMotion.Never) : FadeOut.duration(DURATION.quick);
-  const layout = reduceMotion ? undefined : LinearTransition.duration(DURATION.standard);
+  const layout = useLayoutTransition();
   return { fade, fadeOut, layout };
 }
 

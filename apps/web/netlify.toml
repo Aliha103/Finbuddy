@@ -1,0 +1,17 @@
+# For a separate Netlify site that serves the marketing website. Set that site's base
+# directory to apps/web; Netlify then reads this file and installs apps/web on its own
+# (it is not part of the root npm workspaces).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  BASE_PATH = "/"
+
+# The site is one prerendered page whose links are all in-page anchors. Any other
+# path (old bookmarks from the previous web app, for example) lands on that page.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -7,12 +7,16 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { Button, Icon, SPACE, Text, useTheme } from '@/design';
+import { Icon, SPACE, Text, useTheme } from '@/design';
 import type { Formatter } from '@/features/common/format';
 
 import { BasisRows, useBasisMotion } from './Basis';
 import { insightCopy, severityLabel } from './copy';
+import { LinkButton } from './LinkButton';
 import { severityStyle } from './severity';
+
+/** Kinds whose sentence already names the category, so the row skips the "Category: …" line (the detail keeps it). */
+const NAMES_CATEGORY: ReadonlySet<Insight['kind']> = new Set(['category_spike', 'unusual_expense']);
 
 export interface InsightRowProps {
   insight: Insight;
@@ -49,17 +53,17 @@ export function InsightRow({ insight, f, onPress, expandable, trailing, testID }
         <Text role="subhead" color="labelSecondary" accessibilityLabel={copy.body.spoken}>
           {copy.body.text}
         </Text>
-        {copy.context.map((line, i) => (
+        {copy.context.filter((_, i) => !(NAMES_CATEGORY.has(insight.kind) && i === copy.context.length - 1)).map((line, i) => (
           <Text key={i} role="footnote" color="labelTertiary" accessibilityLabel={line.spoken}>
             {line.text}
           </Text>
         ))}
         {expandable ? (
           <View style={styles.why}>
-            <Button
+            <LinkButton
               label={open ? 'Hide why' : 'Why am I seeing this'}
               icon={open ? 'chevronDown' : 'why'}
-              variant="plain"
+              expanded={open}
               onPress={() => setOpen((o) => !o)}
               accessibilityHint={open ? 'Hides the numbers behind this insight' : 'Shows the numbers behind this insight'}
               testID={testID ? `${testID}-why` : undefined}
@@ -96,6 +100,6 @@ const styles = StyleSheet.create({
   leading: { minWidth: 28, alignItems: 'center', paddingTop: 2 },
   text: { flex: 1, gap: 2 },
   severity: { fontWeight: '600', letterSpacing: 0.2 },
-  why: { marginLeft: -SPACE.xl, alignSelf: 'flex-start' },
+  why: { alignSelf: 'flex-start' },
   basis: { marginHorizontal: SPACE.l, marginBottom: SPACE.m, borderRadius: 10, overflow: 'hidden' },
 });

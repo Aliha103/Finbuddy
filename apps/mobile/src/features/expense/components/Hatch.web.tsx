@@ -15,6 +15,8 @@ let hatchSkia: HatchSkiaModule | null = null;
 function loadHatchSkia(): HatchSkiaModule | null {
   if (hatchSkia) return hatchSkia;
   try {
+    // A deferred require on purpose: the module must not run before CanvasKit has loaded.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     hatchSkia = require('./HatchSkia') as HatchSkiaModule;
   } catch (error) {
     console.warn('Skia hatch unavailable on this browser; keeping the plain remainder.', error);

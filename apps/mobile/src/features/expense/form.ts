@@ -148,7 +148,7 @@ export interface Evaluation {
   readonly amountEmpty: boolean;
   readonly payerErrors: PerPerson<string>;
   readonly payerGeneral: readonly string[];
-  /** "£70.00 of £120.00 assigned" while entering several payers. */
+  /** "£70.00 of £120.00 assigned: £50.00 left" while entering several payers. */
   readonly payerProgress: Spoken | null;
   readonly splitErrors: PerPerson<string>;
   readonly splitGeneral: readonly string[];
@@ -247,7 +247,15 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
       }
     }
     paidBy = payers;
-    if (total) payerProgress = f.say({ amountMinor: sum, currency }, ' of ', total, ' assigned');
+    if (total) {
+      const left = total.amountMinor - sum;
+      payerProgress =
+        left === 0
+          ? f.say('Payments add up to the total of ', total)
+          : left > 0
+            ? f.say({ amountMinor: sum, currency }, ' of ', total, ' assigned: ', { amountMinor: left, currency }, ' left')
+            : f.say({ amountMinor: sum, currency }, ' assigned: ', { amountMinor: -left, currency }, ' more than the total');
+    }
     if (Object.keys(payerErrors).length === 0) {
       if (payers.length === 0) payerGeneral.push('Enter how much each person paid.');
       else if (total) {

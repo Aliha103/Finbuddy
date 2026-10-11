@@ -7,7 +7,7 @@ import type { Expense, Settlement } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { useGroups, type ActivityItem } from '@/data';
+import { useGroups, useToday, type ActivityItem } from '@/data';
 import { Icon, Readout, Row, SPACE, Text, useTheme } from '@/design';
 import { settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
 import { cleanName } from '@/features/home/formatter';
@@ -18,15 +18,35 @@ export function useGroupName(): (groupId: string | null) => string {
   return (groupId) => (groupId === null ? 'Personal' : cleanName(groups.find((g) => g.group.id === groupId)?.group.name ?? 'Unknown group'));
 }
 
-/** "You paid £45.20" / "Casey paid £1,800.00 · your share £720.00" / "… · you're not part of this split". */
+/**
+ * Who paid and your part, without repeating the total the row already shows as a readout:
+ * "You paid · your share US$53.34", "Devon and Emery paid · your share US$49.63",
+ * "Avery paid · you're not part of this split".
+ */
 export function paidSummary(f: Formatter, e: Expense): Spoken {
   const payers = e.paidBy.map((p) => f.name(p.personId));
-  const who = payers.length === 1 ? `${payers[0]} paid ` : `${payers.slice(0, -1).join(', ')} and ${payers[payers.length - 1]} paid `;
+  const who = payers.length === 1 ? `${payers[0]} paid` : `${payers.slice(0, -1).join(', ')} and ${payers[payers.length - 1]} paid`;
   const myShare = e.splits.find((s) => f.isMe(s.personId));
-  const personal = e.groupId === null && e.splits.length === 1 && myShare !== undefined;
-  if (personal) return f.say(who, e.total);
-  if (myShare) return f.say(who, e.total, ' · your share ', myShare.amount);
-  return f.say(who, e.total, " · you're not part of this split");
+  if (myShare) return f.say(who, ' · your share ', myShare.amount);
+  return f.say(who, " · you're not part of this split");
+}
+
+/** "11 Oct" within the current year (the feed's month headers carry the year), "11 Oct 2025" otherwise. */
+export function useShortDate(f: Formatter): (date: string) => string {
+  const year = useToday().slice(0, 4);
+  return (date) => {
+    if (date.slice(0, 4) !== year) return f.date(date);
+    try {
+      return new Intl.DateTimeFormat(f.locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00.000Z`));
+    } catch {
+      return f.date(date);
+    }
+  };
+}
+
+/** A personal expense the owner paid alone: the total already says everything "You paid" would. */
+function isPlainPersonal(f: Formatter, e: Expense): boolean {
+  return e.groupId === null && e.splits.length === 1 && e.paidBy.length === 1 && f.isMe(e.paidBy[0]!.personId);
 }
 
 export function openExpense(expenseId: string): void {
@@ -40,11 +60,17 @@ export function openGroup(groupId: string): void {
 export function ExpenseRow({ f, expense, showGroup = true, testID }: { f: Formatter; expense: Expense; showGroup?: boolean; testID?: string }) {
   const { colors } = useTheme();
   const groupName = useGroupName();
+  const shortDate = useShortDate(f);
   const where = showGroup ? ` · ${groupName(expense.groupId)}` : '';
+  const paid = paidSummary(f, expense);
+  const subtitle = [`${shortDate(expense.occurredOn)}${where} · ${f.category(expense.categoryId)}`];
+  if (!isPlainPersonal(f, expense)) subtitle.push(paid.text);
+  // The paid line carries an amount, so it may take a third line rather than be cut short.
   return (
     <Row
       title={expense.description || f.category(expense.categoryId)}
-      subtitle={[`${f.date(expense.occurredOn)}${where} · ${f.category(expense.categoryId)}`, paidSummary(f, expense).text]}
+      subtitle={subtitle}
+      lines={3}
       detail={<Readout money={expense.total} locale={f.locale} role="readoutS" inline />}
       leading={<Icon name="receipt" size={22} color={colors.labelSecondary} />}
       sample={expense.isSample === true}
@@ -72,6 +98,7 @@ export function StatusChip({ status }: { status: Settlement['status'] }) {
 export function SettlementRow({ f, settlement, showGroup = true, testID }: { f: Formatter; settlement: Settlement; showGroup?: boolean; testID?: string }) {
   const { colors } = useTheme();
   const groupName = useGroupName();
+  const shortDate = useShortDate(f);
   const sentence = settlementSentence(f, settlement);
   const where = showGroup ? ` · ${groupName(settlement.groupId)}` : '';
   const pending = settlement.status === 'pending';
@@ -80,7 +107,7 @@ export function SettlementRow({ f, settlement, showGroup = true, testID }: { f: 
     <Row
       title={sentence.text}
       titleSpoken={sentence.spoken}
-      subtitle={`${f.date(settlement.occurredOn)}${where}${pending ? ' · Not counted in balances yet' : ''}`}
+      subtitle={`${shortDate(settlement.occurredOn)}${where}${pending ? ' · Not counted in balances yet' : ''}`}
       detail={<StatusChip status={settlement.status} />}
       leading={<Icon name="payment" size={22} color={colors.labelSecondary} />}
       sample={settlement.isSample === true}
