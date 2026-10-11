@@ -6,7 +6,7 @@
 import { formatMoneyForInput, pairwiseDebts, parseMoneyInput, type CurrencyCode, type Money, type SettlementMethod, type Transfer } from '@finbuddy/shared';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, ScrollView, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { confirmSettlement, recordSettlement, useDataStore, useGroup, useProfile } from '@/data';
@@ -29,7 +29,12 @@ export function SettleUp() {
   const theme = useTheme();
   const c = theme.colors;
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ groupId?: string; from?: string; to?: string; currency?: string }>();
+  const params = useLocalSearchParams<{
+    groupId?: string;
+    from?: string;
+    to?: string;
+    currency?: string;
+  }>();
   const groupId = params.groupId ?? null;
   const from = params.from ?? '';
   const to = params.to ?? '';
@@ -45,7 +50,8 @@ export function SettleUp() {
     if (inPlan) return inPlan;
     return pairwiseDebts(snapshot.expenses, snapshot.settlements, { groupId }).find(match) ?? null;
   }, [detail, snapshot, groupId, from, to, params.currency]);
-  const currency: CurrencyCode = planned?.amount.currency ?? (params.currency && /^[A-Z]{3}$/.test(params.currency) ? (params.currency as CurrencyCode) : (detail?.group.currency ?? profile?.defaultCurrency ?? 'USD'));
+  const currency: CurrencyCode =
+    planned?.amount.currency ?? (params.currency && /^[A-Z]{3}$/.test(params.currency) ? (params.currency as CurrencyCode) : (detail?.group.currency ?? profile?.defaultCurrency ?? 'USD'));
 
   const [text, setText] = useState(() => (planned ? formatMoneyForInput(planned.amount, f.locale) : ''));
   const [touched, setTouched] = useState(false);
@@ -56,7 +62,10 @@ export function SettleUp() {
   const [failure, setFailure] = useState<string | null>(null);
   const closing = useRef(false);
 
-  const parsed = parseMoneyInput(text, currency, { locale: f.locale, allowZero: true });
+  const parsed = parseMoneyInput(text, currency, {
+    locale: f.locale,
+    allowZero: true,
+  });
   const amount: Money = parsed.ok ? parsed.value : zero(currency);
   const amountError = !parsed.ok && (touched || text.length > 0) ? parseErrorMessage(f, parsed.error, currency, parsed.maxDecimals) : null;
   const over = planned && amount.amountMinor > planned.amount.amountMinor;
@@ -76,10 +85,21 @@ export function SettleUp() {
 
   const who = f.isMe(from) ? `You pay ${f.name(to)}` : f.isMe(to) ? `${f.name(from)} pays you` : `${f.name(from)} pays ${f.name(to)}`;
   const summary = f.say(who, ' ', amount);
-  const settledSentence = f.isMe(from) ? f.say('Settled. You no longer owe ', f.name(to), ' ', amount) : f.isMe(to) ? f.say('Settled. ', f.name(from), ' no longer owes you ', amount) : f.say('Settled. ', f.name(from), ' paid ', f.name(to), ' ', amount);
+  const settledSentence = f.isMe(from)
+    ? f.say('Settled. You no longer owe ', f.name(to), ' ', amount)
+    : f.isMe(to)
+      ? f.say('Settled. ', f.name(from), ' no longer owes you ', amount)
+      : f.say('Settled. ', f.name(from), ' paid ', f.name(to), ' ', amount);
 
   const record = () =>
-    recordSettlement({ groupId, fromPersonId: from, toPersonId: to, amount, method, ...(note.trim() ? { note: note.trim() } : {}) });
+    recordSettlement({
+      groupId,
+      fromPersonId: from,
+      toPersonId: to,
+      amount,
+      method,
+      ...(note.trim() ? { note: note.trim() } : {}),
+    });
 
   const settleNow = () => {
     if (!valid || busy) return;
@@ -129,80 +149,102 @@ export function SettleUp() {
         </Text>
       </View>
 
-      {done ? null : (
-        <>
-          {!from || !to || from === to ? (
-            <Text role="body" color="labelSecondary" testID="settle-nobody">
-              {"Open Settle up from a group's plan or from Home: it needs two people."}
-            </Text>
-          ) : null}
-          <Field
-            label="Amount"
-            value={text}
-            onChangeText={setText}
-            onBlur={() => setTouched(true)}
-            error={amountError}
-            hint={over ? `More than the ${f.money(planned.amount)} the plan asks for. It still records; the difference becomes a balance the other way.` : undefined}
-            inputMode="decimal"
-            keyboardType="decimal-pad"
-            returnKeyType="done"
-            trailing={
-              <Text role="subhead" color="labelSecondary" tabular>
-                {currency}
-              </Text>
-            }
-            testID="settle-amount"
-          />
-          <View style={styles.block}>
-            <Text role="subhead" color="labelSecondary">
-              Paid by
-            </Text>
-            <ChipRow label="Payment method">
-              {METHODS.map((m) => (
-                <Chip key={m.id} label={m.label} selected={method === m.id} onPress={() => setMethod(m.id)} testID={`method-${m.id}`} />
-              ))}
-            </ChipRow>
-          </View>
-          <Field label="Note (optional)" placeholder="What it was for" value={note} onChangeText={setNote} returnKeyType="done" testID="settle-note" />
-          {failure ? (
-            <Text role="footnote" color="danger" accessibilityRole="alert">
-              {failure}
-            </Text>
-          ) : null}
-          <View style={styles.actions}>
-            <HoldToConfirm label="Paid, settle now" summary={summary.spoken} onConfirm={settleNow} disabled={!valid || busy !== null} testID="settle-gate" />
-            <Button label="Mark as pending" variant="tonal" fullWidth onPress={markPending} disabled={!valid || busy === 'settle'} loading={busy === 'pending'} testID="settle-pending" />
-            <Text role="footnote" style={{ color: c.labelTertiary }}>
-              Pending payments wait for a Confirm in the group and do not change balances until then.
-            </Text>
-          </View>
-        </>
-      )}
+      {!from || !to || from === to ? (
+        <Text role="body" color="labelSecondary" testID="settle-nobody">
+          {"Open Settle up from a group's plan or from Home: it needs two people."}
+        </Text>
+      ) : null}
+      <Field
+        label="Amount"
+        value={text}
+        onChangeText={setText}
+        editable={!done}
+        onBlur={() => setTouched(true)}
+        error={amountError}
+        hint={over ? `More than the ${f.money(planned.amount)} the plan asks for. It still records; the difference becomes a balance the other way.` : undefined}
+        inputMode="decimal"
+        keyboardType="decimal-pad"
+        returnKeyType="done"
+        trailing={
+          <Text role="subhead" color="labelSecondary" tabular>
+            {currency}
+          </Text>
+        }
+        testID="settle-amount"
+      />
+      <View style={styles.block}>
+        <Text role="subhead" color="labelSecondary">
+          How it was paid
+        </Text>
+        <ChipRow label="Payment method">
+          {METHODS.map((m) => (
+            <Chip key={m.id} label={m.label} selected={method === m.id} onPress={() => setMethod(m.id)} testID={`method-${m.id}`} />
+          ))}
+        </ChipRow>
+      </View>
+      <Field label="Note (optional)" placeholder="What it was for" value={note} onChangeText={setNote} returnKeyType="done" testID="settle-note" />
+      {failure ? (
+        <Text role="footnote" color="danger" accessibilityRole="alert">
+          {failure}
+        </Text>
+      ) : null}
+      <View style={styles.actions}>
+        <HoldToConfirm label="Paid, settle now" summary={summary.spoken} onConfirm={settleNow} disabled={!valid || busy !== null} testID="settle-gate" />
+        <Button label="Mark as pending" variant="tonal" fullWidth onPress={markPending} disabled={!valid || busy === 'settle'} loading={busy === 'pending'} testID="settle-pending" />
+        <Text role="footnote" style={{ color: c.labelTertiary }}>
+          Pending payments wait for a Confirm in the group and do not change balances until then.
+        </Text>
+      </View>
     </View>
   );
 
+  if (ios) {
+    // iOS: a form sheet sized to its content (fitToContents). The native bar is hidden and the sheet
+    // draws its own: Cancel on the leading side, the title centred, under the system grabber. The
+    // scroll view takes its content's height (flexGrow 0) so the sheet can measure it, and scrolls
+    // only when large text makes the content taller than the screen.
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <ScrollView
+          style={[styles.sheetScroll, { backgroundColor: c.ground }]}
+          contentContainerStyle={[styles.sheet, { paddingBottom: insets.bottom + SPACE.l }]}
+          keyboardShouldPersistTaps="handled"
+          testID="settle"
+        >
+          <View style={styles.sheetBar}>
+            <View style={styles.sheetSide}>
+              <HeaderButton label="Cancel" onPress={close} testID="settle-cancel" />
+            </View>
+            <Text role="headline" accessibilityRole="header" numberOfLines={1}>
+              Settle up
+            </Text>
+            <View style={styles.sheetSide} />
+          </View>
+          {body}
+        </ScrollView>
+      </>
+    );
+  }
   return (
     <>
       <Stack.Screen
         options={{
           title: 'Settle up',
-          headerLeft: ios ? () => <HeaderButton label="Cancel" onPress={close} testID="settle-cancel" /> : theme.platform === 'material' && !router.canGoBack() ? () => <HeaderButton label="Close" icon="close" onPress={close} testID="settle-cancel" /> : undefined,
+          // Android's full-screen dialog closes with an X on the leading edge; a pushed card (the web preview) keeps its back arrow.
+          headerLeft: Platform.OS === 'android' || !router.canGoBack() ? () => <HeaderButton label="Close" icon="close" onPress={close} testID="settle-cancel" /> : undefined,
         }}
       />
-      {ios ? (
-        // A form sheet sized to its content: a scroll view only when the content outgrows the sheet.
-        <ScrollView style={{ backgroundColor: c.ground }} contentContainerStyle={[styles.sheet, { paddingBottom: insets.bottom + SPACE.l }]} keyboardShouldPersistTaps="handled" testID="settle">
-          {body}
-        </ScrollView>
-      ) : (
-        <Screen testID="settle">{body}</Screen>
-      )}
+      <Screen testID="settle">{body}</Screen>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  sheet: { padding: SPACE.gutter, paddingTop: SPACE.l },
+  sheetScroll: { flexGrow: 0 },
+  sheet: { paddingHorizontal: SPACE.gutter, paddingTop: SPACE.l + SPACE.xs, gap: SPACE.l },
+  sheetBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: -SPACE.s },
+  sheetSide: { minWidth: 72, alignItems: 'flex-start' },
   body: { gap: SPACE.xl },
   hero: { gap: SPACE.xs },
   block: { gap: SPACE.s },

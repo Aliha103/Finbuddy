@@ -15,6 +15,7 @@ import { EASING, SPACE, Text, useHaptic, useTheme, type LineColor } from '@/desi
 
 import type { Spoken } from '../common/format';
 import { useSkiaReady } from '../common/skiaWeb';
+import { graphicColor } from './graphicColor';
 import { Segmented } from './Segmented';
 import { SettleArcs } from './SettleArcs';
 import { CHIP_HEIGHT, CHIP_WIDTH, LABEL_HEIGHT, RING_R, blend, buildSlots, layoutStations, mapMetrics, type ArcSlot } from './settleMapGeometry';
@@ -57,7 +58,14 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
   const { railY, height } = mapMetrics(members.length);
   const meId = members.find((m) => m.isMe)?.id ?? null;
 
-  const stations = useMemo(() => layoutStations(members.map((m) => m.id), width), [members, width]);
+  const stations = useMemo(
+    () =>
+      layoutStations(
+        members.map((m) => m.id),
+        width,
+      ),
+    [members, width],
+  );
   const slots = useMemo(() => buildSlots(all, fewest, stations), [all, fewest, stations]);
 
   // The first run only places the map; the morph (and its haptic) belongs to a change of mode.
@@ -96,12 +104,29 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
 
   return (
     <View style={styles.box} testID={testID}>
-      <Segmented values={['All debts', 'Fewest payments']} selectedIndex={MODES.indexOf(mode)} onChange={(i) => onModeChange(MODES[i] ?? 'fewest')} label="How to show the debts" testID={testID ? `${testID}-mode` : undefined} />
+      <Segmented
+        values={['All debts', 'Fewest payments']}
+        selectedIndex={MODES.indexOf(mode)}
+        onChange={(i) => onModeChange(MODES[i] ?? 'fewest')}
+        label="How to show the debts"
+        testID={testID ? `${testID}-mode` : undefined}
+      />
       {ready ? (
         <View style={[styles.canvas, { height }]} onLayout={onLayout} accessible accessibilityRole="image" accessibilityLabel={summary} testID={testID ? `${testID}-canvas` : undefined}>
           {width > 0 ? (
             <>
-              <SettleArcs width={width} height={height} railY={railY} stations={stations} meId={meId} slots={slots} progress={progress} lineColor={line.fill} surfaceColor={c.surface} railColor={c.separator} />
+              <SettleArcs
+                width={width}
+                height={height}
+                railY={railY}
+                stations={stations}
+                meId={meId}
+                slots={slots}
+                progress={progress}
+                lineColor={graphicColor(line.fill, c.surface, c.label)}
+                surfaceColor={c.surface}
+                railColor={c.separator}
+              />
               {stations.map((s, i) => {
                 const member = members[i];
                 const stationWidth = Math.min(88, stations.length > 1 ? (width - 2 * 36) / (stations.length - 1) : width);
@@ -146,7 +171,23 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
   );
 }
 
-function AmountChip({ slot, mode, progress, railY, money, sentence, onSelect }: { slot: ArcSlot; mode: SettleMapMode; progress: SharedValue<number>; railY: number; money: (m: Money) => string; sentence: (t: Transfer) => Spoken; onSelect?: (t: Transfer) => void }) {
+function AmountChip({
+  slot,
+  mode,
+  progress,
+  railY,
+  money,
+  sentence,
+  onSelect,
+}: {
+  slot: ArcSlot;
+  mode: SettleMapMode;
+  progress: SharedValue<number>;
+  railY: number;
+  money: (m: Money) => string;
+  sentence: (t: Transfer) => Spoken;
+  onSelect?: (t: Transfer) => void;
+}) {
   const { colors: c } = useTheme();
   const style = useAnimatedStyle(() => {
     const g = blend(slot, progress.value);

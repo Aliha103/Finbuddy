@@ -53,7 +53,10 @@ function Arc({ slot, progress, railY, color }: { slot: ArcSlot; progress: Shared
   const top = railY - RING_R - 1;
   const arc = useDerivedValue(() => {
     const g = blend(slot, progress.value);
-    return Skia.PathBuilder.Make().moveTo(g.x0, top).cubicTo(g.x0, railY - g.h, g.x1, railY - g.h, g.x1, top).build();
+    return Skia.PathBuilder.Make()
+      .moveTo(g.x0, top)
+      .cubicTo(g.x0, railY - g.h, g.x1, railY - g.h, g.x1, top)
+      .build();
   }, [slot, railY, top]);
   const head = useDerivedValue(() => {
     const g = blend(slot, progress.value);

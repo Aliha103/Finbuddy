@@ -42,7 +42,9 @@ export function GroupCard({ summary, line, memberNames, f, onPress, variant = 'l
   const more = myNet.length - shown.length;
   const position = useMemo(() => {
     if (myNet.length === 0) return { word: 'Settled up', spoken: "You're settled up in this group" };
-    return myNet[0]!.amountMinor > 0 ? { word: "You're owed", spoken: `You're owed ${myNet.map((m) => f.spokenMoney(abs(m))).join(' and ')}` } : { word: 'You owe', spoken: `You owe ${myNet.map((m) => f.spokenMoney(abs(m))).join(' and ')}` };
+    return myNet[0]!.amountMinor > 0
+      ? { word: "You're owed", spoken: `You're owed ${myNet.map((m) => f.spokenMoney(abs(m))).join(' and ')}` }
+      : { word: 'You owe', spoken: `You owe ${myNet.map((m) => f.spokenMoney(abs(m))).join(' and ')}` };
   }, [myNet, f]);
   const initials = memberNames.slice(0, INITIALS).map(initialOf);
   const extra = memberNames.length - initials.length;
@@ -80,14 +82,14 @@ export function GroupCard({ summary, line, memberNames, f, onPress, variant = 'l
         <View style={styles.members}>
           <View style={styles.initials}>
             {initials.map((ch, i) => (
-              <View key={i} style={[styles.initial, { backgroundColor: c.surfaceAlt, borderColor: c.surface, marginLeft: i === 0 ? 0 : -6 }]}>
+              <View key={i} style={[styles.initial, { backgroundColor: c.fill, borderColor: c.surface, marginLeft: i === 0 ? 0 : -6 }]}>
                 <Text role="caption" color="labelSecondary" style={styles.bold}>
                   {ch}
                 </Text>
               </View>
             ))}
             {extra > 0 ? (
-              <View style={[styles.initial, { backgroundColor: c.surfaceAlt, borderColor: c.surface, marginLeft: -6 }]}>
+              <View style={[styles.initial, { backgroundColor: c.fill, borderColor: c.surface, marginLeft: -6 }]}>
                 <Text role="caption" color="labelSecondary" style={styles.bold}>
                   {`+${extra}`}
                 </Text>

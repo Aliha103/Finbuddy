@@ -15,7 +15,6 @@ import { useGroupFormat } from './format';
 import { GroupCard } from './GroupCard';
 import { useLineColorOverrides } from './lineColors';
 
-
 export function GroupsList() {
   const groups = useGroups();
   const people = usePeople();
