@@ -41,6 +41,7 @@ import {
   type IconName,
   type TypeRole,
 } from '@/design';
+import { THIS_DEVICE } from '@/features/common/device';
 import { cleanName } from '@/features/common/format';
 
 /** True where the gallery may render: development, or the web preview. */
@@ -197,7 +198,7 @@ export function Gallery() {
           }}
           testID="gate-money"
         />
-        <HoldToConfirm label="Delete all data" summary="Removes every expense, group and setting from this phone" intent="destructive" mode="hold" onConfirm={() => setGateResult('Delete all data confirmed (gallery only).')} testID="gate-destructive" />
+        <HoldToConfirm label="Delete all data" summary={`Removes every expense, group and setting from ${THIS_DEVICE}`} intent="destructive" mode="hold" onConfirm={() => setGateResult('Delete all data confirmed (gallery only).')} testID="gate-destructive" />
         <HoldToConfirm label="Paid, settle now" summary={`Pay ${creditorName} ${gateSpoken}`} mode="dialog" onConfirm={() => setGateResult(`Dialog path: settled ${gateSpoken}.`)} testID="gate-dialog" />
         <Text role="footnote" color={gateResult ? 'credit' : 'labelSecondary'} accessibilityLiveRegion="polite" testID="gate-result">
           {gateResult ?? 'The third control is the two-step path used for screen readers, Reduce Motion and the dialog preference.'}

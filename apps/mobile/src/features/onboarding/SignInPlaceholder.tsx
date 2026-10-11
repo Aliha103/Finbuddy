@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ListSection, Mark, Row, SPACE, Text } from '@/design';
 
+import { THIS_DEVICE } from '../common/device';
 import { Screen } from '../common/Screen';
 
 export function SignInPlaceholder() {
@@ -13,7 +14,7 @@ export function SignInPlaceholder() {
       <View style={styles.hero}>
         <Mark size={56} />
         <Text role="title" accessibilityRole="header">
-          Your data stays on this phone
+          {`Your data stays on ${THIS_DEVICE}`}
         </Text>
         <Text role="body" color="labelSecondary">
           Accounts and sync arrive with the online service. Until then there is nothing to sign in to, so FinBuddy asks for no email, password or phone number.

@@ -6,6 +6,7 @@ import { useDataStatus } from '@/data';
 import { Icon, ListSection, Row, SPACE, Text, useTheme } from '@/design';
 
 import { StorageBar } from '../common/Banners';
+import { THIS_DEVICE } from '../common/device';
 import { Screen } from '../common/Screen';
 
 export function PrivacySettings() {
@@ -17,7 +18,7 @@ export function PrivacySettings() {
         <View style={styles.hero}>
           <Icon name="lock" size={28} color={theme.colors.tint} />
           <Text role="title" accessibilityRole="header">
-            Your data stays on this phone
+            {`Your data stays on ${THIS_DEVICE}`}
           </Text>
         </View>
         <StorageBar explain={false} />
@@ -28,7 +29,7 @@ export function PrivacySettings() {
         <Row title="No analytics" subtitle="FinBuddy does not measure how you use it and sends nothing anywhere." />
         <Row title="Insights are rules, not a model" subtitle="They compare your own entries with your own history. Nothing is sent for processing." />
       </ListSection>
-      <ListSection header="Keeping your data" footer="Export makes a JSON file you can keep or move to another phone. Deleting removes everything from this device.">
+      <ListSection header="Keeping your data" footer="Export makes a JSON file you can keep or move to another device. Deleting removes everything from this device.">
         <Row title="Export your data" subtitle="Settings › Your data" />
         <Row title="Delete all data" subtitle="Settings › Your data" />
       </ListSection>

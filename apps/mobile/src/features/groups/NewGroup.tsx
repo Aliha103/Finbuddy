@@ -70,7 +70,7 @@ function NewGroupForm() {
     void createGroup({ name: trimmed, currency, memberIds, newMemberNames: newNames })
       .then((group) => {
         setGroupLineColor(group.id, chosen);
-        router.replace({ pathname: '/(tabs)/(groups)/[groupId]', params: { groupId: group.id } });
+        router.replace({ pathname: '/(tabs)/(groups)/group/[groupId]', params: { groupId: group.id } });
       })
       .catch((error: unknown) => {
         setFailure(error instanceof Error ? error.message : 'Could not create the group.');

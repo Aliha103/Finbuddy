@@ -41,7 +41,7 @@ function PreviewNote({ right }: { right: number }) {
     <View style={[styles.note, { right }]}>
       <Lockup height={28} color={colors.label} tile={colors.tint} bars={colors.onTint} />
       <Text role="footnote" color="labelSecondary" align="right">
-        {`Preview of the FinBuddy app for iOS and Android.${profile?.isSample ? ' Sample data.' : ''}`}
+        {`The FinBuddy app for iPhone and Android, running in your browser.${profile?.isSample ? ' Sample data.' : ''}`}
       </Text>
     </View>
   );

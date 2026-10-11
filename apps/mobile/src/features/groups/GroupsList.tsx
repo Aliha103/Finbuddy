@@ -44,7 +44,7 @@ export function GroupsList() {
                 line={lineColorFor(summary.group.id, overrides)}
                 memberNames={summary.group.memberIds.map((id) => people.get(id)?.displayName ?? '?')}
                 f={f}
-                onPress={() => router.push({ pathname: '/(tabs)/(groups)/[groupId]', params: { groupId: summary.group.id } })}
+                onPress={() => router.push({ pathname: '/(tabs)/(groups)/group/[groupId]', params: { groupId: summary.group.id } })}
                 testID={`group-${summary.group.id}`}
               />
             ))}

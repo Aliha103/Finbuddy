@@ -13,6 +13,7 @@ import { confirmSettlement, useDataStore, useGroup } from '@/data';
 import { Button, Card, Icon, ListSection, Readout, Row, SPACE, Text, useTheme } from '@/design';
 
 import { DataGate } from '../common/DataGate';
+import { THIS_DEVICE } from '../common/device';
 import { EmptyState } from '../common/EmptyState';
 import { Fab } from '../common/Fab';
 import { cleanName, memberNetSentence, planSentence, settlementSentence, useFormat, type Formatter, type Spoken } from '../common/format';
@@ -51,7 +52,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
       <Screen testID="group-missing">
         <EmptyState
           title="This group no longer exists"
-          message="It may have been removed when the data on this phone was reset."
+          message={`It may have been removed when the data on ${THIS_DEVICE} was reset.`}
           icon="groups"
           action={{ label: 'Back to Groups', onPress: () => router.replace('/(tabs)/(groups)') }}
         />
@@ -73,7 +74,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
 
   const openSettle = (t: Transfer) => router.push({ pathname: '/settle', params: { groupId: group.id, from: t.from, to: t.to, currency: t.amount.currency } });
   const openAdd = () => router.push({ pathname: '/add', params: { groupId: group.id } });
-  const openSettings = () => router.push({ pathname: '/(tabs)/(groups)/[groupId]/settings', params: { groupId: group.id } });
+  const openSettings = () => router.push({ pathname: '/(tabs)/(groups)/group/[groupId]/settings', params: { groupId: group.id } });
 
   const confirm = (s: Settlement) => {
     setBusy(s.id);

@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { keepSampleData, useDataStatus } from '@/data';
 import { Button, Lockup, RADIUS, SPACE, Text, useTheme } from '@/design';
 
+import { THIS_DEVICE } from '../common/device';
 import { Fill } from '../common/Screen';
 
 export function Welcome() {
@@ -34,7 +35,7 @@ export function Welcome() {
           <Lockup height={44} color={colors.label} tile={colors.tint} bars={colors.onTint} />
           <Text role="title">Shared costs and your own spending, one exact ledger</Text>
           <Text role="subhead" color="labelSecondary">
-            Every amount keeps its currency. Nothing leaves this phone.
+            {`Every amount keeps its currency. Nothing leaves ${THIS_DEVICE}.`}
           </Text>
         </View>
       </View>
