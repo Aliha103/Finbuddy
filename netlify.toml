@@ -1,12 +1,14 @@
 # The finbuddych Netlify site serves the FinBuddy app's web export (apps/mobile).
-# The build runs from the repository root so npm installs the workspaces, including
-# packages/shared, which the app imports as source.
+# The base is set here so the publish path never depends on the site's UI settings.
+# npm finds the workspace root above apps/mobile, so the workspaces install,
+# including packages/shared, which the app imports as source.
 #
 # The marketing website in apps/web has its own netlify.toml; connect it to a separate
 # Netlify site with apps/web as the base directory.
 [build]
-  command = "npm run build:web --workspace @finbuddy/mobile"
-  publish = "apps/mobile/dist"
+  base = "apps/mobile"
+  command = "npm run build:web"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "22"
