@@ -13,6 +13,7 @@ import { Button, Field, HoldToConfirm, ListSection, Row, SPACE, Text, gateUsesDi
 import { CurrencyPicker } from '../common/CurrencyPicker';
 import { currencyNames } from '../common/currency';
 import { DataGate } from '../common/DataGate';
+import { THIS_DEVICE } from '../common/device';
 import { EmptyState } from '../common/EmptyState';
 import { Screen } from '../common/Screen';
 import { cleanName, useFormat } from '../common/format';
@@ -53,7 +54,7 @@ function GroupSettingsBody({ groupId }: { groupId: string }) {
       <Screen testID="group-settings-missing">
         <EmptyState
           title="This group no longer exists"
-          message="It may have been removed when the data on this phone was reset."
+          message={`It may have been removed when the data on ${THIS_DEVICE} was reset.`}
           icon="groups"
           action={{ label: 'Back to Groups', onPress: () => router.replace('/(tabs)/(groups)') }}
         />

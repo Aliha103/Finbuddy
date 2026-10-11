@@ -8,6 +8,7 @@ import { StyleSheet, View } from 'react-native';
 import { deleteAllData, exportData, removeSampleData, resetSampleData, useDataStatus, useDataStore } from '@/data';
 import { Button, HoldToConfirm, ListSection, Row, SPACE, Text, gateUsesDialog, useTheme } from '@/design';
 
+import { THIS_DEVICE } from '../common/device';
 import { Screen } from '../common/Screen';
 import { shareExport } from './exportFile';
 
@@ -45,7 +46,7 @@ export function DataSettings() {
     <Screen flush={theme.platform !== 'ios'} testID="data-settings">
       <ListSection
         header="Export"
-        footer={`A JSON file with every record on this phone: ${counts.expenses} expenses, ${counts.groups} groups, ${counts.settlements} payments. The same file can be imported on another phone when that arrives.`}
+        footer={`A JSON file with every record on ${THIS_DEVICE}: ${counts.expenses} expenses, ${counts.groups} groups, ${counts.settlements} payments. The same file can be imported on another device when that arrives.`}
       >
         <View style={styles.block}>
           <Button label="Export your data" icon="share" onPress={doExport} loading={busy === 'export'} testID="export-data" />
@@ -57,16 +58,16 @@ export function DataSettings() {
         </View>
       </ListSection>
 
-      <ListSection header="Sample data" footer={sampleCount ? `${sampleCount} records on this phone are sample data, each labelled.` : 'No sample data on this phone.'}>
+      <ListSection header="Sample data" footer={sampleCount ? `${sampleCount} records on ${THIS_DEVICE} are sample data, each labelled.` : `No sample data on ${THIS_DEVICE}.`}>
         <Row title="Reset sample data" subtitle="Replaces everything with a fresh, labelled sample set" onPress={() => run('reset', resetSampleData)} chevron={false} testID="reset-sample" />
         {sampleCount ? <Row title="Remove sample data" subtitle="Drops every labelled record; a sample profile goes back to the welcome screen" onPress={() => run('remove', () => removeSampleData().then(() => afterWipe()))} chevron={false} testID="remove-sample" /> : null}
       </ListSection>
 
-      <ListSection header="Delete" footer={persistent ? 'Removes every expense, group, payment, budget and your profile from this phone. There is no copy anywhere else, so export first if you want one.' : 'Storage is refused right now, so there is nothing saved to delete; the data in memory goes when the app closes.'}>
+      <ListSection header="Delete" footer={persistent ? `Removes every expense, group, payment, budget and your profile from ${THIS_DEVICE}. There is no copy anywhere else, so export first if you want one.` : 'Storage is refused right now, so there is nothing saved to delete; the data in memory goes when the app closes.'}>
         <View style={styles.block}>
           <HoldToConfirm
             label="Delete all data"
-            summary={`Removes ${counts.expenses} expenses, ${counts.groups} groups and your profile from this phone`}
+            summary={`Removes ${counts.expenses} expenses, ${counts.groups} groups and your profile from ${THIS_DEVICE}`}
             intent="destructive"
             disabled={busy !== null}
             onConfirm={() => run('delete', () => deleteAllData().then(() => afterWipe()))}

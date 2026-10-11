@@ -10,6 +10,7 @@ import { StyleSheet, View } from 'react-native';
 import { resetSampleData, useDataStatus } from '@/data';
 import { Button, Reveal, SPACE, Skeleton, SkeletonText, Text, useTheme } from '@/design';
 
+import { THIS_DEVICE } from './device';
 import { Screen } from './Screen';
 
 export function DataGate({ children, skeleton }: { children: ReactNode; skeleton?: ReactNode }) {
@@ -62,8 +63,7 @@ export function DataError() {
           Saved data could not be read
         </Text>
         <Text role="body" color="labelSecondary">
-          What this phone saved is still there, but FinBuddy cannot make sense of it. You can look around with sample data instead, or start again with your own money. Either choice replaces the saved
-          data.
+          {`What ${THIS_DEVICE} saved is still there, but FinBuddy cannot make sense of it. You can look around with sample data instead, or start again with your own money. Either choice replaces the saved data.`}
         </Text>
         <View style={styles.actions}>
           <Button label="Reset sample data" onPress={reset} loading={busy} />

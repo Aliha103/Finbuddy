@@ -16,8 +16,8 @@ export default function GroupsStack() {
         options={{ ...largeTitle('Groups'), headerRight: ios ? () => <HeaderButton label="New group" icon="add" onPress={() => router.push('/(tabs)/(groups)/new')} testID="header-new-group" /> : undefined }}
       />
       <Stack.Screen name="new" options={{ title: 'New group' }} />
-      <Stack.Screen name="[groupId]/index" options={{ title: '' }} />
-      <Stack.Screen name="[groupId]/settings" options={{ title: 'Group settings' }} />
+      <Stack.Screen name="group/[groupId]/index" options={{ title: '' }} />
+      <Stack.Screen name="group/[groupId]/settings" options={{ title: 'Group settings' }} />
     </Stack>
   );
 }

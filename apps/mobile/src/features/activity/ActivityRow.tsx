@@ -53,7 +53,7 @@ export function openExpense(expenseId: string): void {
 }
 
 export function openGroup(groupId: string): void {
-  router.push({ pathname: '/(tabs)/(groups)/[groupId]', params: { groupId } });
+  router.push({ pathname: '/(tabs)/(groups)/group/[groupId]', params: { groupId } });
 }
 
 export function ExpenseRow({ f, expense, showGroup = true, testID }: { f: Formatter; expense: Expense; showGroup?: boolean; testID?: string }) {
