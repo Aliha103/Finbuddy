@@ -4,7 +4,7 @@ import { AccessibilityInfo, View } from 'react-native';
 
 import { confirmSettlement, settleTransfer, useGroup } from '@/data';
 
-import { memberNetSentence, settlementSentence, useFormat, type Formatter, type Spoken } from '../format';
+import { memberNetSentence, settlementSentence, useFormat, type Formatter, type Spoken } from '@/features/common/format';
 import { useBackLabel, useNavigation } from '../navigation';
 import { ExpenseRow, SettlementRow } from '../rows';
 import { Button, Note, Row, SampleTag, Screen, Section, SpokenText, T, styles } from '../ui';

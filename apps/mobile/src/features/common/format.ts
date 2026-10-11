@@ -18,9 +18,10 @@ import {
 import { useDeviceLocale, usePeople, useProfile } from '@/data';
 
 /**
- * PREVIEW COPY. Plain English placeholder strings until the design team writes final copy.
- * Every amount goes through formatMoney with the device locale; every sentence also has a
- * spoken form where amounts carry their currency name ("12.50 British pounds").
+ * The Formatter and the money sentences every screen speaks with. Every amount goes through
+ * formatMoney with the device locale, and every sentence also has a spoken form where amounts
+ * carry their currency name ("12.50 British pounds"). Direction (owe, owed) is carried by the
+ * words, never by colour alone.
  */
 export interface Spoken {
   readonly text: string;

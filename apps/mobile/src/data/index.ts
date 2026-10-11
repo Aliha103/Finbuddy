@@ -6,4 +6,4 @@ export * from './ids';
 export * from './locale';
 export * from './selectors';
 export * from './storage';
-export { dismissNotice, resetSampleData, startDataStore, useDataStore, type DataState, type DataStatus } from './store';
+export { applySnapshot, dismissNotice, freshSampleData, resetSampleData, startDataStore, useDataStore, type DataState, type DataStatus } from './store';

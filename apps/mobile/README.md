@@ -25,7 +25,7 @@ From this folder the usual Expo commands work too: `npm start`, `npm run typeche
 ## Configuration notes
 
 - **Placeholder identifiers.** `ios.bundleIdentifier` and `android.package` are both `app.finbuddy.mobile`, and the URL scheme is `finbuddy`. They are placeholders: confirm them before the first store submission, because they cannot change after release.
-- **Placeholder assets.** `assets/` still holds the Expo template icon and splash images. They will be replaced with the new brand.
+- **Brand assets.** `assets/brand/` holds the SVG sources (mark, wordmark, lockup, iOS and Android icon layers, splash). The PNGs `app.json` needs are rendered from them with `npm run brand:icons` (sharp, from the repo root) and listed with their hashes in `assets/brand/RASTERS.md`. The readout face lives in `assets/fonts/` (synced from `@expo-google-fonts/mona-sans` with `npm run brand:fonts`); see `src/design/FONTS.md`.
 - **Reanimated / worklets.** No `babel.config.js` is needed: `babel-preset-expo` adds `react-native-worklets/plugin` automatically when `react-native-worklets` is installed (Reanimated 4). If a custom `babel.config.js` is ever added, keep `babel-preset-expo` and do not add the plugin a second time.
 - **Monorepo.** Expo's Metro config detects the npm workspace automatically, so there is no `metro.config.js`.
 - **New Architecture.** SDK 57 always runs on the New Architecture, so `newArchEnabled` is not set.

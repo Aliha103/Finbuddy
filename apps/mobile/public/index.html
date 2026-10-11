@@ -5,9 +5,19 @@
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!-- Follows the system light/dark setting before the bundle runs, so dark mode never flashes white
-         and form controls match. The colours are the preview's neutral greys (src/preview/theme.ts). -->
+         and form controls match. The colours are the design's ground tokens (src/design/tokens.ts). -->
     <meta name="color-scheme" content="light dark" />
     <title>%WEB_TITLE%</title>
+    <!-- The export is reviewed from whatever sub-path hosts it. Pinning the document base to that path
+         keeps every relative asset URL (fonts, icons, CanvasKit) valid after the router changes the
+         address bar, since nothing is loaded from the server root. -->
+    <script>
+      (function () {
+        var base = document.createElement('base');
+        base.href = location.href.replace(/[?#].*$/, '').replace(/[^/]*$/, '');
+        document.head.appendChild(base);
+      })();
+    </script>
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
       /* These styles make the body full-height */
@@ -18,11 +28,11 @@
       /* These styles disable body scrolling if you are using <ScrollView> */
       body {
         overflow: hidden;
-        background-color: #f2f2f7;
+        background-color: #f5f3f6;
       }
       @media (prefers-color-scheme: dark) {
         body {
-          background-color: #000000;
+          background-color: #121016;
         }
       }
       /* These styles make the root element full-height */

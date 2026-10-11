@@ -2,7 +2,7 @@ import { monthOf, type MonthKey } from '@finbuddy/shared';
 
 import { useActivity, type ActivityItem } from '@/data';
 
-import { useFormat } from '../format';
+import { useFormat } from '@/features/common/format';
 import { ActivityRow } from '../rows';
 import { Note, Screen, Section } from '../ui';
 

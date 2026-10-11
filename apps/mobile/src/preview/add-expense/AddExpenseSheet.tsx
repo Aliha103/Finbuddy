@@ -5,12 +5,12 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 
 import { addExpense, useGroups, useProfile, useToday } from '@/data';
 
-import { useFormat, type Formatter } from '../format';
+import { useFormat, type Formatter } from '@/features/common/format';
 import { useNavigation } from '../navigation';
 import { useReducedMotion } from '../motion';
 import { usePalette, space } from '../theme';
 import { Button, Chip, ChipRow, ErrorText, Field, Note, PreviewBanner, Row, Section, SpokenText, T, styles } from '../ui';
-import { SPLIT_METHODS, evaluate, initialForm, issueMessage, withGroup, withMethod, withPayerMode, type FormState } from './form';
+import { SPLIT_METHODS, evaluate, initialForm, issueMessage, withGroup, withMethod, withPayerMode, type FormState } from '@/features/expense/form';
 
 /** The add-expense modal sheet. Mounted fresh each time it opens, so the form starts clean. */
 export function AddExpenseSheet() {

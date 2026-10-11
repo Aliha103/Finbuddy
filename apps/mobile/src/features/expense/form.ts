@@ -19,20 +19,22 @@ import {
   type SplitSpec,
 } from '@finbuddy/shared';
 
-import { categoryLabel, parseErrorMessage, type Formatter, type Spoken } from '../format';
+import { categoryLabel, parseErrorMessage, type Formatter, type Spoken } from '@/features/common/format';
 
 /**
  * The add-expense form as plain data plus one pure evaluate() that turns it into either a
  * ready ExpenseDraft or per-field messages, using the engine's own parser and validators.
- * Kept free of React so the designed form can reuse it.
+ * Free of React: the add-expense sheet and the split editor both drive it.
  */
-export type SplitMethod = 'equal' | 'exact' | 'percentage' | 'shares';
+export type SplitMethod = 'equal' | 'exact' | 'percentage' | 'shares' | 'adjustment';
 
-export const SPLIT_METHODS: readonly { id: SplitMethod; label: string }[] = [
-  { id: 'equal', label: 'Equally' },
-  { id: 'exact', label: 'Exact amounts' },
-  { id: 'percentage', label: 'Percentages' },
-  { id: 'shares', label: 'Shares' },
+/** The segmented control's order and labels (DIRECTION.md, split editor). */
+export const SPLIT_METHODS: readonly { id: SplitMethod; label: string; description: string }[] = [
+  { id: 'equal', label: 'Equally', description: 'The same share for everyone included' },
+  { id: 'exact', label: 'Exact', description: 'Type each person\'s amount' },
+  { id: 'percentage', label: 'Percent', description: 'Percentages that add up to 100' },
+  { id: 'shares', label: 'Shares', description: 'Proportional shares, such as nights stayed' },
+  { id: 'adjustment', label: 'Adjust', description: 'Equal shares, plus or minus an amount for some people' },
 ];
 
 type PerPerson<T> = Readonly<Record<PersonId, T>>;
@@ -52,6 +54,8 @@ export interface FormState {
   readonly exact: PerPerson<string>;
   readonly percent: PerPerson<string>;
   readonly shares: PerPerson<string>;
+  /** Adjustment split: a signed amount per person ("+5", "-2.50"); empty means no adjustment. */
+  readonly adjustment: PerPerson<string>;
   readonly categoryId: CategoryId;
   readonly date: LocalDate;
 }
@@ -70,6 +74,7 @@ export function initialForm(input: { groupId: string | null; currency: CurrencyC
     exact: {},
     percent: {},
     shares: {},
+    adjustment: {},
     categoryId: FALLBACK_CATEGORY_ID,
     date: input.today,
   };
@@ -77,7 +82,7 @@ export function initialForm(input: { groupId: string | null; currency: CurrencyC
 
 /** Switching personal/group resets everything that depends on who is involved. */
 export function withGroup(state: FormState, groupId: string | null, currency: CurrencyCode, me: PersonId): FormState {
-  return { ...state, groupId, currency, payerMode: 'single', payerId: me, payerAmounts: {}, method: 'equal', included: {}, exact: {}, percent: {}, shares: {} };
+  return { ...state, groupId, currency, payerMode: 'single', payerId: me, payerAmounts: {}, method: 'equal', included: {}, exact: {}, percent: {}, shares: {}, adjustment: {} };
 }
 
 const blank = (values: PerPerson<string>, members: readonly PersonId[]) => members.every((id) => !(values[id] ?? '').trim());
@@ -113,6 +118,14 @@ export function withPayerMode(state: FormState, mode: 'single' | 'multiple', mem
   return { ...state, payerMode: mode };
 }
 
+/** "+5", "-2,50" -> { sign, rest } for the adjustment fields; the amount part goes through parseMoneyInput. */
+export function splitSign(text: string): { sign: 1 | -1; rest: string } {
+  const trimmed = text.trim();
+  if (trimmed.startsWith('-') || trimmed.startsWith('\u2212')) return { sign: -1, rest: trimmed.slice(1).trim() };
+  if (trimmed.startsWith('+')) return { sign: 1, rest: trimmed.slice(1).trim() };
+  return { sign: 1, rest: trimmed };
+}
+
 /** "33,5" -> "33.5" in a comma-decimal locale; null when it is not a plain non-negative number. */
 export function normaliseNumber(text: string, locale: string): string | null {
   const { decimal } = getNumberSeparators(locale);
@@ -143,6 +156,8 @@ export interface Evaluation {
   readonly splitProgress: Spoken | null;
   /** Each person's resolved share (live preview), when the total and split are valid. */
   readonly resolved: PerPerson<Money> | null;
+  /** The split as the engine sees it right now (the split bar reads it for the remainder tick). */
+  readonly spec: SplitSpec;
   readonly draft: ExpenseDraft | null;
 }
 
@@ -164,8 +179,9 @@ export function issueMessage(f: Formatter, issue: SplitIssue | ExpenseIssue, cur
     case 'invalid_amount':
       return `${who}: enter a valid amount.`;
     case 'negative_amount':
-    case 'negative_share':
       return `${who}: amounts can't be negative.`;
+    case 'negative_share':
+      return `${who}: their share would be below zero. Make the adjustment smaller.`;
     case 'exact_sum_mismatch': {
       const diff = Number(issue.expected ?? 0) - Number(issue.actual ?? 0);
       return diff > 0
@@ -290,7 +306,7 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
     spec = { type: 'percentage', percentages };
     const sum = percentages.reduce((acc, p) => acc + Number(p.percent), 0);
     splitProgress = f.say(`Adds up to ${f.number(sum, 4)}% of 100%`);
-  } else {
+  } else if (state.method === 'shares') {
     const shares: { personId: PersonId; shares: string }[] = [];
     for (const id of people) {
       const text = (state.shares[id] ?? '').trim();
@@ -302,6 +318,36 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
     spec = { type: 'shares', shares };
     const sum = shares.reduce((acc, s) => acc + Number(s.shares), 0);
     splitProgress = f.say(`${f.number(sum, 4)} shares in total`);
+  } else {
+    // Adjustment: everyone included gets an equal share of what is left after the signed adjustments.
+    const adjustments: { personId: PersonId; adjustmentMinor: number }[] = [];
+    let adjusted = 0;
+    for (const id of people.filter((p) => state.included[p] !== false)) {
+      const text = (state.adjustment[id] ?? '').trim();
+      if (!text) {
+        adjustments.push({ personId: id, adjustmentMinor: 0 });
+        continue;
+      }
+      const { sign, rest } = splitSign(text);
+      const r = parseMoneyInput(rest, currency, { locale, allowZero: true });
+      if (!r.ok) splitErrors[id] = parseErrorMessage(f, r.error, currency, r.maxDecimals);
+      else {
+        adjustments.push({ personId: id, adjustmentMinor: sign * r.value.amountMinor });
+        adjusted += sign * r.value.amountMinor;
+      }
+    }
+    spec = { type: 'adjustment', adjustments };
+    if (total) {
+      const rest = total.amountMinor - adjusted;
+      const adjustedMoney: Money = { amountMinor: Math.abs(adjusted), currency };
+      const restMoney: Money = { amountMinor: Math.abs(rest), currency };
+      splitProgress =
+        adjusted === 0
+          ? f.say('No adjustments yet: ', total, ' split equally')
+          : rest < 0
+            ? f.say('Adjustments add ', adjustedMoney, ': ', restMoney, ' more than the total')
+            : f.say(adjusted > 0 ? 'Adjustments add ' : 'Adjustments take off ', adjustedMoney, ', ', restMoney, ' split equally');
+    }
   }
 
   let resolved: Record<PersonId, Money> | null = null;
@@ -345,6 +391,7 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
     splitGeneral,
     splitProgress,
     resolved,
+    spec,
     draft,
   };
 }

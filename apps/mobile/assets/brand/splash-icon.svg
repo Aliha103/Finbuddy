@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="12 19 40 26" width="800" height="520">
+  <!-- The splash image: the mark's three bars alone, white on transparent, cropped to the bars with a 2-unit margin.
+       app.json places it centred on Graphite (expo-splash-screen backgroundColor), so the splash is the mark itself. -->
+  <rect x="14" y="21" width="36" height="8" rx="4" fill="#FFFFFF"/>
+  <rect x="14" y="35" width="16" height="8" rx="4" fill="#FFFFFF"/>
+  <rect x="34" y="35" width="16" height="8" rx="4" fill="#FFFFFF"/>
+</svg>
