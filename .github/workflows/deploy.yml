@@ -44,6 +44,9 @@ jobs:
 
     - name: Build project
       run: npm run build
+      env:
+        BASE_PATH: /Finbuddy/
+        SITE_URL: https://aliha103.github.io/Finbuddy
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

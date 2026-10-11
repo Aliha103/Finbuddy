@@ -6,7 +6,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const BASE_URL = 'https://aliha103.github.io/Finbuddy'
+// SITE_URL is set by the GitHub Pages workflow; Netlify provides URL for the site's main address.
+const BASE_URL = (process.env.SITE_URL || process.env.URL || 'https://aliha103.github.io/Finbuddy').replace(/\/$/, '')
 
 const routes = [
   {

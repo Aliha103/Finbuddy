@@ -1,0 +1,17 @@
+# Netlify builds the website in apps/web and serves it from the site root.
+# Netlify installs apps/web's dependencies itself before running the command.
+[build]
+  base = "apps/web"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  BASE_PATH = "/"
+
+# The site is a single-page app: every path serves index.html so refreshes and
+# deep links work.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

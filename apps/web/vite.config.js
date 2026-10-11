@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  base: '/Finbuddy/',
+  // '/' on Netlify (the site root); GitHub Pages sets BASE_PATH=/Finbuddy/ in its workflow.
+  base: process.env.BASE_PATH || '/',
   plugins: [react()],
   resolve: {
     alias: {
