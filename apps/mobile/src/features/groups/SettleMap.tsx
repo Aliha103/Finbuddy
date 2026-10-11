@@ -2,12 +2,16 @@
 // The settle map: a group's debts in one currency drawn on its white card. Members are rings on a
 // rail in the group's line colour; every debt is an arc from payer to payee. The segmented toggle
 // "All debts | Fewest payments" morphs between pairwiseDebts and simplifyDebts from one shared
-// progress value (Reanimated); the amount chips are real text riding each arc's apex (labels, not
-// buttons: each transfer's Settle up is a full-size button in the plan under the map, and chips
-// packed 22 points apart could never be 44-point targets). Reduce Motion switches instantly. Until Skia can draw (the web preview
-// before CanvasKit loads) the map is a plain list of the same transfers.
+// progress value (Reanimated). The amount chips are real text on each arc (labels, not buttons:
+// each transfer's Settle up is a full-size button in the plan under the map, and chips packed this
+// close could never be 44-point targets). Each state places its own chips so none overlaps another
+// or a station (placeChips); during the morph the arcs move while the leaving state's chips fade
+// out early and the arriving state's fade in late, so two sets of labels never share the map, and
+// a chip that is the same in both states simply stays. Reduce Motion switches instantly. Until
+// Skia can draw (the web preview before CanvasKit loads) the map is a plain list of the same
+// transfers.
 import type { Money, Transfer } from '@finbuddy/shared';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -17,7 +21,7 @@ import { EASING, SPACE, Segmented, Text, graphicColor, useHaptic, useTheme, type
 import type { Spoken } from '../common/format';
 import { useSkiaReady } from '../common/skiaWeb';
 import { SettleArcs } from './SettleArcs';
-import { CHIP_HEIGHT, CHIP_WIDTH, LABEL_HEIGHT, RING_R, blend, buildSlots, layoutStations, mapMetrics, type ArcSlot } from './settleMapGeometry';
+import { CHIP_HEIGHT, LABEL_HEIGHT, RING_R, buildSlots, estimateChipWidth, layoutStations, mapMetrics, placeChips, type ChipPlace } from './settleMapGeometry';
 
 export type SettleMapMode = 'all' | 'fewest';
 
@@ -44,6 +48,16 @@ export interface SettleMapProps {
 }
 
 const MORPH_MS = 600;
+/** The share of the morph over which the leaving chips fade out (and, at the other end, the arriving ones fade in). */
+const CHIP_FADE = 0.3;
+
+/** One amount chip as drawn: the state it belongs to ('both' when it is the same in each), its text and centre. */
+interface ChipView {
+  readonly id: string;
+  readonly state: 'all' | 'fewest' | 'both';
+  readonly text: string;
+  readonly at: ChipPlace;
+}
 const MODES: readonly SegmentOption<SettleMapMode>[] = [
   { id: 'all', label: 'All debts', description: 'Every debt between two people, netted pair by pair' },
   { id: 'fewest', label: 'Fewest payments', description: 'The fewest payments that settle everyone' },
@@ -68,6 +82,32 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
     [members, width],
   );
   const slots = useMemo(() => buildSlots(all, fewest, stations), [all, fewest, stations]);
+
+  // Chip widths as measured (estimated until then), and each state's placement from them.
+  const [chipWidths, setChipWidths] = useState<Readonly<Record<string, number>>>({});
+  const onChipWidth = useCallback((text: string, w: number) => {
+    setChipWidths((prev) => (Math.abs((prev[text] ?? 0) - w) < 0.5 ? prev : { ...prev, [text]: w }));
+  }, []);
+  const chips = useMemo(() => {
+    const widthOf = (text: string) => chipWidths[text] ?? estimateChipWidth(text);
+    const inAll = slots.filter((sl) => sl.amountA).map((sl) => ({ id: sl.key, g: sl.a, text: money(sl.amountA!), width: widthOf(money(sl.amountA!)) }));
+    const inFewest = slots.filter((sl) => sl.amountB).map((sl) => ({ id: sl.key, g: sl.b, text: money(sl.amountB!), width: widthOf(money(sl.amountB!)) }));
+    const placedAll = placeChips(inAll, railY, width);
+    const placedFewest = placeChips(inFewest, railY, width);
+    const out: ChipView[] = [];
+    for (const c of inAll) {
+      const a = placedAll.get(c.id)!;
+      const twin = inFewest.find((b) => b.id === c.id);
+      const b = twin ? placedFewest.get(c.id) : undefined;
+      if (twin && b && twin.text === c.text && Math.abs(a.x - b.x) < 0.5 && Math.abs(a.y - b.y) < 0.5) out.push({ id: `both:${c.id}`, state: 'both', text: c.text, at: a });
+      else out.push({ id: `all:${c.id}`, state: 'all', text: c.text, at: a });
+    }
+    for (const c of inFewest) {
+      if (out.some((v) => v.id === `both:${c.id}`)) continue;
+      out.push({ id: `fewest:${c.id}`, state: 'fewest', text: c.text, at: placedFewest.get(c.id)! });
+    }
+    return out;
+  }, [slots, chipWidths, money, railY, width]);
 
   // The first run only places the map; the morph (and its haptic) belongs to a change of mode.
   const placed = useRef(false);
@@ -144,8 +184,8 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
                   </Text>
                 );
               })}
-              {slots.map((slot) => (
-                <AmountChip key={slot.key} slot={slot} mode={mode} progress={progress} railY={railY} money={money} />
+              {chips.map((chip) => (
+                <AmountChip key={chip.id} chip={chip} progress={progress} onWidth={onChipWidth} />
               ))}
             </>
           ) : null}
@@ -172,37 +212,41 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
   );
 }
 
-function AmountChip({ slot, mode, progress, railY, money }: { slot: ArcSlot; mode: SettleMapMode; progress: SharedValue<number>; railY: number; money: (m: Money) => string }) {
+function AmountChip({ chip, progress, onWidth }: { chip: ChipView; progress: SharedValue<number>; onWidth: (text: string, width: number) => void }) {
   const { colors: c } = useTheme();
+  const { state, text, at } = chip;
   const style = useAnimatedStyle(() => {
-    const g = blend(slot, progress.value);
-    return {
-      opacity: Math.min(1, Math.max(0, g.present)),
-      // The apex of a cubic whose two control points sit at height h is at 0.75 h.
-      transform: [{ translateX: (g.x0 + g.x1) / 2 - CHIP_WIDTH / 2 }, { translateY: railY - 0.75 * g.h - CHIP_HEIGHT / 2 }],
-    };
-  }, [slot, railY]);
-  // The amount printed is the one in the state the map is heading to; the chip fades with its arc.
-  const amount = mode === 'fewest' ? (slot.amountB ?? slot.amountA) : (slot.amountA ?? slot.amountB);
-  if (!amount) return null;
+    const p = progress.value;
+    // 'all' is fully shown at p = 0 and gone by CHIP_FADE; 'fewest' arrives over the last CHIP_FADE.
+    const opacity = state === 'both' ? 1 : state === 'all' ? 1 - p / CHIP_FADE : (p - (1 - CHIP_FADE)) / CHIP_FADE;
+    return { opacity: Math.min(1, Math.max(0, opacity)) };
+  }, [state]);
   // The map is one accessible image whose label is the whole plan, so the chip is for the eye only.
   return (
-    <Animated.View style={[styles.chipWrap, style]} pointerEvents="none" importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
-      <View style={[styles.chip, { backgroundColor: c.fill, borderColor: c.surface }]} testID={`arc-${slot.from}-${slot.to}`}>
+    <Animated.View
+      style={[styles.chipWrap, { left: at.x - CHIP_SLOT / 2, top: at.y - CHIP_HEIGHT / 2 }, style]}
+      pointerEvents="none"
+      importantForAccessibility="no-hide-descendants"
+      accessibilityElementsHidden
+    >
+      <View style={[styles.chip, { backgroundColor: c.fill, borderColor: c.surface }]} onLayout={(e) => onWidth(text, e.nativeEvent.layout.width)} testID={`arc-${chip.id}`}>
         <Text role="caption" tabular style={[styles.chipText, { color: c.label }]} numberOfLines={1}>
-          {money(amount)}
+          {text}
         </Text>
       </View>
     </Animated.View>
   );
 }
 
+/** The box a chip is centred in; wider than any chip, so the chip's own width never shifts its centre. */
+const CHIP_SLOT = 160;
+
 const styles = StyleSheet.create({
   box: { gap: SPACE.m },
   canvas: { alignSelf: 'stretch', overflow: 'visible' },
   station: { position: 'absolute', textAlign: 'center' },
   bold: { fontWeight: '600' },
-  chipWrap: { position: 'absolute', left: 0, top: 0, width: CHIP_WIDTH, alignItems: 'center' },
+  chipWrap: { position: 'absolute', width: CHIP_SLOT, height: CHIP_HEIGHT, alignItems: 'center', zIndex: 1 },
   chip: { height: CHIP_HEIGHT, paddingHorizontal: SPACE.s, justifyContent: 'center', borderRadius: 999, borderWidth: 1.5 },
   chipText: { textAlign: 'center', fontWeight: '600' },
   plain: { gap: SPACE.xs, paddingVertical: SPACE.s },
