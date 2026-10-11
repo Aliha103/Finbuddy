@@ -1,9 +1,10 @@
 // apps/mobile/src/features/common/Fab.tsx
 // The one Material floating action button a screen may carry (Android and the web preview):
-// an extended FAB, bottom-trailing, with the only shadow in the app. iOS never renders it; its
-// primary action lives in the navigation bar or the iOS 26 bottom accessory ("Add expense" above
-// the tab bar). Whatever floats over a screen's bottom edge, the screen's content inset clears it
-// (useFloatingInset), so the last row can always scroll out from under it.
+// an extended FAB, bottom-trailing, with the only shadow in the app. It is docked: the screen keeps
+// a strip of ground under its scroll area for it (Screen, FAB_DOCK), so it never covers a row or a
+// Settle up button at rest or mid-scroll, at any width. iOS never renders it; its primary action
+// lives in the navigation bar or the iOS 26 bottom accessory ("Add expense" above the tab bar),
+// which the content inset clears (useFloatingInset).
 import { createContext, use } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -28,16 +29,19 @@ const ACCESSORY_HEIGHT = TOUCH.min + SPACE.s;
 /** True inside the tabs while the iOS bottom accessory floats above the tab bar (set by the tabs layout). */
 export const BottomAccessoryContext = createContext(false);
 
+/** The strip under a Material screen's scroll area that the FAB sits in: margin, FAB, margin. */
+export const FAB_DOCK = FAB_MARGIN + FAB_HEIGHT + FAB_MARGIN;
+
 /**
  * The bottom space, above the safe area, that keeps a screen's last content clear of what floats
- * over its bottom edge: the FAB (height plus its margin) on Material when the screen shows one, the
- * bottom accessory on iOS 26 on every tab screen. Screens add their own breathing room on top.
+ * over its bottom edge: the bottom accessory on iOS 26 on every tab screen. The Material FAB floats
+ * over nothing (it is docked under the scroll area), so it needs no inset. Screens add their own
+ * breathing room on top.
  */
-export function useFloatingInset(fab: boolean): number {
+export function useFloatingInset(): number {
   const { platform } = useTheme();
   const accessory = use(BottomAccessoryContext);
-  if (platform === 'ios') return accessory ? ACCESSORY_HEIGHT : 0;
-  return fab ? FAB_HEIGHT + FAB_MARGIN : 0;
+  return platform === 'ios' && accessory ? ACCESSORY_HEIGHT : 0;
 }
 
 export function Fab({ label, icon = 'add', onPress, testID }: FabProps) {

@@ -34,7 +34,7 @@ function ActivityFeed() {
   const c = theme.colors;
   const ios = theme.platform === 'ios';
   const insets = useSafeAreaInsets();
-  const floating = useFloatingInset(false);
+  const floating = useFloatingInset();
   const f = useFormat();
   const activity = useActivity();
   const groups = useGroups();
