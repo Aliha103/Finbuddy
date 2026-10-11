@@ -7,8 +7,7 @@ import { router } from 'expo-router';
 import { useDataStore, useExpense, useGroups } from '@/data';
 import { Icon, ListSection, Readout, Row, useTheme } from '@/design';
 import { openExpense, openGroup } from '@/features/activity/ActivityRow';
-import { categoryLabel, type Formatter } from '@/features/common/format';
-import { cleanName } from '@/features/home/formatter';
+import { categoryLabel, cleanName, type Formatter } from '@/features/common/format';
 
 const MAX_EXPENSES = 6;
 

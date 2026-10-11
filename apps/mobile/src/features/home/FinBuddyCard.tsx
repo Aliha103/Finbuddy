@@ -11,9 +11,8 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { Card, DURATION, Readout, SPACE, SampleChip, Text, fitRole, useCardColors, useTheme } from '@/design';
+import { Card, DURATION, Readout, SPACE, SampleChip, Text, fitRole, useCardColors, useLayoutTransition, useTheme } from '@/design';
 
-import { useLayoutTransition } from './motion';
 import { useCardReadouts } from './rolling';
 
 export interface FinBuddyCardProps {

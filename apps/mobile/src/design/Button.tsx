@@ -1,7 +1,8 @@
 // apps/mobile/src/design/Button.tsx
 // Capsule buttons. Filled (the one primary action on a screen), tonal (secondary, on the tint wash),
 // outlined and plain; on the tint field (the FinBuddy card) the inverse pair swaps the roles.
-// Presses with the press spring; the label names the action.
+// Presses with the press spring; the label names the action. A small button draws a 36-point
+// capsule inside a full 44 (iOS) / 48 (Material) pressable, since hitSlop does nothing on the web.
 import { ActivityIndicator, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -43,7 +44,7 @@ export function Button({ label, onPress, variant = 'filled', intent = 'tint', si
   const background = variant === 'filled' ? accent : variant === 'tonal' ? wash : variant === 'inverse' ? c.onTint : 'transparent';
   const foreground = variant === 'filled' ? onAccent : variant === 'tonal' ? onWash : variant === 'inverse' ? c.tint : variant === 'inverseOutlined' ? c.onTint : accent;
   const solid = variant === 'filled' || variant === 'tonal' || variant === 'inverse';
-  const height = size === 'small' ? 36 : Math.max(theme.minTouch, 48);
+  const height = size === 'small' ? SMALL_HEIGHT : Math.max(theme.minTouch, 48);
   const inactive = disabled || loading;
 
   return (
@@ -53,7 +54,6 @@ export function Button({ label, onPress, variant = 'filled', intent = 'tint', si
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: !!disabled, busy: !!loading }}
       disabled={inactive}
-      hitSlop={size === 'small' ? { top: (theme.minTouch - 36) / 2, bottom: (theme.minTouch - 36) / 2 } : undefined}
       onPress={onPress}
       onPressIn={() => {
         scale.set(theme.reduceMotion ? 1 : withSpring(0.97, SPRING.press));
@@ -63,7 +63,7 @@ export function Button({ label, onPress, variant = 'filled', intent = 'tint', si
         scale.set(withSpring(1, SPRING.press));
       }}
       testID={testID}
-      style={fullWidth ? styles.full : styles.inline}
+      style={[fullWidth ? styles.full : styles.inline, size === 'small' ? [styles.smallTarget, { minHeight: theme.minTouch }] : null]}
     >
       {({ pressed }) => (
         <Animated.View
@@ -96,8 +96,11 @@ export function Button({ label, onPress, variant = 'filled', intent = 'tint', si
   );
 }
 
+const SMALL_HEIGHT = 36;
+
 const styles = StyleSheet.create({
   inline: { alignSelf: 'flex-start' },
+  smallTarget: { justifyContent: 'center' },
   full: { alignSelf: 'stretch' },
   button: { borderRadius: 999, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   content: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s },

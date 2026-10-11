@@ -3,7 +3,7 @@
 // budget for the current month), so the Budgets screen quotes exactly the figures Insights does.
 import { isMoney, type Insight, type Money } from '@finbuddy/shared';
 
-import type { BudgetPace, PaceStatus } from './copy';
+import type { BudgetPace, PaceStatus } from '@/features/common/format';
 
 const money = (value: unknown): Money | null => (isMoney(value) ? value : null);
 

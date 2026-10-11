@@ -10,11 +10,12 @@ import { StyleSheet, View } from 'react-native';
 
 import { useCategoryRecords, useDataStore, useDeviceLocale, useGroups, useProfile, useToday } from '@/data';
 import { Card, ListSection, Readout, Row, SPACE, SampleChip, Text, useTheme } from '@/design';
+import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
-import { categoryLabel, useFormat } from '@/features/common/format';
+import { categoryLabel, changeInWords, monthName, useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
-import { changeInWords, expenseCount, monthName } from './copy';
+import { expenseCount } from './copy';
 import { MonthBars } from './MonthBars';
 
 export interface CategoryScreenProps {
@@ -22,7 +23,15 @@ export interface CategoryScreenProps {
   currency: CurrencyCode;
 }
 
-export function CategoryScreen({ categoryId, currency }: CategoryScreenProps) {
+export function CategoryScreen(props: CategoryScreenProps) {
+  return (
+    <DataGate>
+      <CategoryBody {...props} />
+    </DataGate>
+  );
+}
+
+function CategoryBody({ categoryId, currency }: CategoryScreenProps) {
   const theme = useTheme();
   const f = useFormat();
   const locale = useDeviceLocale();

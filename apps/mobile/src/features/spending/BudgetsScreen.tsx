@@ -9,13 +9,14 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { removeBudget, setBudget, useBudgets, useDeviceLocale, useInsights, useProfile, useSpending } from '@/data';
-import { Button, Card, Chip, ChipRow, Field, Hairline, HoldToConfirm, Icon, ListSection, Row, SPACE, Text, useHaptic, useTheme } from '@/design';
-import { categoryLabel, exampleAmount, parseErrorMessage, useFormat } from '@/features/common/format';
+import { Button, Card, Chip, ChipRow, Field, Hairline, HoldToConfirm, Icon, ListSection, Row, SPACE, Text, gateUsesDialog, useHaptic, useTheme } from '@/design';
+import { DataGate } from '@/features/common/DataGate';
+import { categoryLabel, exampleAmount, paceSentence, parseErrorMessage, useFormat, type BudgetPace } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
 import { findPace } from './budgetPace';
 import { BudgetRow, budgetLabel } from './BudgetRow';
-import { excludedNote, paceSentence, type BudgetPace } from './copy';
+import { excludedNote } from './copy';
 
 export interface BudgetsScreenProps {
   /** The currency to open on (the one Spending was showing). */
@@ -24,7 +25,15 @@ export interface BudgetsScreenProps {
 
 type Editing = { kind: 'new' } | { kind: 'edit'; id: BudgetId } | null;
 
-export function BudgetsScreen({ initialCurrency }: BudgetsScreenProps) {
+export function BudgetsScreen(props: BudgetsScreenProps) {
+  return (
+    <DataGate>
+      <Budgets {...props} />
+    </DataGate>
+  );
+}
+
+function Budgets({ initialCurrency }: BudgetsScreenProps) {
   const theme = useTheme();
   const c = theme.colors;
   const f = useFormat();
@@ -216,7 +225,7 @@ function BudgetEditor({ currency, budget, pace, taken, onDone }: BudgetEditorPro
             <Hairline />
             <HoldToConfirm label="Remove budget" summary={`Removes the ${budgetLabel(budget).toLowerCase()} budget of ${f.money(budget.amount)} a month`} intent="destructive" disabled={busy !== null} onConfirm={remove} testID="budget-remove" />
             <Text role="footnote" style={{ color: theme.colors.labelTertiary }}>
-              {theme.reduceMotion || theme.screenReader || theme.confirmWithDialog ? 'Opens a confirmation. Your expenses stay as they are.' : 'Hold until the ring closes. Your expenses stay as they are.'}
+              {gateUsesDialog(theme) ? 'Asks you to confirm first. Your expenses stay as they are.' : 'Hold until the ring closes. Your expenses stay as they are.'}
             </Text>
           </>
         ) : null}

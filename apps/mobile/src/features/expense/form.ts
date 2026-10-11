@@ -150,10 +150,18 @@ export interface Evaluation {
   readonly payerGeneral: readonly string[];
   /** "£70.00 of £120.00 assigned: £50.00 left" while entering several payers. */
   readonly payerProgress: Spoken | null;
+  /**
+   * The payments-do-not-add-up message, also in payerGeneral (it blocks saving). The payers screen
+   * leaves it out, because payerProgress already says the same thing in neutral words while the
+   * person is still typing; the sheet's save problems still show it.
+   */
+  readonly payerSumMessage: string | null;
   readonly splitErrors: PerPerson<string>;
   readonly splitGeneral: readonly string[];
   /** Running sum for exact / percentage / shares. */
   readonly splitProgress: Spoken | null;
+  /** The exact-amounts-do-not-add-up message, also in splitGeneral; the split editor's running line covers it. */
+  readonly splitSumMessage: string | null;
   /** Each person's resolved share (live preview), when the total and split are valid. */
   readonly resolved: PerPerson<Money> | null;
   /** The split as the engine sees it right now (the split bar reads it for the remainder tick). */
@@ -232,6 +240,7 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
   const payerErrors: Record<PersonId, string> = {};
   const payerGeneral: string[] = [];
   let payerProgress: Spoken | null = null;
+  let payerSumMessage: string | null = null;
   let paidBy: PersonId | Payer[] = isGroup ? state.payerId : me;
   if (isGroup && state.payerMode === 'multiple') {
     const payers: Payer[] = [];
@@ -263,7 +272,11 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
         if (!check.ok) {
           for (const issue of check.issues) {
             if (issue.personId && issue.code !== 'payer_sum_mismatch') payerErrors[issue.personId] = issueMessage(f, issue, currency);
-            else payerGeneral.push(issueMessage(f, issue, currency));
+            else {
+              const message = issueMessage(f, issue, currency);
+              payerGeneral.push(message);
+              if (issue.code === 'payer_sum_mismatch') payerSumMessage = message;
+            }
           }
         }
       }
@@ -274,6 +287,7 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
   const splitErrors: Record<PersonId, string> = {};
   const splitGeneral: string[] = [];
   let splitProgress: Spoken | null = null;
+  let splitSumMessage: string | null = null;
   let spec: SplitSpec;
   if (!isGroup) {
     spec = { type: 'equal', participants: [me] };
@@ -366,7 +380,11 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
       for (const issue of check.issues) {
         if (!total && (issue.code === 'exact_sum_mismatch' || issue.code === 'non_positive_total')) continue;
         if (issue.personId && issue.code !== 'exact_sum_mismatch' && issue.code !== 'percent_sum_out_of_tolerance') splitErrors[issue.personId] = issueMessage(f, issue, currency);
-        else splitGeneral.push(issueMessage(f, issue, currency));
+        else {
+          const message = issueMessage(f, issue, currency);
+          splitGeneral.push(message);
+          if (issue.code === 'exact_sum_mismatch' && splitProgress) splitSumMessage = message;
+        }
       }
     } else if (total) {
       resolved = Object.fromEntries(resolveSplit(spec, total).map((s) => [s.personId, s.amount]));
@@ -395,9 +413,11 @@ export function evaluate(state: FormState, ctx: FormContext): Evaluation {
     payerErrors,
     payerGeneral,
     payerProgress,
+    payerSumMessage: payerProgress ? payerSumMessage : null,
     splitErrors,
     splitGeneral,
     splitProgress,
+    splitSumMessage,
     resolved,
     spec,
     draft,

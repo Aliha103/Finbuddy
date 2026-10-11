@@ -2,21 +2,20 @@
 // The settle map: a group's debts in one currency drawn on its white card. Members are rings on a
 // rail in the group's line colour; every debt is an arc from payer to payee. The segmented toggle
 // "All debts | Fewest payments" morphs between pairwiseDebts and simplifyDebts from one shared
-// progress value (Reanimated); the amount chips are real text riding each arc's apex, each a button
-// that opens Settle up. Reduce Motion switches instantly. Until Skia can draw (the web preview
+// progress value (Reanimated); the amount chips are real text riding each arc's apex (labels, not
+// buttons: each transfer's Settle up is a full-size button in the plan under the map, and chips
+// packed 22 points apart could never be 44-point targets). Reduce Motion switches instantly. Until Skia can draw (the web preview
 // before CanvasKit loads) the map is a plain list of the same transfers.
 import type { Money, Transfer } from '@finbuddy/shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
+import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { EASING, SPACE, Text, useHaptic, useTheme, type LineColor } from '@/design';
+import { EASING, SPACE, Segmented, Text, graphicColor, useHaptic, useTheme, type LineColor, type SegmentOption } from '@/design';
 
 import type { Spoken } from '../common/format';
 import { useSkiaReady } from '../common/skiaWeb';
-import { graphicColor } from './graphicColor';
-import { Segmented } from './Segmented';
 import { SettleArcs } from './SettleArcs';
 import { CHIP_HEIGHT, CHIP_WIDTH, LABEL_HEIGHT, RING_R, blend, buildSlots, layoutStations, mapMetrics, type ArcSlot } from './settleMapGeometry';
 
@@ -39,16 +38,18 @@ export interface SettleMapProps {
   onModeChange: (mode: SettleMapMode) => void;
   line: LineColor;
   money: (m: Money) => string;
-  /** The sentence for one transfer, for chips and the spoken summary. */
+  /** The sentence for one transfer, for the spoken summary and the plain list. */
   sentence: (t: Transfer) => Spoken;
-  onSelect?: (t: Transfer) => void;
   testID?: string;
 }
 
 const MORPH_MS = 600;
-const MODES: readonly SettleMapMode[] = ['all', 'fewest'];
+const MODES: readonly SegmentOption<SettleMapMode>[] = [
+  { id: 'all', label: 'All debts', description: 'Every debt between two people, netted pair by pair' },
+  { id: 'fewest', label: 'Fewest payments', description: 'The fewest payments that settle everyone' },
+];
 
-export function SettleMap({ members, all, fewest, mode, onModeChange, line, money, sentence, onSelect, testID }: SettleMapProps) {
+export function SettleMap({ members, all, fewest, mode, onModeChange, line, money, sentence, testID }: SettleMapProps) {
   const theme = useTheme();
   const c = theme.colors;
   const haptic = useHaptic();
@@ -105,9 +106,9 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
   return (
     <View style={styles.box} testID={testID}>
       <Segmented
-        values={['All debts', 'Fewest payments']}
-        selectedIndex={MODES.indexOf(mode)}
-        onChange={(i) => onModeChange(MODES[i] ?? 'fewest')}
+        options={MODES}
+        value={mode}
+        onChange={onModeChange}
         label="How to show the debts"
         testID={testID ? `${testID}-mode` : undefined}
       />
@@ -144,7 +145,7 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
                 );
               })}
               {slots.map((slot) => (
-                <AmountChip key={slot.key} slot={slot} mode={mode} progress={progress} railY={railY} money={money} sentence={sentence} onSelect={onSelect} />
+                <AmountChip key={slot.key} slot={slot} mode={mode} progress={progress} railY={railY} money={money} />
               ))}
             </>
           ) : null}
@@ -171,23 +172,7 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
   );
 }
 
-function AmountChip({
-  slot,
-  mode,
-  progress,
-  railY,
-  money,
-  sentence,
-  onSelect,
-}: {
-  slot: ArcSlot;
-  mode: SettleMapMode;
-  progress: SharedValue<number>;
-  railY: number;
-  money: (m: Money) => string;
-  sentence: (t: Transfer) => Spoken;
-  onSelect?: (t: Transfer) => void;
-}) {
+function AmountChip({ slot, mode, progress, railY, money }: { slot: ArcSlot; mode: SettleMapMode; progress: SharedValue<number>; railY: number; money: (m: Money) => string }) {
   const { colors: c } = useTheme();
   const style = useAnimatedStyle(() => {
     const g = blend(slot, progress.value);
@@ -200,27 +185,14 @@ function AmountChip({
   // The amount printed is the one in the state the map is heading to; the chip fades with its arc.
   const amount = mode === 'fewest' ? (slot.amountB ?? slot.amountA) : (slot.amountA ?? slot.amountB);
   if (!amount) return null;
-  const present = mode === 'fewest' ? slot.b.present : slot.a.present;
-  const transfer: Transfer = { from: slot.from, to: slot.to, amount };
-  const said = sentence(transfer);
+  // The map is one accessible image whose label is the whole plan, so the chip is for the eye only.
   return (
-    <Animated.View style={[styles.chipWrap, style]} pointerEvents={present ? 'box-none' : 'none'}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={said.spoken}
-        accessibilityHint={onSelect ? 'Opens Settle up for this payment' : undefined}
-        accessibilityElementsHidden={!present}
-        importantForAccessibility={present ? 'yes' : 'no-hide-descendants'}
-        disabled={!onSelect || !present}
-        onPress={onSelect ? () => onSelect(transfer) : undefined}
-        hitSlop={6}
-        style={({ pressed }) => [styles.chip, { backgroundColor: pressed ? c.pressed : c.fill, borderColor: c.surface }]}
-        testID={`arc-${slot.from}-${slot.to}`}
-      >
-        <Text role="caption" tabular style={[styles.chipText, { color: c.label }]} numberOfLines={1} importantForAccessibility="no">
+    <Animated.View style={[styles.chipWrap, style]} pointerEvents="none" importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+      <View style={[styles.chip, { backgroundColor: c.fill, borderColor: c.surface }]} testID={`arc-${slot.from}-${slot.to}`}>
+        <Text role="caption" tabular style={[styles.chipText, { color: c.label }]} numberOfLines={1}>
           {money(amount)}
         </Text>
-      </Pressable>
+      </View>
     </Animated.View>
   );
 }

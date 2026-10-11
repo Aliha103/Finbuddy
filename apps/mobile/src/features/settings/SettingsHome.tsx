@@ -12,7 +12,7 @@ import { Field, ListSection, Row, SPACE, SampleChip, Text, useTheme } from '@/de
 import { StorageBar } from '../common/Banners';
 import { currencyNames, exampleMoney } from '../common/currency';
 import { Screen } from '../common/Screen';
-import { useFormat } from '../common/format';
+import { cleanName, useFormat } from '../common/format';
 
 export const REPOSITORY_URL = 'https://github.com/Aliha103/Finbuddy';
 
@@ -25,7 +25,8 @@ export function SettingsHome() {
   // `draft` is null while the field is untouched, so the profile's own name shows without an effect.
   const [draft, setDraft] = useState<string | null>(null);
   const [nameError, setNameError] = useState<string | null>(null);
-  const name = draft ?? profile?.displayName ?? '';
+  // Shown the way every other screen shows it (the " (sample)" marker is the Sample chip's job).
+  const name = draft ?? cleanName(profile?.displayName ?? '');
 
   const saveName = () => {
     if (!profile || draft === null) return;

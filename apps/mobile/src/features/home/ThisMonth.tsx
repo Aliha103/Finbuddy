@@ -9,8 +9,7 @@ import { useSpending, type CurrencySpending } from '@/data';
 import { ListSection, Readout, Row, SPACE, useTheme } from '@/design';
 import { currencyNames } from '@/features/common/currency';
 import type { Formatter } from '@/features/common/format';
-
-import { SectionEmpty } from './SectionEmpty';
+import { SectionEmpty } from '@/features/common/SectionEmpty';
 
 /** "up 68% on last month, £829.50 more" / "down 12% on last month, £40.00 less" / null when there is nothing to compare. */
 export function changeWords(f: Formatter, spending: CurrencySpending): string | null {

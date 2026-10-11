@@ -10,19 +10,18 @@ import { useEffect, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 
 import { deleteExpense, useDataStore, useExpense, useGroups } from '@/data';
-import { Card, HoldToConfirm, ListSection, Readout, Row, SPACE, SampleChip, Text, useTheme } from '@/design';
+import { Card, CategoryIcon, HoldToConfirm, ListSection, Readout, Row, SPACE, SampleChip, Text, bestOn, useTheme } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
-import { useFormat, type Formatter } from '@/features/common/format';
+import { cleanName, useFormat, type Formatter } from '@/features/common/format';
 import { HeaderButton } from '@/features/common/HeaderButton';
+import { PersonAvatar } from '@/features/common/PersonAvatar';
 import { Screen } from '@/features/common/Screen';
 import { useGroupLineColor } from '@/features/groups/lineColors';
 
-import { CategoryIcon } from './components/CategoryIcon';
-import { PersonAvatar } from './components/PersonAvatar';
 import { RemainderTick, SplitBar } from './components/SplitBar';
-import { enteredValue, personName, plainName, splitSentence } from './model';
-import { bestOn, remainderCarriers, shareColour } from './splitMath';
+import { enteredValue, splitSentence } from './model';
+import { remainderCarriers, shareColour } from './splitMath';
 
 const INK = '#1A1420';
 
@@ -69,6 +68,11 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
   const blocked = deletionIssues('expenses', expense.id, snapshot);
   const carriers = remainderCarriers(expense.split, expense.splits, total.amountMinor);
   const shared = group !== null && expense.splits.length > 1;
+  // A personal expense has one share, the whole total: "Split equally between 1 person" says nothing.
+  const only = expense.splits.length === 1 ? expense.splits[0] : undefined;
+  const shareFooter = only
+    ? `${!group ? 'A personal expense: you carry' : f.isMe(only.personId) ? 'You carry' : `${f.name(only.personId)} carries`} all of ${f.money(total)}.`
+    : `${splitSentence(f, expense.split)}. The shares add up exactly to ${f.money(total)}.`;
   const colour = (i: number) => shareColour(line.fill, i, theme.scheme);
   const shareIndex = new Map(expense.splits.map((s, i) => [s.personId, i]));
   // A person keeps one colour on this screen: their share's, wherever they appear.
@@ -78,7 +82,7 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
   };
   const avatar = (personId: PersonId) => {
     const fill = fillFor(personId);
-    return <PersonAvatar name={personName(f, personId)} size={28} fill={fill} on={fill ? bestOn(fill, ['#FFFFFF', INK]) : undefined} />;
+    return <PersonAvatar name={f.name(personId)} size={28} fill={fill} on={fill ? bestOn(fill, ['#FFFFFF', INK]) : undefined} />;
   };
   const spokenTotal = f.spokenMoney(total);
   const title = expense.description || f.category(expense.categoryId);
@@ -124,7 +128,7 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
           {shared ? (
             <View style={styles.bar}>
               <SplitBar
-                people={expense.splits.map((s) => ({ id: s.personId, name: personName(f, s.personId), amountMinor: s.amount.amountMinor, remainder: carriers.has(s.personId) }))}
+                people={expense.splits.map((s) => ({ id: s.personId, name: f.name(s.personId), amountMinor: s.amount.amountMinor, remainder: carriers.has(s.personId) }))}
                 totalMinor={total.amountMinor}
                 currency={currency}
                 locale={f.locale}
@@ -141,7 +145,7 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
         {expense.paidBy.map((p) => (
           <Row
             key={p.personId}
-            title={personName(f, p.personId)}
+            title={f.name(p.personId)}
             leading={avatar(p.personId)}
             detail={<Readout money={p.amount} locale={f.locale} role="readoutS" inline />}
             testID={`expense-payer-${p.personId}`}
@@ -149,14 +153,14 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
         ))}
       </ListSection>
 
-      <ListSection header={expense.splits.length > 1 ? 'Shares' : 'Share'} footer={`${splitSentence(f, expense.split)}. The shares add up exactly to ${f.money(total)}.`} style={styles.flushList}>
+      <ListSection header={expense.splits.length > 1 ? 'Shares' : 'Share'} footer={shareFooter} style={styles.flushList}>
         {expense.splits.map((s) => {
           const entered = enteredValue(f, expense, s.personId);
           const remainder = carriers.has(s.personId);
           return (
             <Row
               key={s.personId}
-              title={personName(f, s.personId)}
+              title={f.name(s.personId)}
               subtitle={entered ?? undefined}
               leading={avatar(s.personId)}
               detail={
@@ -177,7 +181,7 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
         {group ? (
           <Row
             title="Group"
-            detail={<Text role="body" color="labelSecondary" numberOfLines={1}>{plainName(group.name)}</Text>}
+            detail={<Text role="body" color="labelSecondary" numberOfLines={1}>{cleanName(group.name)}</Text>}
             sample={!!group.isSample}
             onPress={() => router.push({ pathname: '/(tabs)/(groups)/[groupId]', params: { groupId: group.id } })}
             chevron
@@ -201,7 +205,7 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
           </Text>
         ) : (
           <Text role="footnote" color="labelSecondary">
-            {group ? `Deleting it changes the balances in ${plainName(group.name)}.` : 'Deleting it removes it from your spending.'}
+            {group ? `Deleting it changes the balances in ${cleanName(group.name)}.` : 'Deleting it removes it from your spending.'}
           </Text>
         )}
       </View>
@@ -210,7 +214,7 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
 }
 
 function shareLabel(f: Formatter, personId: PersonId, amount: Expense['total'], remainder: boolean): string {
-  const base = `${personName(f, personId)}, ${formatMoney(amount, { locale: f.locale, currencyDisplay: 'name' })}`;
+  const base = `${f.name(personId)}, ${formatMoney(amount, { locale: f.locale, currencyDisplay: 'name' })}`;
   return remainder ? `${base}, includes one leftover ${formatMoney({ amountMinor: 1, currency: amount.currency }, { locale: f.locale, currencyDisplay: 'name' })}` : base;
 }
 

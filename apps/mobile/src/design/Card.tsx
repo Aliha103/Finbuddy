@@ -2,8 +2,8 @@
 // The fare card. A flat ID-1-cornered card on the surface colour. A group's card wears its line
 // colour as a 6-point band on the leading edge and in its name chip (DECISIONS.md), never as a
 // full fill; the FinBuddy card on Home is the one card in the tint. Presses with the press spring.
-import { createContext, use, type ReactNode } from 'react';
-import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { createContext, use, useState, type ReactNode } from 'react';
+import { Pressable, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import { useHaptic } from './haptics';
@@ -32,7 +32,10 @@ export const LINE_BAND = 6;
 export interface CardProps {
   /** The group's line colour: drawn as the leading-edge band. The card itself stays on the surface colour. */
   line?: LineColor;
-  /** A fixed width:height ratio (the Groups list uses 16:9 on phones, 1.586 on wide screens). */
+  /**
+   * The card's proportion, width:height (the Groups list uses 16:9 on phones, 1.586 on wide
+   * screens). It is a minimum: the card grows with its content at large text sizes, never clips it.
+   */
   aspect?: number;
   onPress?: () => void;
   accessibilityLabel?: string;
@@ -53,6 +56,11 @@ export function Card({ line, aspect, onPress, accessibilityLabel, accessibilityH
   const scale = useSharedValue(1);
   const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
   const cardColors: CardColors | null = tone === 'tint' ? { fill: colors.tint, on: colors.onTint, onMuted: muted(colors.onTint) } : null;
+  // The proportion as a minimum height from the measured width (aspectRatio would fix the height and
+  // cut off a readout once the text grows).
+  const [width, setWidth] = useState(0);
+  const onLayout = aspect ? (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width) : undefined;
+  const proportion: ViewStyle | null = aspect ? (width > 0 ? { minHeight: width / aspect } : { aspectRatio: aspect }) : null;
 
   const surface: ViewStyle =
     tone === 'tint'
@@ -61,12 +69,12 @@ export function Card({ line, aspect, onPress, accessibilityLabel, accessibilityH
         ? { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.separator }
         : { backgroundColor: tone === 'surfaceAlt' ? colors.surfaceAlt : colors.surface };
 
-  const visual = [styles.card, surface, { padding, paddingLeft: line ? padding + LINE_BAND : padding }, aspect ? { aspectRatio: aspect } : null];
+  const visual = [styles.card, surface, { padding, paddingLeft: line ? padding + LINE_BAND : padding }];
   const band = line ? <View style={[styles.band, { backgroundColor: line.fill }]} importantForAccessibility="no" /> : null;
 
   if (!onPress) {
     return (
-      <Animated.View style={[visual, style]} testID={testID}>
+      <Animated.View style={[visual, proportion, style]} onLayout={onLayout} testID={testID}>
         {band}
         <CardContext value={cardColors}>{children}</CardContext>
       </Animated.View>
@@ -78,7 +86,8 @@ export function Card({ line, aspect, onPress, accessibilityLabel, accessibilityH
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
-      style={[aspect ? { aspectRatio: aspect } : null, style]}
+      style={[proportion, style]}
+      onLayout={onLayout}
       testID={testID}
       onPress={onPress}
       onPressIn={() => {

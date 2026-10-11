@@ -1,6 +1,6 @@
-// apps/mobile/src/features/home/SectionEmpty.tsx
-// A section's empty state on Home: a surface card with the fact in a headline, one sentence, and
-// at most one quiet action. Smaller than the screen-level EmptyState, so Home keeps its rhythm.
+// apps/mobile/src/features/common/SectionEmpty.tsx
+// A section's empty state inside a screen: a surface card with the fact in a headline, one sentence, and
+// at most one quiet action. Smaller than the screen-level EmptyState, so the screen keeps its rhythm.
 import { StyleSheet, View } from 'react-native';
 
 import { Button, Card, SPACE, Text, type IconName } from '@/design';

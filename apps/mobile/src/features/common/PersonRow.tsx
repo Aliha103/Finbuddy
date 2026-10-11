@@ -1,5 +1,5 @@
-// apps/mobile/src/features/expense/components/PersonRow.tsx
-// One person in the split editor or the payers screen: their avatar in the bar's colour, their
+// apps/mobile/src/features/common/PersonRow.tsx
+// One person in a list of people (the split editor, the payers screen): their avatar, their
 // name, the method's control at the trailing end, and the problem with that row in words under it.
 // At large text sizes the control drops under the name instead of squeezing it.
 import type { ReactNode } from 'react';

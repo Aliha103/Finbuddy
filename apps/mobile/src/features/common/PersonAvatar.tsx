@@ -1,5 +1,5 @@
-// apps/mobile/src/features/expense/components/PersonAvatar.tsx
-// A person's initials on a disc. Under the split bar it wears the group's line colour; elsewhere
+// apps/mobile/src/features/common/PersonAvatar.tsx
+// A person's initials on a disc. In a split it wears the person's share colour; elsewhere
 // the tint wash. Decorative: the row beside it carries the name.
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 

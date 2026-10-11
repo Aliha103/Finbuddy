@@ -1,30 +1,34 @@
 // apps/mobile/src/features/common/Screen.tsx
-// The scrolling body of a screen: the ground colour, the 16-point gutter, safe-area bottom padding,
-// and the native large-title collapse on iOS (contentInsetAdjustmentBehavior). Content stacks
-// with the grid's 24-point section gap.
+// The scrolling body of a screen: the ground colour, the 16-point gutter, safe-area bottom padding
+// that also clears whatever floats over the bottom edge (the FAB, the iOS bottom accessory), and the
+// native large-title collapse on iOS (contentInsetAdjustmentBehavior). Content stacks with the
+// grid's 24-point section gap.
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SPACE, useTheme } from '@/design';
 
+import { useFloatingInset } from './Fab';
+
 export interface ScreenProps extends Omit<ScrollViewProps, 'style' | 'contentContainerStyle'> {
   children: ReactNode;
   /** No horizontal gutter: for screens whose rows run edge to edge (Material lists). */
   flush?: boolean;
-  /** Extra space at the bottom (a FAB, a floating accessory). */
-  bottomSpace?: number;
+  /** The screen shows the Material FAB: the bottom inset clears it. */
+  fab?: boolean;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
 }
 
-export function Screen({ children, flush, bottomSpace = 0, style, contentStyle, ...rest }: ScreenProps) {
+export function Screen({ children, flush, fab = false, style, contentStyle, ...rest }: ScreenProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const floating = useFloatingInset(fab);
   return (
     <ScrollView
       style={[styles.flex, { backgroundColor: colors.ground }, style]}
-      contentContainerStyle={[styles.content, flush ? null : styles.gutter, { paddingBottom: insets.bottom + SPACE.xxl + bottomSpace }, contentStyle]}
+      contentContainerStyle={[styles.content, flush ? null : styles.gutter, { paddingBottom: insets.bottom + floating + SPACE.xxl }, contentStyle]}
       contentInsetAdjustmentBehavior="automatic"
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"

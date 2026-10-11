@@ -12,10 +12,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { confirmSettlement, recordSettlement, useDataStore, useGroup, useProfile } from '@/data';
 import { Button, Chip, ChipRow, DURATION, Field, HoldToConfirm, Readout, SPACE, Text, useTheme } from '@/design';
 
-import { parseErrorMessage } from '../common/format';
+import { parseErrorMessage, useFormat } from '../common/format';
 import { HeaderButton } from '../common/HeaderButton';
+import { webHeaderBack } from '../common/navigation';
 import { Screen } from '../common/Screen';
-import { useGroupFormat } from '../groups/format';
 
 const METHODS: readonly { id: SettlementMethod; label: string }[] = [
   { id: 'cash', label: 'Cash' },
@@ -38,7 +38,7 @@ export function SettleUp() {
   const groupId = params.groupId ?? null;
   const from = params.from ?? '';
   const to = params.to ?? '';
-  const f = useGroupFormat();
+  const f = useFormat();
   const profile = useProfile();
   const detail = useGroup(groupId ?? '');
   const snapshot = useDataStore((s) => s.snapshot);
@@ -232,7 +232,7 @@ export function SettleUp() {
         options={{
           title: 'Settle up',
           // Android's full-screen dialog closes with an X on the leading edge; a pushed card (the web preview) keeps its back arrow.
-          headerLeft: Platform.OS === 'android' || !router.canGoBack() ? () => <HeaderButton label="Close" icon="close" onPress={close} testID="settle-cancel" /> : undefined,
+          headerLeft: Platform.OS === 'android' || !router.canGoBack() ? () => <HeaderButton label="Close" icon="close" onPress={close} testID="settle-cancel" /> : webHeaderBack,
         }}
       />
       <Screen testID="settle">{body}</Screen>

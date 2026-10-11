@@ -37,17 +37,22 @@ export function StorageBar({ explain = true }: { explain?: boolean }) {
 
 /** Shown under the Home title while the profile is the sample one. */
 export function SampleBanner() {
-  const { colors } = useTheme();
+  const { colors, minTouch } = useTheme();
   const profile = useProfile();
   if (!profile?.isSample) return null;
   return (
     <View style={[styles.bar, { backgroundColor: colors.surfaceAlt }]} testID="sample-banner">
-      <View style={styles.inner}>
+      <View style={[styles.inner, styles.wrap]}>
         <Icon name="sample" size={18} color={colors.labelSecondary} />
-        <Text role="subhead" color="labelSecondary" style={styles.text}>
+        <Text role="subhead" color="labelSecondary" style={styles.sampleText}>
           {"You're looking at sample data"}
         </Text>
-        <Pressable accessibilityRole="button" onPress={() => router.push('/onboarding/profile')} hitSlop={8}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/onboarding/profile')}
+          style={({ pressed }) => [styles.linkTarget, { minHeight: minTouch, opacity: pressed ? 0.6 : 1 }]}
+          testID="sample-banner-start"
+        >
           <Text role="subhead" color="tint" style={styles.link}>
             Start with your own
           </Text>
@@ -61,5 +66,12 @@ const styles = StyleSheet.create({
   bar: { borderRadius: RADIUS.tile, paddingHorizontal: SPACE.m, minHeight: 44, justifyContent: 'center' },
   inner: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s, paddingVertical: SPACE.s },
   text: { flex: 1 },
+  // When the words and the link do not fit on one line (large text, narrow phones), the link moves
+  // under the words instead of squeezing them into a column of single words.
+  wrap: { flexWrap: 'wrap' },
+  sampleText: { flexGrow: 1, flexShrink: 1, flexBasis: 120 },
+  // The link's target is the full 44/48 points: it reaches into the bar's own padding (negative
+  // margins) so the bar keeps its height and the words stay where they were.
+  linkTarget: { justifyContent: 'center', paddingHorizontal: SPACE.s, marginHorizontal: -SPACE.s, marginVertical: -SPACE.s },
   link: { fontWeight: '600' },
 });

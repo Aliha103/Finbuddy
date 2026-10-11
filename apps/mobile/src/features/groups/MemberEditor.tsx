@@ -7,7 +7,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Button, Chip, ChipRow, Field, SPACE, Text } from '@/design';
 
-import { cleanName } from './format';
+import { cleanName } from '../common/format';
 
 export interface MemberEditorProps {
   /** People who can be added (everyone this device knows except the owner and current members). */

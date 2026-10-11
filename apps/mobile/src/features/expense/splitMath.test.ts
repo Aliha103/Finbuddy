@@ -1,7 +1,7 @@
 import { formatMoney, resolveSplit } from '@finbuddy/shared';
 import { describe, expect, it } from 'vitest';
 
-import { adjustShare, bestOn, contrast, dragStep, formatMinorWorklet, mixHex, moneyFormatSpec, moveBoundary, remainderCarriers, snapBoundary } from './splitMath';
+import { adjustShare, dragStep, formatMinorWorklet, moneyFormatSpec, moveBoundary, remainderCarriers, snapBoundary } from './splitMath';
 
 describe('moveBoundary', () => {
   it('moves whole minor units between two neighbours and keeps the sum', () => {
@@ -116,15 +116,5 @@ describe('snapBoundary and dragStep', () => {
     expect(dragStep(0, 3000, 358)).toBe(100);
     // £10 on 358 points: £1 is 35.8 points.
     expect(dragStep(2, 1000, 358)).toBe(100);
-  });
-});
-
-describe('colour helpers', () => {
-  it('mixes and picks the readable label', () => {
-    expect(mixHex('#000000', '#FFFFFF', 0.5)).toBe('#808080');
-    expect(mixHex('#1F4FD8', '#FFFFFF', 1)).toBe('#1F4FD8');
-    expect(contrast('#FFFFFF', '#000000')).toBeCloseTo(21, 0);
-    expect(bestOn('#F2B705', ['#FFFFFF', '#1A1420'])).toBe('#1A1420');
-    expect(bestOn('#1F4FD8', ['#FFFFFF', '#1A1420'])).toBe('#FFFFFF');
   });
 });

@@ -41,6 +41,7 @@ import {
   type IconName,
   type TypeRole,
 } from '@/design';
+import { cleanName } from '@/features/common/format';
 
 /** True where the gallery may render: development, or the web preview. */
 export const GALLERY_ENABLED = __DEV__ || Platform.OS === 'web';
@@ -227,7 +228,7 @@ export function Gallery() {
         </View>
         <Text role="footnote" color="labelSecondary">
           A group&apos;s card stays on the surface; its line colour is the band on the leading edge and the name chip. Assigned per group from a hash of its id:{' '}
-          {sample.groupCards.map((g) => `${g.group.name.replace(' (sample)', '')} → ${lineColorFor(g.group.id).name}`).join(', ')}.
+          {sample.groupCards.map((g) => `${cleanName(g.group.name)} → ${lineColorFor(g.group.id).name}`).join(', ')}.
         </Text>
       </Section>
 
@@ -288,7 +289,7 @@ export function Gallery() {
         <ChipRow label="Who" role="list">
           <Chip label="Just me" icon="person" role="radio" selected={false} onPress={() => {}} />
           {sample.groupCards.map((g) => (
-            <Chip key={g.group.id} label={g.group.name.replace(' (sample)', '')} role="radio" selected={false} onPress={() => {}} />
+            <Chip key={g.group.id} label={cleanName(g.group.name)} role="radio" selected={false} onPress={() => {}} />
           ))}
           <Chip label="Disabled" disabled />
         </ChipRow>

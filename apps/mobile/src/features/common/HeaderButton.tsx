@@ -1,6 +1,7 @@
 // apps/mobile/src/features/common/HeaderButton.tsx
 // Navigation-bar items: an icon button (the avatar, "+") or a text button ("Done", "Save"),
 // each a 44-point target in the tint colour.
+import { router } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 
 import { Icon, SPACE, Text, useHaptic, useTheme, type IconName } from '@/design';
@@ -41,6 +42,16 @@ export function HeaderButton({ label, icon, onPress, disabled, emphasis, testID 
       )}
     </Pressable>
   );
+}
+
+/**
+ * The web preview's back control in a stack header. React Navigation's own is a 30-point link
+ * there (its hitSlop does nothing on the web); this is the same arrow in a full Material target,
+ * named after the screen it returns to ("Groups, back").
+ */
+export function HeaderBack({ canGoBack, label, onPress }: { canGoBack?: boolean; label?: string; onPress?: () => void }) {
+  if (!canGoBack) return null;
+  return <HeaderButton label={label && label !== 'Back' ? `${label}, back` : 'Go back'} icon="back" onPress={onPress ?? (() => router.back())} testID="header-back" />;
 }
 
 const styles = StyleSheet.create({

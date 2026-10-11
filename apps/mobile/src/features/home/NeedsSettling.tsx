@@ -8,12 +8,9 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { useGroups, useMySettleUps, type SettleUpItem } from '@/data';
-import { Button, DURATION, ListSection, Readout, Row, SPACE, useTheme } from '@/design';
-import { transferSentence, type Formatter, type Spoken } from '@/features/common/format';
-
-import { cleanName } from './formatter';
-import { useLayoutTransition } from './motion';
-import { SectionEmpty } from './SectionEmpty';
+import { Button, DURATION, ListSection, Readout, Row, SPACE, useLayoutTransition, useTheme } from '@/design';
+import { cleanName, transferSentence, type Formatter, type Spoken } from '@/features/common/format';
+import { SectionEmpty } from '@/features/common/SectionEmpty';
 
 /** Rows beyond this many hand over to Groups, which lists every plan in full. */
 const MAX_ROWS = 5;

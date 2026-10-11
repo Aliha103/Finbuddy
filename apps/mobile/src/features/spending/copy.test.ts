@@ -2,10 +2,10 @@
 import { addMonths, createSampleData, formatMoney, generateInsights, monthOf, monthOverMonth, spendingByMonth, type Money, type PersonId } from '@finbuddy/shared';
 import { describe, expect, test } from 'vitest';
 
-import type { Formatter } from '@/features/common/format';
+import { changeInWords, monthName, paceSentence, type Formatter } from '@/features/common/format';
 
 import { findPace } from './budgetPace';
-import { changeInWords, excludedNote, expenseCount, monthName, paceSentence } from './copy';
+import { excludedNote, expenseCount } from './copy';
 import { indexAtX, layoutBars } from './barGeometry';
 
 /** A Formatter for en-GB without the data layer (the real one is a hook). */

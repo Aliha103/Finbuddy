@@ -5,6 +5,8 @@
 // marks the people the engine's largest-remainder allocation gave the leftover minor unit to.
 import { allocateMinor, formatMoneyToParts, minorUnits, type CurrencyCode, type PersonId, type Split, type SplitSpec } from '@finbuddy/shared';
 
+import { mixHex } from '@/design/color';
+
 /** What a worklet needs to print an amount the way formatMoney would, without Intl. */
 export interface MoneyFormatSpec {
   readonly decimals: number;
@@ -121,29 +123,6 @@ export function dragStep(decimals: number, denominatorMinor: number, barWidth: n
   return unit;
 }
 
-/** '#RRGGBB' mixed toward another colour: t = 1 is `a`, 0 is `b`. */
-export function mixHex(a: string, b: string, t: number): string {
-  const parse = (hex: string) => {
-    const m = /^#([0-9a-f]{6})$/i.exec(hex);
-    const n = m ? parseInt(m[1] ?? '0', 16) : 0;
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255] as const;
-  };
-  const ca = parse(a);
-  const cb = parse(b);
-  const out = ca.map((v, i) => Math.round(v * t + (cb[i] ?? 0) * (1 - t)));
-  return `#${out.map((v) => v.toString(16).padStart(2, '0')).join('')}`.toUpperCase();
-}
-
-function luminance(hex: string): number {
-  const m = /^#([0-9a-f]{6})$/i.exec(hex);
-  const n = m ? parseInt(m[1] ?? '0', 16) : 0;
-  const channel = (v: number) => {
-    const c = v / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255);
-}
-
 /**
  * A person's colour in the split: the line colour at full strength for every other person, and a
  * lighter mix between them, toward white in both schemes so the lighter segments stand off a dark
@@ -151,17 +130,6 @@ function luminance(hex: string): number {
  */
 export function shareColour(fill: string, index: number, scheme: 'light' | 'dark'): string {
   return index % 2 === 0 ? fill : mixHex(fill, '#FFFFFF', scheme === 'dark' ? 0.5 : 0.6);
-}
-
-/** WCAG contrast ratio between two '#RRGGBB' colours. */
-export function contrast(a: string, b: string): number {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
-  return (hi + 0.05) / (lo + 0.05);
-}
-
-/** Of the candidates, the one that reads best on `background`. */
-export function bestOn(background: string, candidates: readonly string[]): string {
-  return [...candidates].sort((x, y) => contrast(y, background) - contrast(x, background))[0] ?? '#000000';
 }
 
 /**

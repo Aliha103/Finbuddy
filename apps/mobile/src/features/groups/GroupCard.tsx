@@ -6,13 +6,13 @@
 // readout per currency (two shown, "+n more" beyond).
 import type { Money } from '@finbuddy/shared';
 import { useMemo } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import type { GroupSummary } from '@/data';
-import { Card, LineChip, Readout, SPACE, SampleChip, Text, useTheme, type LineColor } from '@/design';
+import { Card, LineChip, Readout, SPACE, SampleChip, StatusChip, Text, useAppWidth, useTheme, type LineColor } from '@/design';
 
-import type { Formatter } from '../common/format';
-import { cleanName, initialOf, peopleCount } from './format';
+import { cleanName, initialOf, type Formatter } from '../common/format';
+import { peopleCount } from './format';
 
 export interface GroupCardProps {
   summary: GroupSummary;
@@ -34,10 +34,13 @@ const INITIALS = 5;
 export function GroupCard({ summary, line, memberNames, f, onPress, variant = 'list', testID }: GroupCardProps) {
   const theme = useTheme();
   const c = theme.colors;
-  const { width } = useWindowDimensions();
+  const width = useAppWidth();
   const { group, myNet } = summary;
   const name = cleanName(group.name);
   const aspect = width >= 600 ? 1.586 : 16 / 9;
+  // The card's shape is a minimum, not a fixed size: at large text sizes or on narrow phones its
+  // content grows past 16:9, and a fixed ratio would clip the readout off the bottom of the card.
+  const minHeight = Math.round((width - 2 * SPACE.gutter) / aspect);
   const shown = myNet.slice(0, SHOWN);
   const more = myNet.length - shown.length;
   const position = useMemo(() => {
@@ -54,10 +57,9 @@ export function GroupCard({ summary, line, memberNames, f, onPress, variant = 'l
     <Card
       line={line}
       onPress={onPress}
-      aspect={aspect}
       accessibilityLabel={onPress ? label : undefined}
       accessibilityHint={onPress ? 'Opens balances, the settle-up plan and expenses' : undefined}
-      style={group.archived ? styles.archived : null}
+      style={[{ minHeight }, group.archived ? styles.archived : null]}
       testID={testID}
     >
       <View style={styles.content} accessible={!onPress} accessibilityLabel={onPress ? undefined : label}>
@@ -66,13 +68,7 @@ export function GroupCard({ summary, line, memberNames, f, onPress, variant = 'l
             <LineChip line={line} label={name} />
           </View>
           {group.isSample ? <SampleChip /> : null}
-          {group.archived ? (
-            <View style={[styles.archivedChip, { borderColor: c.labelSecondary }]}>
-              <Text role="caption" color="labelSecondary" style={styles.bold}>
-                Archived
-              </Text>
-            </View>
-          ) : null}
+          {group.archived ? <StatusChip label="Archived" tone="outlined" /> : null}
           <View style={styles.spacer} />
           <Text role="subhead" color="labelSecondary" tabular>
             {group.currency}
@@ -137,7 +133,6 @@ const styles = StyleSheet.create({
   content: { flex: 1, justifyContent: 'space-between', gap: SPACE.s },
   top: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s, flexWrap: 'wrap' },
   name: { flexShrink: 1, maxWidth: '75%' },
-  archivedChip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: SPACE.s, paddingVertical: 1 },
   spacer: { flex: 1 },
   members: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s },
   initials: { flexDirection: 'row', alignItems: 'center' },

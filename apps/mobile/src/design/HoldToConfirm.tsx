@@ -31,6 +31,15 @@ export interface HoldToConfirmProps {
   testID?: string;
 }
 
+/**
+ * True when the Gate is the two-step confirmation rather than the hold: a screen reader is on, motion
+ * is reduced, or the person chose "Confirm with a dialog instead of holding". Copy that explains the
+ * control ("Hold until the ring closes") reads this so it never describes the other path.
+ */
+export function gateUsesDialog(theme: { screenReader: boolean; reduceMotion: boolean; confirmWithDialog: boolean }): boolean {
+  return theme.screenReader || theme.reduceMotion || theme.confirmWithDialog;
+}
+
 const HEIGHT = 56;
 const RING = 40;
 const STROKE = 4;
@@ -81,7 +90,7 @@ export function HoldToConfirm({ label, summary, onConfirm, disabled, intent = 'm
   const scaled = useAnimatedStyle(() => ({ transform: [{ scale: pressScale.value }] }));
   const checkStyle = useAnimatedStyle(() => ({ opacity: progress.value >= 0.999 ? 1 : 0.35 + progress.value * 0.3 }));
 
-  const twoStep = mode === 'dialog' || (mode === 'auto' && (theme.screenReader || theme.reduceMotion || theme.confirmWithDialog));
+  const twoStep = mode === 'dialog' || (mode === 'auto' && gateUsesDialog(theme));
   if (twoStep) {
     return (
       <Pressable

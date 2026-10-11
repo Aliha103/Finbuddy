@@ -11,8 +11,8 @@ import { useInsights } from '@/data';
 import { Button, Card, Icon, RADIUS, SPACE, Text, useHaptic, useTheme } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
+import { useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
-import { useFormatter } from '@/features/home/formatter';
 
 import { BasisRows, useBasisMotion } from './Basis';
 import { INSIGHTS_FOOTER, insightCopy, severityLabel } from './copy';
@@ -39,7 +39,7 @@ function InsightDetail({ insightId }: { insightId: string }) {
   const theme = useTheme();
   const c = theme.colors;
   const ios = theme.platform === 'ios';
-  const f = useFormatter();
+  const f = useFormat();
   const haptic = useHaptic();
   const insight = useInsights().find((i) => i.id === insightId);
   const { dismissed } = useDismissedInsights();

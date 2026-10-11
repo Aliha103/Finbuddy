@@ -1,7 +1,8 @@
 // apps/mobile/src/features/common/DataGate.tsx
 // The state rules every screen shares (DIRECTION.md section 4): while the store loads, skeleton
 // bones in the screen's own layout; when saved data could not be read, one explanation and the
-// ways out; otherwise the content, crossfading in over the bones.
+// ways out; otherwise the content, crossfading in over the bones. Every screen gates itself, so its
+// own skeleton shows; a navigator only takes over for the error (DataErrorGate).
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -16,6 +17,16 @@ export function DataGate({ children, skeleton }: { children: ReactNode; skeleton
   if (status === 'loading') return <>{skeleton ?? <ListSkeleton />}</>;
   if (status === 'error') return <DataError />;
   return <Reveal style={styles.flex}>{children}</Reveal>;
+}
+
+/**
+ * For a navigator (the tabs): when saved data could not be read, the error replaces everything
+ * below it. While the store loads it renders its children, so each screen shows its own skeleton.
+ */
+export function DataErrorGate({ children }: { children: ReactNode }) {
+  const { status } = useDataStatus();
+  if (status === 'error') return <DataError />;
+  return <>{children}</>;
 }
 
 /** Bones in the shape of a list screen: a card and a few rows. */

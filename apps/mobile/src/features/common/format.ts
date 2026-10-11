@@ -1,4 +1,5 @@
 import {
+  addMonths,
   DEFAULT_CATEGORIES,
   formatMoney,
   getNumberSeparators,
@@ -8,12 +9,15 @@ import {
   type CurrencyCode,
   type LocalDate,
   type Money,
+  type MonthChange,
   type MonthKey,
   type ParseMoneyErrorCode,
   type PersonId,
   type Settlement,
   type Transfer,
 } from '@finbuddy/shared';
+
+import { useMemo } from 'react';
 
 import { useDeviceLocale, usePeople, useProfile } from '@/data';
 
@@ -22,6 +26,10 @@ import { useDeviceLocale, usePeople, useProfile } from '@/data';
  * formatMoney with the device locale, and every sentence also has a spoken form where amounts
  * carry their currency name ("12.50 British pounds"). Direction (owe, owed) is carried by the
  * words, never by colour alone.
+ *
+ * Sample people and groups carry " (sample)" in their stored names. The Formatter names people
+ * without it, and cleanName strips it from group names, because every sample row and card wears
+ * the Sample chip: the chip, not the name, says "demonstration data".
  */
 export interface Spoken {
   readonly text: string;
@@ -44,6 +52,18 @@ export interface Formatter {
   /** "You" for the profile owner, otherwise the person's name. */
   name(personId: PersonId): string;
   isMe(personId: PersonId): boolean;
+}
+
+const SAMPLE_SUFFIX = / \(sample\)$/;
+
+/** "Trip to Japan (sample)" -> "Trip to Japan". */
+export function cleanName(name: string): string {
+  return name.replace(SAMPLE_SUFFIX, '');
+}
+
+/** First letter of a cleaned name, for member initials. */
+export function initialOf(name: string): string {
+  return cleanName(name).trim().charAt(0).toUpperCase();
 }
 
 const categoryLabels = new Map<string, string>(DEFAULT_CATEGORIES.map((c) => [c.id, c.defaultLabel]));
@@ -87,7 +107,7 @@ export function createFormatter(locale: string, me: PersonId | null, names: Read
       return name && name !== c ? `${name} (${c})` : c;
     },
     category: categoryLabel,
-    name: (personId) => (personId === me ? 'You' : (names.get(personId)?.displayName ?? 'Someone')),
+    name: (personId) => (personId === me ? 'You' : cleanName(names.get(personId)?.displayName ?? 'Someone')),
     isMe: (personId) => personId === me,
   };
 }
@@ -96,17 +116,18 @@ export function useFormat(): Formatter {
   const locale = useDeviceLocale();
   const profile = useProfile();
   const people = usePeople();
-  return createFormatter(locale, profile?.personId ?? null, people);
+  const me = profile?.personId ?? null;
+  return useMemo(() => createFormatter(locale, me, people), [locale, me, people]);
 }
 
-/** "You owe Blake (sample) ¥21,486", "Avery (sample) owes you $135.99", "Devon (sample) owes Casey (sample) £701.21". */
+/** "You owe Blake ¥21,486", "Avery owes you $135.99", "Devon owes Casey £701.21". */
 export function transferSentence(f: Formatter, t: Transfer): Spoken {
   if (f.isMe(t.from)) return f.say('You owe ', f.name(t.to), ' ', t.amount);
   if (f.isMe(t.to)) return f.say(f.name(t.from), ' owes you ', t.amount);
   return f.say(f.name(t.from), ' owes ', f.name(t.to), ' ', t.amount);
 }
 
-/** A member's net in a group: "Casey (sample) is owed £758.76", "You owe £57.55", "Blake (sample) is settled up". */
+/** A member's net in a group: "Casey is owed £758.76", "You owe £57.55", "Blake is settled up". */
 export function memberNetSentence(f: Formatter, personId: PersonId, net: Money): Spoken {
   const me = f.isMe(personId);
   const who = f.name(personId);
@@ -115,12 +136,7 @@ export function memberNetSentence(f: Formatter, personId: PersonId, net: Money):
   return f.say(me ? 'You owe ' : `${who} owes `, absolute(net));
 }
 
-/** The profile owner's position: "You owe £57.55", "You're owed $185.92". */
-export function myNetSentence(f: Formatter, net: Money): Spoken {
-  return net.amountMinor >= 0 ? f.say("You're owed ", absolute(net)) : f.say('You owe ', absolute(net));
-}
-
-/** A payment, in the past tense: "You paid Casey (sample) £720.00". */
+/** A payment, in the past tense: "You paid Casey £720.00". */
 export function settlementSentence(f: Formatter, s: Settlement): Spoken {
   if (s.status === 'pending') {
     if (f.isMe(s.fromPersonId)) return f.say("You're paying ", f.name(s.toPersonId), ' ', s.amount);
@@ -130,6 +146,63 @@ export function settlementSentence(f: Formatter, s: Settlement): Spoken {
   if (f.isMe(s.fromPersonId)) return f.say('You paid ', f.name(s.toPersonId), ' ', s.amount);
   if (f.isMe(s.toPersonId)) return f.say(f.name(s.fromPersonId), ' paid you ', s.amount);
   return f.say(f.name(s.fromPersonId), ' paid ', f.name(s.toPersonId), ' ', s.amount);
+}
+
+/** One step of a settle-up plan: "You pay Casey £57.55", "Avery pays you US$135.99", "Devon pays Emery US$60.12". */
+export function planSentence(f: Formatter, t: Transfer): Spoken {
+  if (f.isMe(t.from)) return f.say('You pay ', f.name(t.to), ' ', t.amount);
+  if (f.isMe(t.to)) return f.say(f.name(t.from), ' pays you ', t.amount);
+  return f.say(f.name(t.from), ' pays ', f.name(t.to), ' ', t.amount);
+}
+
+/** "October" or "Oct" in the device locale. */
+export function monthName(locale: string, month: MonthKey, style: 'long' | 'short' = 'long'): string {
+  try {
+    return new Intl.DateTimeFormat(locale, { month: style, timeZone: 'UTC' }).format(new Date(`${month}-01T00:00:00.000Z`));
+  } catch {
+    return month;
+  }
+}
+
+/**
+ * A month against the one before, in words ("Up 68% (£829.50) from September"). Sentences end
+ * without a full stop so they can sit under a readout as a caption.
+ */
+export function changeInWords(f: Formatter, change: MonthChange): Spoken {
+  const previous = monthName(f.locale, addMonths(change.month, -1));
+  if (!change.previous || !change.change) return f.say(`No ${previous} figures to compare with`);
+  if (change.current.amountMinor === 0 && change.previous.amountMinor === 0) return f.say(`Nothing in ${previous} either`);
+  if (change.change.amountMinor === 0) return f.say(`The same as ${previous}`);
+  const up = change.change.amountMinor > 0;
+  const amount = absolute(change.change);
+  if (change.changeRatio === null) return f.say('Up ', amount, ` from nothing in ${previous}`);
+  // A change that rounds to 0% is "about the same", not "up 0%".
+  if (Math.round(Math.abs(change.changeRatio) * 100) === 0) return f.say(`About the same as ${previous} (`, up ? 'up ' : 'down ', amount, ')');
+  return f.say(up ? 'Up ' : 'Down ', f.percent(Math.abs(change.changeRatio)), ' (', amount, `) from ${previous}`);
+}
+
+export type PaceStatus = 'on_track' | 'ahead' | 'over';
+
+export interface BudgetPace {
+  readonly spent: Money;
+  readonly budget: Money;
+  readonly expectedToDate: Money;
+  readonly projected: Money;
+  readonly daysLeft: number;
+  readonly status: PaceStatus;
+  /** Currencies with spending this month that the budget does not count (never mixed in). */
+  readonly excluded: readonly string[];
+}
+
+/** A budget's status in words; the words, not a colour, carry the state. */
+export function paceWords(status: PaceStatus): string {
+  return status === 'over' ? 'over budget' : status === 'ahead' ? 'ahead of pace' : 'on pace';
+}
+
+/** "£159.50 of £200.00, 20 days left, ahead of pace" */
+export function paceSentence(f: Formatter, pace: BudgetPace): Spoken {
+  const days = pace.daysLeft === 1 ? '1 day left' : `${pace.daysLeft} days left`;
+  return f.say(pace.spent, ' of ', pace.budget, `, ${days}, ${paceWords(pace.status)}`);
 }
 
 /** An example amount typed the local way: "12.50", "12,50", "1250" for JPY. */
@@ -166,7 +239,11 @@ export function valueText(f: Formatter, value: unknown, key = ''): Spoken {
   if (isMoney(value)) return f.say(value);
   if (key === 'category' || key === 'categoryId') return f.say(categoryLabel(value as string | null));
   if (typeof value === 'string' && isLocalDate(value)) return f.say(f.date(value));
-  if (key === 'ratio' && typeof value === 'string' && /^\d+(\.\d+)?$/.test(value)) return f.say(f.number(Number(value)));
+  // A ratio sits in a column of amounts ("This month so far £159.50 … 5.55"), so it carries its own unit.
+  if (key === 'ratio' && typeof value === 'string' && /^\d+(\.\d+)?$/.test(value)) {
+    const n = f.number(Number(value));
+    return { text: `${n}×`, spoken: `${n} times` };
+  }
   if (typeof value === 'number') return f.say(f.number(value));
   if (typeof value === 'boolean') return f.say(value ? 'yes' : 'no');
   if (value === null || value === undefined) return f.say('none');

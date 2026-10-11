@@ -11,17 +11,16 @@ import { useEffect, useState } from 'react';
 import { AccessibilityInfo, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { addExpense, updateExpense, useDataStatus, useProfile } from '@/data';
-import { Chip, ChipRow, Field, Icon, ListSection, Row, SPACE, SampleChip, Skeleton, SkeletonText, Text, confirmDialog, useHaptic, useTheme } from '@/design';
-import { EmptyState } from '@/features/common/EmptyState';
+import { CategoryIcon, Chip, ChipRow, Field, Icon, ListSection, Row, SPACE, SampleChip, Skeleton, SkeletonText, Text, confirmDialog, useHaptic, useTheme } from '@/design';
 import { minorUnitsLabel } from '@/features/common/currency';
-import { categoryLabel } from '@/features/common/format';
+import { EmptyState } from '@/features/common/EmptyState';
+import { categoryLabel, cleanName } from '@/features/common/format';
 import { HeaderButton } from '@/features/common/HeaderButton';
 import { Screen } from '@/features/common/Screen';
 
-import { CategoryIcon } from './components/CategoryIcon';
 import { DateField } from './components/DateField';
 import { issueMessage, withGroup } from './form';
-import { payerSummary, plainName, splitSummary, useExpenseModel, type ExpenseModel } from './model';
+import { payerSummary, splitSummary, useExpenseModel, type ExpenseModel } from './model';
 import { usePreventRemove } from './preventRemove';
 import { useExpenseSession } from './session';
 
@@ -172,7 +171,7 @@ function AddExpenseForm({ model }: { model: ExpenseModel }) {
         error={showAmountError ? result.amountError : null}
         // The line under the amount always holds something (the currency and its minor units, or the
         // mismatch note), so an error replaces it instead of pushing the form down mid-tap.
-        hint={model.currencyMismatch && group ? `Balances in ${plainName(group.group.name)} will show ${form.currency} separately from ${group.group.currency}.` : `${currencyName} · ${minorUnitsLabel(form.currency)}`}
+        hint={model.currencyMismatch && group ? `Balances in ${cleanName(group.group.name)} will show ${form.currency} separately from ${group.group.currency}.` : `${currencyName} · ${minorUnitsLabel(form.currency)}`}
         trailing={<CurrencyButton currency={form.currency} name={currencyName} />}
         testID="amount-field"
       />
@@ -201,10 +200,10 @@ function AddExpenseForm({ model }: { model: ExpenseModel }) {
           {groups.map((g) => (
             <Chip
               key={g.group.id}
-              label={plainName(g.group.name)}
+              label={cleanName(g.group.name)}
               icon="groups"
               selected={form.groupId === g.group.id}
-              accessibilityLabel={`${plainName(g.group.name)}${g.group.isSample ? ', sample group' : ''}`}
+              accessibilityLabel={`${cleanName(g.group.name)}${g.group.isSample ? ', sample group' : ''}`}
               onPress={() => setForm((s) => withGroup(s, g.group.id, g.group.currency, me))}
               testID={`who-${g.group.id}`}
             />

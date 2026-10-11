@@ -10,9 +10,10 @@ import { StyleSheet, View } from 'react-native';
 import { useActivity } from '@/data';
 import { SPACE, Text } from '@/design';
 import { CurrencyPicker } from '@/features/common/CurrencyPicker';
+import { cleanName } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
-import { plainName, useExpenseModel } from './model';
+import { useExpenseModel } from './model';
 import { useExpenseSession } from './session';
 
 export function CurrencyScreen() {
@@ -36,7 +37,7 @@ export function CurrencyScreen() {
       <View style={styles.note}>
         <Text role="subhead" color="labelSecondary">
           {group
-            ? `${plainName(group.group.name)} uses ${f.currencyName(group.group.currency)}. Another currency is kept separate in the group's balances, never converted.`
+            ? `${cleanName(group.group.name)} uses ${f.currencyName(group.group.currency)}. Another currency is kept separate in the group's balances, never converted.`
             : `Your personal expenses default to ${f.currencyName(defaultCurrency)}. Amounts are never converted between currencies.`}
         </Text>
       </View>

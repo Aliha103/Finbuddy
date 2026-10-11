@@ -12,10 +12,10 @@ import { useSharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { SPACE, Text, useHaptic, useTheme } from '@/design';
+import { monthName } from '@/features/common/format';
 
 import { indexAtX, layoutBars } from './barGeometry';
 import { BarsDrawing } from './BarsDrawing';
-import { monthName } from './copy';
 
 export interface MonthBarsProps {
   /** Oldest first. */

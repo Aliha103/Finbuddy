@@ -29,6 +29,9 @@ export function WebTabs() {
         tabBarIconStyle: { width: 64, height: 32 },
         // lineHeight: react-navigation gives the label a 13-point box at 12 pt, which cuts the descenders of "Spending" and "Activity".
         tabBarLabelStyle: { fontSize: 12, lineHeight: 16, fontWeight: '600', marginTop: SPACE.xs },
+        // Always the phone's navigation bar: react-navigation would put labels beside the icons from
+        // 768 wide, and the app keeps a phone layout in a wide window (WebFrame).
+        tabBarLabelPosition: 'below-icon',
         sceneStyle: { backgroundColor: colors.ground },
       }}
     >

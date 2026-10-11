@@ -16,11 +16,11 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { cancelAnimation, useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { FONT, RADIUS, SPACE, TIMING, Text, fireHaptic, readoutFamilyFor, readoutWeightFor, scaledType, useTheme, type HapticKind, type LineColor } from '@/design';
+import { FONT, RADIUS, SPACE, TIMING, Text, bestOn, fireHaptic, readoutFamilyFor, readoutWeightFor, scaledType, useTheme, type HapticKind, type LineColor } from '@/design';
+import { PersonAvatar } from '@/features/common/PersonAvatar';
 
-import { adjustShare, bestOn, dragStep, formatMinorWorklet, moneyFormatSpec, moveBoundary, shareColour, snapBoundary, type MoneyFormatSpec } from '../splitMath';
+import { adjustShare, dragStep, formatMinorWorklet, moneyFormatSpec, moveBoundary, shareColour, snapBoundary, type MoneyFormatSpec } from '../splitMath';
 import { Hatch } from './Hatch';
-import { PersonAvatar } from './PersonAvatar';
 
 /** Beyond this many people the boundaries are too close to drag; amounts are typed instead. */
 export const MAX_DRAG_PEOPLE = 8;
@@ -122,18 +122,7 @@ export function SplitBar({ people, totalMinor, currency, locale, line, draggable
       >
         <View style={[styles.bar, { backgroundColor: c.fill }]} accessibilityRole={canDrag ? undefined : 'image'} accessible={!canDrag} accessibilityLabel={canDrag ? undefined : barSummary(people, amounts, remainderMinor, spoken)}>
           {people.map((p, i) => (
-            <Segment
-              key={p.id}
-              index={i}
-              parts={parts}
-              denom={denom}
-              barWidth={barWidth}
-              color={colours[i] ?? line.fill}
-              accessible={canDrag}
-              label={`${p.name}, ${spoken(amounts[i] ?? 0)}`}
-              onAction={accessibilityAction(i)}
-              testID={testID ? `${testID}-segment-${i}` : undefined}
-            />
+            <Segment key={p.id} index={i} parts={parts} denom={denom} barWidth={barWidth} color={colours[i] ?? line.fill} />
           ))}
           {remainderMinor > 0 && width > 0 ? <Remainder parts={parts} denom={denom} barWidth={barWidth} width={width} stripe={c.labelTertiary} ground={c.surfaceAlt} testID={testID ? `${testID}-remainder` : undefined} /> : null}
           {!canDrag ? people.slice(0, -1).map((p, i) => <Separator key={`sep-${p.id}`} index={i} parts={parts} denom={denom} barWidth={barWidth} color={c.surface} />) : null}
@@ -144,6 +133,20 @@ export function SplitBar({ people, totalMinor, currency, locale, line, draggable
           ) : null}
         </View>
         {overMinor > 0 && width > 0 && totalMinor !== null ? <View pointerEvents="none" style={[styles.overMarker, { left: (totalMinor / denominator) * width - 1, backgroundColor: c.danger }]} /> : null}
+        {canDrag
+          ? people.map((p, i) => (
+              <SegmentTarget
+                key={`target-${p.id}`}
+                index={i}
+                parts={parts}
+                denom={denom}
+                barWidth={barWidth}
+                label={`${p.name}, ${spoken(amounts[i] ?? 0)}`}
+                onAction={accessibilityAction(i)}
+                testID={testID ? `${testID}-segment-${i}` : undefined}
+              />
+            ))
+          : null}
         {canDrag
           ? people.slice(0, -1).map((p, i) => (
               <BoundaryHandle
@@ -212,8 +215,9 @@ interface Geometry {
   barWidth: SharedValue<number>;
 }
 
-function Segment({ index, parts, denom, barWidth, color, accessible, label, onAction, testID }: Geometry & { index: number; color: string; accessible: boolean; label: string; onAction: (e: AccessibilityActionEvent) => void; testID?: string }) {
-  const style = useAnimatedStyle(() => {
+/** One person's span of the bar, as a left offset and a width in points. */
+function useSpan({ index, parts, denom, barWidth }: Geometry & { index: number }) {
+  return useAnimatedStyle(() => {
     const list = parts.value;
     const d = denom.value;
     const w = barWidth.value;
@@ -222,16 +226,29 @@ function Segment({ index, parts, denom, barWidth, color, accessible, label, onAc
     for (let k = 0; k < index; k++) before += list[k] ?? 0;
     return { left: (before / d) * w, width: ((list[index] ?? 0) / d) * w };
   });
+}
+
+/** The drawn segment inside the 28-point bar. */
+function Segment({ index, parts, denom, barWidth, color }: Geometry & { index: number; color: string }) {
+  const style = useSpan({ index, parts, denom, barWidth });
+  return <Animated.View pointerEvents="none" style={[styles.segment, { backgroundColor: color }, style]} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden />;
+}
+
+/**
+ * The same span as an adjustable element the full height of the track (44 points), so the
+ * screen-reader control is a full-size target even though the bar it describes is 28 points tall.
+ */
+function SegmentTarget({ index, parts, denom, barWidth, label, onAction, testID }: Geometry & { index: number; label: string; onAction: (e: AccessibilityActionEvent) => void; testID?: string }) {
+  const style = useSpan({ index, parts, denom, barWidth });
   return (
     <Animated.View
-      style={[styles.segment, { backgroundColor: color }, style]}
-      accessible={accessible}
-      accessibilityRole={accessible ? 'adjustable' : undefined}
-      accessibilityLabel={accessible ? label : undefined}
-      accessibilityHint={accessible ? 'Swipe up or down to move one unit to or from the next person' : undefined}
-      accessibilityActions={accessible ? [{ name: 'increment' }, { name: 'decrement' }] : undefined}
-      onAccessibilityAction={accessible ? onAction : undefined}
-      importantForAccessibility={accessible ? 'yes' : 'no-hide-descendants'}
+      style={[styles.segmentTarget, style]}
+      accessible
+      accessibilityRole="adjustable"
+      accessibilityLabel={label}
+      accessibilityHint="Swipe up or down to move one unit to or from the next person"
+      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+      onAccessibilityAction={onAction}
       testID={testID}
     />
   );
@@ -420,6 +437,7 @@ const styles = StyleSheet.create({
   track: { height: TRACK_HEIGHT, justifyContent: 'center' },
   bar: { height: BAR_HEIGHT, borderRadius: RADIUS.tile, overflow: 'hidden' },
   segment: { position: 'absolute', top: 0, bottom: 0 },
+  segmentTarget: { position: 'absolute', top: 0, height: TRACK_HEIGHT },
   separator: { position: 'absolute', top: 0, bottom: 0, width: 2 },
   remainder: { position: 'absolute', top: 0, bottom: 0, right: 0, overflow: 'hidden' },
   remainderCanvas: { position: 'absolute', top: 0, bottom: 0, right: 0 },

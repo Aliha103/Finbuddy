@@ -3,8 +3,8 @@
 // decimal separator before they type an amount. Saving runs startFresh: a person record and a
 // profile on an empty snapshot (which also replaces sample data when coming from the banner).
 import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { StyleSheet, View, type TextInput } from 'react-native';
 
 import { startFresh, useDeviceLocale, useProfile } from '@/data';
 import { Button, Card, Field, Readout, SPACE, Text, useTheme } from '@/design';
@@ -24,6 +24,7 @@ export function ProfileSetup() {
   const [saving, setSaving] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const nameOf = useMemo(() => currencyNames(locale), [locale]);
+  const nameField = useRef<TextInput>(null);
 
   const trimmed = name.trim();
   const nameError = touched && !trimmed ? 'Enter the name your friends know you by.' : null;
@@ -31,7 +32,11 @@ export function ProfileSetup() {
 
   const save = () => {
     setTouched(true);
-    if (!trimmed) return;
+    if (!trimmed) {
+      // The error sits under the name field, which may be above the fold: take the person to it.
+      nameField.current?.focus();
+      return;
+    }
     setSaving(true);
     setFailure(null);
     void startFresh({ displayName: trimmed, defaultCurrency: currency, locale })
@@ -60,6 +65,7 @@ export function ProfileSetup() {
         autoComplete="name"
         returnKeyType="done"
         onSubmitEditing={save}
+        ref={nameField}
         testID="name-field"
       />
       <Card tone="surface" testID="format-preview">
@@ -76,7 +82,8 @@ export function ProfileSetup() {
       <View style={styles.pickerHeader}>
         <Text role="headline">Default currency</Text>
       </View>
-      <CurrencyPicker locale={locale} value={currency} onChange={setCurrency} suggested={[regionCurrency, 'EUR', 'USD', 'GBP']} />
+      {/* Suggestions and search only: the full list would push Start three screens down. */}
+      <CurrencyPicker locale={locale} value={currency} onChange={setCurrency} suggested={[regionCurrency, 'EUR', 'USD', 'GBP']} limit={0} />
       {failure ? (
         <Text role="footnote" color="danger" accessibilityRole="alert">
           {failure}
