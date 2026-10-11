@@ -1,14 +1,9 @@
-import { formatMoney } from '@finbuddy/shared';
-import { Stack } from 'expo-router';
-import { Text, View } from 'react-native';
+import { PreviewApp } from '@/preview/PreviewApp';
 
-// Placeholder screen: proves the Expo Router + @finbuddy/shared wiring.
-// The real UI replaces this once the design direction is chosen.
+/**
+ * The only route. All in-app navigation is React state inside PreviewApp, so the exported
+ * web build never depends on the URL (it is served from an unknown sub-path, inside an iframe).
+ */
 export default function Index() {
-  return (
-    <View>
-      <Stack.Screen options={{ title: 'FinBuddy' }} />
-      <Text>{formatMoney({ amountMinor: 123456, currency: 'EUR' })}</Text>
-    </View>
-  );
+  return <PreviewApp />;
 }
