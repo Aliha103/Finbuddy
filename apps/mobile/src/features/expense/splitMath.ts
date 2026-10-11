@@ -3,7 +3,7 @@
 // can be tested without React: moving a boundary between two neighbours in whole minor units, a
 // worklet-safe decimal formatter (no Intl on the UI thread), and the "+1" remainder tick, which
 // marks the people the engine's largest-remainder allocation gave the leftover minor unit to.
-import { formatMoneyToParts, minorUnits, type CurrencyCode, type PersonId, type Split, type SplitSpec } from '@finbuddy/shared';
+import { allocateMinor, formatMoneyToParts, minorUnits, type CurrencyCode, type PersonId, type Split, type SplitSpec } from '@finbuddy/shared';
 
 /** What a worklet needs to print an amount the way formatMoney would, without Intl. */
 export interface MoneyFormatSpec {
@@ -144,6 +144,15 @@ function luminance(hex: string): number {
   return 0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255);
 }
 
+/**
+ * A person's colour in the split: the line colour at full strength for every other person, and a
+ * lighter mix between them, toward white in both schemes so the lighter segments stand off a dark
+ * card as well as a light one.
+ */
+export function shareColour(fill: string, index: number, scheme: 'light' | 'dark'): string {
+  return index % 2 === 0 ? fill : mixHex(fill, '#FFFFFF', scheme === 'dark' ? 0.5 : 0.6);
+}
+
 /** WCAG contrast ratio between two '#RRGGBB' colours. */
 export function contrast(a: string, b: string): number {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
@@ -176,7 +185,8 @@ function integerWeights(weights: readonly (number | string)[]): bigint[] | null 
 /**
  * The people carrying the leftover minor unit: those whose resolved share is above the plain
  * floor of their proportional part. For £100 split three ways that is the first person (33.34).
- * Exact splits have no leftover by definition.
+ * Typed exact amounts have no leftover, except when they are exactly the even split (which is what
+ * Exact starts from): then the same people carry it as in Equally.
  */
 export function remainderCarriers(spec: SplitSpec, resolved: readonly Split[], totalMinor: number): ReadonlySet<PersonId> {
   const out = new Set<PersonId>();
@@ -187,8 +197,15 @@ export function remainderCarriers(spec: SplitSpec, resolved: readonly Split[], t
     return typeof base === 'bigint' ? BigInt(got) > base : got > base;
   };
   switch (spec.type) {
-    case 'exact':
+    case 'exact': {
+      const n = spec.amounts.length;
+      if (n === 0 || totalMinor <= 0) return out;
+      const even = allocateMinor(totalMinor, spec.amounts.map(() => 1));
+      if (!spec.amounts.every((a, i) => a.amountMinor === even[i])) return out;
+      const base = Math.floor(totalMinor / n);
+      for (const a of spec.amounts) if (over(a.personId, base)) out.add(a.personId);
       return out;
+    }
     case 'equal': {
       const n = spec.participants.length;
       if (n === 0) return out;

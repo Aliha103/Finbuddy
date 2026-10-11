@@ -1,7 +1,8 @@
 // apps/mobile/src/features/expense/components/CategoryIcon.tsx
 // One drawn icon per default category, native on each OS: SF Symbols on iOS, Material Symbols on
-// Android and the web preview (both verified against expo-symbols' typings and catalogue). Mirrors
-// the design system's Icon; the pairs belong in design/Icon.tsx once the design system takes them.
+// Android and the web preview (both verified against expo-symbols' typings and catalogue), plus the
+// two stepper glyphs the design system's ICONS lacks. Mirrors design/Icon.tsx; the pairs belong
+// there once the design system takes them.
 import { FALLBACK_CATEGORY_ID, type CategoryId } from '@finbuddy/shared';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
@@ -30,6 +31,12 @@ export const CATEGORY_ICONS = {
   other: { ios: 'ellipsis.circle', android: 'more_horiz' },
 } as const satisfies Record<string, { ios: SF; android: MD }>;
 
+/** Glyphs the design system's ICONS does not carry yet. */
+export const EXTRA_ICONS = {
+  minus: { ios: 'minus', android: 'remove' },
+  plus: { ios: 'plus', android: 'add' },
+} as const satisfies Record<string, { ios: SF; android: MD }>;
+
 function pairFor(categoryId: CategoryId): { ios: SF; android: MD } {
   return (CATEGORY_ICONS as Record<string, { ios: SF; android: MD }>)[categoryId] ?? CATEGORY_ICONS[FALLBACK_CATEGORY_ID as keyof typeof CATEGORY_ICONS];
 }
@@ -42,8 +49,15 @@ export interface CategoryIconProps {
 }
 
 export function CategoryIcon({ categoryId, size = 22, color, style }: CategoryIconProps) {
+  return <SymbolPair pair={pairFor(categoryId)} size={size} color={color} style={style} />;
+}
+
+export function ExtraIcon({ name, size = 22, color, style }: { name: keyof typeof EXTRA_ICONS; size?: number; color?: string; style?: StyleProp<ViewStyle> }) {
+  return <SymbolPair pair={EXTRA_ICONS[name]} size={size} color={color} style={style} />;
+}
+
+function SymbolPair({ pair, size, color, style }: { pair: { ios: SF; android: MD }; size: number; color?: string; style?: StyleProp<ViewStyle> }) {
   const { colors } = useTheme();
-  const pair = pairFor(categoryId);
   const tint = color ?? colors.label;
   return (
     <View style={[styles.box, { width: size, height: size }, style]} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>

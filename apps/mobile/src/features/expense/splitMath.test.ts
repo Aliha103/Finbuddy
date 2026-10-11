@@ -67,6 +67,13 @@ describe('remainderCarriers', () => {
     expect([...remainderCarriers(spec, resolved, 10_000)]).toEqual(['a']);
   });
 
+  it('marks the first person when Exact still holds the even split, nobody once amounts are typed', () => {
+    const even = { type: 'exact', amounts: [{ personId: 'a', amountMinor: 3334 }, { personId: 'b', amountMinor: 3333 }, { personId: 'c', amountMinor: 3333 }] } as const;
+    expect([...remainderCarriers(even, resolveSplit(even, { amountMinor: 10_000, currency: 'GBP' }), 10_000)]).toEqual(['a']);
+    const typed = { type: 'exact', amounts: [{ personId: 'a', amountMinor: 4000 }, { personId: 'b', amountMinor: 2667 }, { personId: 'c', amountMinor: 3333 }] } as const;
+    expect(remainderCarriers(typed, resolveSplit(typed, { amountMinor: 10_000, currency: 'GBP' }), 10_000).size).toBe(0);
+  });
+
   it('marks nobody when the split is even or exact', () => {
     const even = { type: 'equal', participants: ['a', 'b', 'c'] } as const;
     expect(remainderCarriers(even, resolveSplit(even, { amountMinor: 3000, currency: 'JPY' }), 3000).size).toBe(0);

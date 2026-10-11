@@ -9,12 +9,9 @@ import type { HatchProps } from './hatchTypes';
 
 export function HatchSkia({ width, height, stripe, ground, gap = 6 }: HatchProps) {
   const path = useMemo(() => {
-    const p = Skia.Path.Make();
-    for (let x = -height; x < width + height; x += gap) {
-      p.moveTo(x, height);
-      p.lineTo(x + height, 0);
-    }
-    return p;
+    const builder = Skia.PathBuilder.Make();
+    for (let x = -height; x < width + height; x += gap) builder.moveTo(x, height).lineTo(x + height, 0);
+    return builder.detach();
   }, [width, height, gap]);
   if (width <= 0 || height <= 0) return null;
   return (
