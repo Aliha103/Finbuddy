@@ -1,101 +1,32 @@
-// Generate sitemap for FinBuddy
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
+// Writes public/sitemap.xml and public/robots.txt for the one-page site.
 // SITE_URL is set by the GitHub Pages workflow; Netlify provides URL for the site's main address.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const here = path.dirname(fileURLToPath(import.meta.url))
 const BASE_URL = (process.env.SITE_URL || process.env.URL || 'https://aliha103.github.io/Finbuddy').replace(/\/$/, '')
+const today = new Date().toISOString().split('T')[0]
 
-const routes = [
-  {
-    url: '/',
-    changefreq: 'daily',
-    priority: '1.0',
-    lastmod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/login',
-    changefreq: 'monthly',
-    priority: '0.8',
-    lastmod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/signup',
-    changefreq: 'monthly',
-    priority: '0.8',
-    lastmod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/dashboard',
-    changefreq: 'daily',
-    priority: '0.9',
-    lastmod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/dashboard/balance',
-    changefreq: 'daily',
-    priority: '0.7',
-    lastmod: new Date().toISOString().split('T')[0]
-  }
-]
-
-function generateSitemap() {
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes.map(route => `  <url>
-    <loc>${BASE_URL}${route.url}</loc>
-    <lastmod>${route.lastmod}</lastmod>
-    <changefreq>${route.changefreq}</changefreq>
-    <priority>${route.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`
+  <url>
+    <loc>${BASE_URL}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`
 
-  return sitemap
-}
-
-function generateRobotsTxt() {
-  return `User-agent: *
+const robots = `User-agent: *
 Allow: /
 
 Sitemap: ${BASE_URL}/sitemap.xml
+`
 
-# Block sensitive areas
-Disallow: /api/
-Disallow: /_vite/
-Disallow: /node_modules/
-Disallow: /.env*
-
-# Allow common crawlers
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /`
-}
-
-// Write files
-const publicDir = path.join(__dirname, '..', 'public')
-
-// Ensure public directory exists
-if (!fs.existsSync(publicDir)) {
-  fs.mkdirSync(publicDir, { recursive: true })
-}
-
-// Generate and write sitemap
-const sitemapContent = generateSitemap()
-fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapContent)
-
-// Generate and write robots.txt
-const robotsContent = generateRobotsTxt()
-fs.writeFileSync(path.join(publicDir, 'robots.txt'), robotsContent)
-
-console.log('✅ Sitemap and robots.txt generated successfully!')
-console.log(`📁 Files created in: ${publicDir}`)
-console.log('📄 sitemap.xml - Contains all public routes')
-console.log('🤖 robots.txt - Search engine crawler instructions')
+const publicDir = path.join(here, '..', 'public')
+fs.mkdirSync(publicDir, { recursive: true })
+fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap)
+fs.writeFileSync(path.join(publicDir, 'robots.txt'), robots)
+console.log(`sitemap.xml and robots.txt written for ${BASE_URL}`)

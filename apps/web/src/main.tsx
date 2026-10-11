@@ -1,31 +1,17 @@
-/* main.tsx */
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import { RecoilRoot } from 'recoil'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+import '@fontsource-variable/mona-sans/wdth.css';
+import './styles.css';
 
-import './index.css'
-import App from './App'
-import { AppInitService } from './services/app-init'
+import { StrictMode } from 'react';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 
-// Initialize global error handlers
-AppInitService.setupGlobalErrorHandlers()
+import { App } from './App';
 
-// Initialize application services
-AppInitService.initialize().then(() => {
-  console.log('🚀 FinBuddy services initialized')
-}).catch(error => {
-  console.error('Failed to initialize services:', error)
-})
-
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root');
+const app = (
   <StrictMode>
-    <RecoilRoot>
-      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-        <App />
-      </BrowserRouter>
-    </RecoilRoot>
-  </StrictMode>,
-)
+    <App />
+  </StrictMode>
+);
+// The build prerenders the page into #root; hydrate it. The dev server serves an empty root.
+if (root?.firstElementChild) hydrateRoot(root, app);
+else if (root) createRoot(root).render(app);

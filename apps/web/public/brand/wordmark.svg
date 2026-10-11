@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 670 170" width="670" height="170" role="img" aria-labelledby="fb-word-title">
+  <title id="fb-word-title">FinBuddy</title>
+  <g fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <!-- F -->
+    <path d="M29 29V111M29 29H86M29 72H77"/>
+    <!-- i -->
+    <path d="M120.5 59V111"/>
+    <!-- n -->
+    <path d="M155 111V59M155 80C155 67 165 58 179 58C193 58 203 67 203 80V111"/>
+    <!-- B -->
+    <path d="M237 29V111M237 29H273C289 29 297 38 297 49.5C297 61 289 70 273 70H237M237 70H279C296 70 305 79 305 90.5C305 102 296 111 279 111H237"/>
+    <!-- u -->
+    <path d="M339 59V88C339 102 349 111 363 111C377 111 387 102 387 88V59M387 59V111"/>
+    <!-- d -->
+    <path d="M473 29V111"/>
+    <!-- d -->
+    <path d="M559 29V111"/>
+    <!-- y -->
+    <path d="M593 59L616 108M639 59L605 130C601 138 594 142 585 141"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="18">
+    <circle cx="447" cy="85" r="26"/>
+    <circle cx="533" cy="85" r="26"/>
+  </g>
+  <!-- the dot of the i is the mark's split bar, set as a tile -->
+  <rect x="111" y="20" width="19" height="19" rx="5" fill="#4A4652"/>
+</svg>
