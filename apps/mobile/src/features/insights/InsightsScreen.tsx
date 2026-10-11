@@ -1,5 +1,5 @@
 // apps/mobile/src/features/insights/InsightsScreen.tsx
-// The list: the engine's insights in its order (warnings first), each with its severity in words,
+// The list: the engine's insights in its order (warnings first), each with its severity as its icon,
 // an inline "Why am I seeing this" disclosure, and the honest footer. Dismissed insights are kept
 // behind one row so they can be restored.
 import { router } from 'expo-router';

@@ -15,7 +15,7 @@ import { useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
 import { BasisRows, useBasisMotion } from './Basis';
-import { INSIGHTS_FOOTER, insightCopy, severityLabel } from './copy';
+import { INSIGHTS_FOOTER, insightCopy } from './copy';
 import { dismissInsight, restoreInsight, useDismissedInsights } from './dismissed';
 import { severityStyle } from './severity';
 import { SubjectLinks } from './SubjectLinks';
@@ -75,15 +75,12 @@ function InsightDetail({ insightId }: { insightId: string }) {
     <Screen flush testID="insight-detail">
       <View style={styles.gutter}>
         <Card>
-          <View style={styles.severityLine}>
-            <Icon name={sev.icon} size={20} color={sev.color} />
-            <Text role="subhead" style={{ color: sev.color, fontWeight: '600' }}>
-              {severityLabel(insight.severity)}
+          <View style={styles.titleLine}>
+            <Icon name={sev.icon} size={24} color={sev.color} accessibilityLabel={sev.label} style={styles.titleIcon} />
+            <Text role="title" accessibilityRole="header" style={styles.title}>
+              {copy.title}
             </Text>
           </View>
-          <Text role="title" accessibilityRole="header" style={styles.title}>
-            {copy.title}
-          </Text>
           <Text role="body" accessibilityLabel={copy.body.spoken}>
             {copy.body.text}
           </Text>
@@ -158,8 +155,9 @@ function InsightDetail({ insightId }: { insightId: string }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   gutter: { paddingHorizontal: SPACE.gutter },
-  severityLine: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s },
-  title: { marginTop: SPACE.s, marginBottom: SPACE.xs },
+  titleLine: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.s, marginBottom: SPACE.xs },
+  titleIcon: { marginTop: 2 },
+  title: { flex: 1 },
   section: { gap: SPACE.s },
   header: { paddingHorizontal: SPACE.l },
   upper: { letterSpacing: 0.4 },
