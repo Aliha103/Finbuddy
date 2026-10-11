@@ -1,0 +1,1236 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-11T23:51:02.848Z",
+  "title": "Design System: FinBuddy",
+  "extensions": {
+    "colorMeta": {
+      "tint": {
+        "role": "primary",
+        "displayName": "Graphite",
+        "canonical": "#4A4652",
+        "oklch": "oklch(40.3% 0.021 300.7)",
+        "tonalRamp": [
+          "#0D0912",
+          "#27232E",
+          "#44404B",
+          "#635F6B",
+          "#84808D",
+          "#A7A2B0",
+          "#CBC6D5",
+          "#F0ECFB"
+        ]
+      },
+      "tint-dark": {
+        "role": "primary",
+        "displayName": "Light Graphite (dark)",
+        "canonical": "#CFC8D6",
+        "oklch": "oklch(84.3% 0.021 308.2)",
+        "tonalRamp": [
+          "#0E0912",
+          "#28222D",
+          "#453F4B",
+          "#645E6A",
+          "#867F8C",
+          "#A9A2AF",
+          "#CDC6D4",
+          "#F2EBF9"
+        ]
+      },
+      "on-tint": {
+        "role": "primary",
+        "displayName": "On Graphite",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "on-tint-dark": {
+        "role": "primary",
+        "displayName": "On Graphite (dark)",
+        "canonical": "#1A1420",
+        "oklch": "oklch(20.4% 0.025 307.1)",
+        "tonalRamp": [
+          "#0E0813",
+          "#28222F",
+          "#453F4D",
+          "#655E6D",
+          "#867F8E",
+          "#A9A1B2",
+          "#CDC5D6",
+          "#F3EAFC"
+        ]
+      },
+      "tint-wash": {
+        "role": "primary",
+        "displayName": "Graphite Wash",
+        "canonical": "#ECE9EF",
+        "oklch": "oklch(93.8% 0.009 308.4)",
+        "tonalRamp": [
+          "#0C0A0E",
+          "#262428",
+          "#434146",
+          "#626065",
+          "#848186",
+          "#A6A4A9",
+          "#CBC8CD",
+          "#F0EDF3"
+        ]
+      },
+      "tint-wash-dark": {
+        "role": "primary",
+        "displayName": "Graphite Wash (dark)",
+        "canonical": "#2E2935",
+        "oklch": "oklch(29.1% 0.023 304.0)",
+        "tonalRamp": [
+          "#0D0913",
+          "#27222E",
+          "#443F4C",
+          "#645E6C",
+          "#857F8E",
+          "#A8A2B1",
+          "#CCC6D5",
+          "#F2EBFB"
+        ]
+      },
+      "on-tint-wash": {
+        "role": "primary",
+        "displayName": "Deep Graphite",
+        "canonical": "#2E2935",
+        "oklch": "oklch(29.1% 0.023 304.0)",
+        "tonalRamp": [
+          "#0D0913",
+          "#27222E",
+          "#443F4C",
+          "#645E6C",
+          "#857F8E",
+          "#A8A2B1",
+          "#CCC6D5",
+          "#F2EBFB"
+        ]
+      },
+      "on-tint-wash-dark": {
+        "role": "primary",
+        "displayName": "Deep Graphite (dark)",
+        "canonical": "#E8E2EC",
+        "oklch": "oklch(92.0% 0.015 312.2)",
+        "tonalRamp": [
+          "#0D0910",
+          "#27232A",
+          "#454048",
+          "#645F67",
+          "#858089",
+          "#A8A2AC",
+          "#CCC6D0",
+          "#F2ECF6"
+        ]
+      },
+      "credit": {
+        "role": "secondary",
+        "displayName": "Leaf Credit",
+        "canonical": "#1F7A4D",
+        "oklch": "oklch(51.5% 0.110 156.8)",
+        "tonalRamp": [
+          "#000F05",
+          "#012E18",
+          "#00502E",
+          "#157347",
+          "#409667",
+          "#65BA89",
+          "#8ADFAC",
+          "#C5FFDA"
+        ]
+      },
+      "credit-dark": {
+        "role": "secondary",
+        "displayName": "Leaf Credit (dark)",
+        "canonical": "#5FD39A",
+        "oklch": "oklch(78.5% 0.135 159.5)",
+        "tonalRamp": [
+          "#000F06",
+          "#022D1B",
+          "#034F31",
+          "#06744A",
+          "#119A65",
+          "#48BE87",
+          "#71E4AA",
+          "#C4FFDD"
+        ]
+      },
+      "debit": {
+        "role": "neutral",
+        "displayName": "Ink Debit",
+        "canonical": "#1A1420",
+        "oklch": "oklch(20.4% 0.025 307.1)",
+        "tonalRamp": [
+          "#0E0813",
+          "#28222F",
+          "#453F4D",
+          "#655E6D",
+          "#867F8E",
+          "#A9A1B2",
+          "#CDC5D6",
+          "#F3EAFC"
+        ]
+      },
+      "debit-dark": {
+        "role": "neutral",
+        "displayName": "Ink Debit (dark)",
+        "canonical": "#F6F2F7",
+        "oklch": "oklch(96.6% 0.008 319.4)",
+        "tonalRamp": [
+          "#0D0A0D",
+          "#272427",
+          "#444145",
+          "#636064",
+          "#848185",
+          "#A7A3A8",
+          "#CBC7CC",
+          "#F1EDF2"
+        ]
+      },
+      "attention": {
+        "role": "tertiary",
+        "displayName": "Attention Amber",
+        "canonical": "#9A5B00",
+        "oklch": "oklch(53.1% 0.119 65.1)",
+        "tonalRamp": [
+          "#150800",
+          "#381E00",
+          "#603700",
+          "#8B5204",
+          "#B27227",
+          "#D8954E",
+          "#FFB972",
+          "#FFEBD8"
+        ]
+      },
+      "attention-dark": {
+        "role": "tertiary",
+        "displayName": "Attention Amber (dark)",
+        "canonical": "#FFB857",
+        "oklch": "oklch(83.1% 0.139 72.2)",
+        "tonalRamp": [
+          "#130800",
+          "#362000",
+          "#5C3A00",
+          "#855601",
+          "#B17304",
+          "#DA952E",
+          "#FFBA5D",
+          "#FEEBD4"
+        ]
+      },
+      "attention-wash": {
+        "role": "tertiary",
+        "displayName": "Amber Wash",
+        "canonical": "#FFF0D6",
+        "oklch": "oklch(96.0% 0.038 81.5)",
+        "tonalRamp": [
+          "#120900",
+          "#2E230E",
+          "#4C402B",
+          "#6C5F49",
+          "#8E8069",
+          "#B1A38B",
+          "#D6C7AE",
+          "#FCEDD3"
+        ]
+      },
+      "attention-wash-dark": {
+        "role": "tertiary",
+        "displayName": "Amber Wash (dark)",
+        "canonical": "#4A2E00",
+        "oklch": "oklch(32.8% 0.070 73.0)",
+        "tonalRamp": [
+          "#130900",
+          "#352000",
+          "#583B10",
+          "#795B32",
+          "#9C7C52",
+          "#C09F74",
+          "#E5C397",
+          "#FFEBD3"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Danger Red",
+        "canonical": "#B3261E",
+        "oklch": "oklch(50.1% 0.178 28.7)",
+        "tonalRamp": [
+          "#1F0000",
+          "#4D0001",
+          "#810103",
+          "#B0221B",
+          "#D84C3F",
+          "#FF7464",
+          "#FFB3A8",
+          "#FFE9E5"
+        ]
+      },
+      "danger-dark": {
+        "role": "tertiary",
+        "displayName": "Danger Red (dark)",
+        "canonical": "#FFB4AB",
+        "oklch": "oklch(83.8% 0.089 26.8)",
+        "tonalRamp": [
+          "#1F0001",
+          "#470C0B",
+          "#692C27",
+          "#8D4C45",
+          "#B26D65",
+          "#D78F87",
+          "#FEB3AA",
+          "#FEE9E6"
+        ]
+      },
+      "danger-wash": {
+        "role": "tertiary",
+        "displayName": "Danger Wash",
+        "canonical": "#F9DEDC",
+        "oklch": "oklch(92.2% 0.030 22.8)",
+        "tonalRamp": [
+          "#160606",
+          "#321F1E",
+          "#513C3B",
+          "#725B59",
+          "#947C7A",
+          "#B79E9C",
+          "#DCC2C0",
+          "#FFE9E7"
+        ]
+      },
+      "danger-wash-dark": {
+        "role": "tertiary",
+        "displayName": "Danger Wash (dark)",
+        "canonical": "#93000A",
+        "oklch": "oklch(41.7% 0.170 27.4)",
+        "tonalRamp": [
+          "#1F0000",
+          "#4D0002",
+          "#810008",
+          "#AD2824",
+          "#D54F46",
+          "#FE7468",
+          "#FFB3A9",
+          "#FFE9E6"
+        ]
+      },
+      "on-danger": {
+        "role": "tertiary",
+        "displayName": "On Danger",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "on-danger-dark": {
+        "role": "tertiary",
+        "displayName": "On Danger (dark)",
+        "canonical": "#690005",
+        "oklch": "oklch(32.8% 0.134 27.3)",
+        "tonalRamp": [
+          "#1F0000",
+          "#4D0003",
+          "#7A1715",
+          "#9F3C35",
+          "#C65F55",
+          "#ED8276",
+          "#FEB3A9",
+          "#FEE9E6"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ground",
+        "canonical": "#F5F3F6",
+        "oklch": "oklch(96.7% 0.004 314.8)",
+        "tonalRamp": [
+          "#0C0B0C",
+          "#262427",
+          "#434144",
+          "#626063",
+          "#838184",
+          "#A6A4A7",
+          "#CAC8CB",
+          "#EFEEF0"
+        ]
+      },
+      "ground-dark": {
+        "role": "neutral",
+        "displayName": "Ground (dark)",
+        "canonical": "#121016",
+        "oklch": "oklch(17.8% 0.013 300.4)",
+        "tonalRamp": [
+          "#0C0A10",
+          "#26242A",
+          "#434148",
+          "#626067",
+          "#838189",
+          "#A6A3AC",
+          "#CAC7D0",
+          "#F0EDF6"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Surface (dark)",
+        "canonical": "#1C1922",
+        "oklch": "oklch(22.1% 0.018 300.2)",
+        "tonalRamp": [
+          "#0C0912",
+          "#26232D",
+          "#43404A",
+          "#635F6A",
+          "#84808C",
+          "#A6A3AF",
+          "#CBC7D3",
+          "#F0ECF9"
+        ]
+      },
+      "surface-alt": {
+        "role": "neutral",
+        "displayName": "Surface Alt",
+        "canonical": "#F0ECF2",
+        "oklch": "oklch(94.8% 0.009 314.8)",
+        "tonalRamp": [
+          "#0D0A0E",
+          "#272428",
+          "#444145",
+          "#636065",
+          "#848186",
+          "#A7A3A9",
+          "#CBC7CD",
+          "#F1EDF3"
+        ]
+      },
+      "surface-alt-dark": {
+        "role": "neutral",
+        "displayName": "Surface Alt (dark)",
+        "canonical": "#1F1B25",
+        "oklch": "oklch(23.1% 0.020 303.1)",
+        "tonalRamp": [
+          "#0D0912",
+          "#27232D",
+          "#44404B",
+          "#635F6B",
+          "#85808C",
+          "#A7A2B0",
+          "#CBC6D4",
+          "#F1ECFA"
+        ]
+      },
+      "fill": {
+        "role": "neutral",
+        "displayName": "Fill",
+        "canonical": "#EFEAF1",
+        "oklch": "oklch(94.3% 0.011 316.5)",
+        "tonalRamp": [
+          "#0D0A0E",
+          "#272329",
+          "#444046",
+          "#645F65",
+          "#858087",
+          "#A8A3AA",
+          "#CCC7CE",
+          "#F1ECF3"
+        ]
+      },
+      "fill-dark": {
+        "role": "neutral",
+        "displayName": "Fill (dark)",
+        "canonical": "#2A2431",
+        "oklch": "oklch(27.3% 0.025 305.8)",
+        "tonalRamp": [
+          "#0E0814",
+          "#28222F",
+          "#453F4D",
+          "#655E6D",
+          "#867F8F",
+          "#A9A1B2",
+          "#CDC5D7",
+          "#F2EBFC"
+        ]
+      },
+      "label": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1A1420",
+        "oklch": "oklch(20.4% 0.025 307.1)",
+        "tonalRamp": [
+          "#0E0813",
+          "#28222F",
+          "#453F4D",
+          "#655E6D",
+          "#867F8E",
+          "#A9A1B2",
+          "#CDC5D6",
+          "#F3EAFC"
+        ]
+      },
+      "label-dark": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#F6F2F7",
+        "oklch": "oklch(96.6% 0.008 319.4)",
+        "tonalRamp": [
+          "#0D0A0D",
+          "#272427",
+          "#444145",
+          "#636064",
+          "#848185",
+          "#A7A3A8",
+          "#CBC7CC",
+          "#F1EDF2"
+        ]
+      },
+      "label-secondary": {
+        "role": "neutral",
+        "displayName": "Secondary Label",
+        "canonical": "#5F5564",
+        "oklch": "oklch(46.5% 0.027 314.5)",
+        "tonalRamp": [
+          "#0F0813",
+          "#2A212E",
+          "#473E4C",
+          "#675D6C",
+          "#887E8E",
+          "#ABA0B1",
+          "#D0C4D6",
+          "#F5E9FB"
+        ]
+      },
+      "label-secondary-dark": {
+        "role": "neutral",
+        "displayName": "Secondary Label (dark)",
+        "canonical": "#B9AFBE",
+        "oklch": "oklch(76.7% 0.024 314.7)",
+        "tonalRamp": [
+          "#0F0812",
+          "#29222D",
+          "#473E4B",
+          "#665D6B",
+          "#887E8C",
+          "#ABA1B0",
+          "#CFC5D4",
+          "#F5EAFA"
+        ]
+      },
+      "label-tertiary": {
+        "role": "neutral",
+        "displayName": "Tertiary Label",
+        "canonical": "#726778",
+        "oklch": "oklch(53.0% 0.029 313.8)",
+        "tonalRamp": [
+          "#100714",
+          "#2A212F",
+          "#483E4D",
+          "#675D6D",
+          "#897D8F",
+          "#ACA0B2",
+          "#D0C4D7",
+          "#F6E9FD"
+        ]
+      },
+      "label-tertiary-dark": {
+        "role": "neutral",
+        "displayName": "Tertiary Label (dark)",
+        "canonical": "#9A8FA0",
+        "oklch": "oklch(66.5% 0.028 313.9)",
+        "tonalRamp": [
+          "#0F0813",
+          "#2A212F",
+          "#473E4D",
+          "#675D6D",
+          "#887E8E",
+          "#ABA0B2",
+          "#D0C4D6",
+          "#F5E9FC"
+        ]
+      },
+      "separator": {
+        "role": "neutral",
+        "displayName": "Separator",
+        "canonical": "#E4DEE6",
+        "oklch": "oklch(90.8% 0.013 317.7)",
+        "tonalRamp": [
+          "#0D0A0F",
+          "#282329",
+          "#454046",
+          "#645F66",
+          "#858087",
+          "#A8A3AA",
+          "#CDC7CF",
+          "#F2ECF4"
+        ]
+      },
+      "separator-dark": {
+        "role": "neutral",
+        "displayName": "Separator (dark)",
+        "canonical": "#332C3A",
+        "oklch": "oklch(30.7% 0.026 307.5)",
+        "tonalRamp": [
+          "#0E0814",
+          "#28222F",
+          "#463E4D",
+          "#655D6D",
+          "#877E8F",
+          "#A9A1B2",
+          "#CEC5D7",
+          "#F3EAFD"
+        ]
+      },
+      "pressed": {
+        "role": "neutral",
+        "displayName": "Pressed Overlay",
+        "canonical": "rgba(26,20,32,0.08)"
+      },
+      "pressed-dark": {
+        "role": "neutral",
+        "displayName": "Pressed Overlay (dark)",
+        "canonical": "rgba(246,242,247,0.10)"
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "#E9E4EB",
+        "oklch": "oklch(92.5% 0.011 316.5)",
+        "tonalRamp": [
+          "#0D0A0E",
+          "#272329",
+          "#444046",
+          "#645F65",
+          "#858087",
+          "#A8A3AA",
+          "#CCC7CE",
+          "#F1ECF3"
+        ]
+      },
+      "bone-dark": {
+        "role": "neutral",
+        "displayName": "Bone (dark)",
+        "canonical": "#2A252F",
+        "oklch": "oklch(27.4% 0.019 307.7)",
+        "tonalRamp": [
+          "#0D0912",
+          "#28232D",
+          "#453F4A",
+          "#645E6A",
+          "#857F8C",
+          "#A8A2AF",
+          "#CCC6D3",
+          "#F2EBF9"
+        ]
+      },
+      "line-violet": {
+        "role": "tertiary",
+        "displayName": "Line: Violet",
+        "canonical": "#6D3FC8",
+        "oklch": "oklch(50.1% 0.200 293.2)",
+        "tonalRamp": [
+          "#0F002A",
+          "#2D0063",
+          "#4D0D9F",
+          "#6B3CC5",
+          "#8B62ED",
+          "#AA8FFE",
+          "#CBBFFE",
+          "#EFECFE"
+        ]
+      },
+      "line-violet-on": {
+        "role": "tertiary",
+        "displayName": "Text on Violet",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-tangerine": {
+        "role": "tertiary",
+        "displayName": "Line: Tangerine",
+        "canonical": "#E8620A",
+        "oklch": "oklch(65.6% 0.185 45.0)",
+        "tonalRamp": [
+          "#1A0400",
+          "#411601",
+          "#6E2A02",
+          "#9F4001",
+          "#D25703",
+          "#FF7831",
+          "#FFB595",
+          "#FFE9E0"
+        ]
+      },
+      "line-tangerine-on": {
+        "role": "tertiary",
+        "displayName": "Text on Tangerine",
+        "canonical": "#1A1420",
+        "oklch": "oklch(20.4% 0.025 307.1)",
+        "tonalRamp": [
+          "#0E0813",
+          "#28222F",
+          "#453F4D",
+          "#655E6D",
+          "#867F8E",
+          "#A9A1B2",
+          "#CDC5D6",
+          "#F3EAFC"
+        ]
+      },
+      "line-marigold": {
+        "role": "tertiary",
+        "displayName": "Line: Marigold",
+        "canonical": "#F2B705",
+        "oklch": "oklch(81.1% 0.166 85.0)",
+        "tonalRamp": [
+          "#110A00",
+          "#312200",
+          "#553E00",
+          "#7B5C04",
+          "#A47B03",
+          "#CF9C01",
+          "#FABF1F",
+          "#FFEDC8"
+        ]
+      },
+      "line-marigold-on": {
+        "role": "tertiary",
+        "displayName": "Text on Marigold",
+        "canonical": "#1A1420",
+        "oklch": "oklch(20.4% 0.025 307.1)",
+        "tonalRamp": [
+          "#0E0813",
+          "#28222F",
+          "#453F4D",
+          "#655E6D",
+          "#867F8E",
+          "#A9A1B2",
+          "#CDC5D6",
+          "#F3EAFC"
+        ]
+      },
+      "line-leaf": {
+        "role": "tertiary",
+        "displayName": "Line: Leaf",
+        "canonical": "#1F7A4D",
+        "oklch": "oklch(51.5% 0.110 156.8)",
+        "tonalRamp": [
+          "#000F05",
+          "#012E18",
+          "#00502E",
+          "#157347",
+          "#409667",
+          "#65BA89",
+          "#8ADFAC",
+          "#C5FFDA"
+        ]
+      },
+      "line-leaf-on": {
+        "role": "tertiary",
+        "displayName": "Text on Leaf",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-moss": {
+        "role": "tertiary",
+        "displayName": "Line: Moss",
+        "canonical": "#6B7A1E",
+        "oklch": "oklch(54.9% 0.115 118.5)",
+        "tonalRamp": [
+          "#0A0D00",
+          "#222901",
+          "#3E4802",
+          "#5B6901",
+          "#7C8B33",
+          "#9EAF57",
+          "#C2D47B",
+          "#E6FAA0"
+        ]
+      },
+      "line-moss-on": {
+        "role": "tertiary",
+        "displayName": "Text on Moss",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-cocoa": {
+        "role": "tertiary",
+        "displayName": "Line: Cocoa",
+        "canonical": "#7A4A2B",
+        "oklch": "oklch(45.8% 0.079 52.4)",
+        "tonalRamp": [
+          "#170600",
+          "#3D1A00",
+          "#623414",
+          "#855435",
+          "#A87555",
+          "#CD9777",
+          "#F3BB9A",
+          "#FEEADE"
+        ]
+      },
+      "line-cocoa-on": {
+        "role": "tertiary",
+        "displayName": "Text on Cocoa",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-cobalt": {
+        "role": "tertiary",
+        "displayName": "Line: Cobalt",
+        "canonical": "#1F4FD8",
+        "oklch": "oklch(49.1% 0.216 264.5)",
+        "tonalRamp": [
+          "#000036",
+          "#01017B",
+          "#0527B1",
+          "#2050D9",
+          "#4076FF",
+          "#78A2FF",
+          "#AFC9FE",
+          "#E7EFFE"
+        ]
+      },
+      "line-cobalt-on": {
+        "role": "tertiary",
+        "displayName": "Text on Cobalt",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-teal": {
+        "role": "tertiary",
+        "displayName": "Line: Teal",
+        "canonical": "#0F7B86",
+        "oklch": "oklch(53.4% 0.088 206.2)",
+        "tonalRamp": [
+          "#000E11",
+          "#012B30",
+          "#014B53",
+          "#006E79",
+          "#32919C",
+          "#5AB5C0",
+          "#7FDAE5",
+          "#CAF8FF"
+        ]
+      },
+      "line-teal-on": {
+        "role": "tertiary",
+        "displayName": "Text on Teal",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "readout-xl": {
+        "displayName": "Readout XL",
+        "purpose": "The hero figure of a screen: the first currency on the FinBuddy card, Settle up, the month total, an expense total, the amount being typed."
+      },
+      "readout-l": {
+        "displayName": "Readout L",
+        "purpose": "The first figure on Group detail's header card, a category's month, the split editor's total."
+      },
+      "readout-m": {
+        "displayName": "Readout M",
+        "purpose": "Further currencies on the FinBuddy card, group-card positions, This month totals."
+      },
+      "readout-s": {
+        "displayName": "Readout S",
+        "purpose": "Amounts inside rows."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "The iOS large navigation title only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Screen-level empty states, detail-screen titles, the welcome sentence."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Button labels, card labels, insight titles, section empty facts."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Row titles and sentences."
+      },
+      "subhead": {
+        "displayName": "Subhead",
+        "purpose": "Row subtitles, direction words above readouts, chip and small-button labels, Material section headers."
+      },
+      "footnote": {
+        "displayName": "Footnote",
+        "purpose": "List footers, hints and errors, line-chip names, iOS section headers (uppercase, 0.4 tracking)."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Sample and status chips at 600, member initials, settle-map amount chips."
+      }
+    },
+    "shadows": [
+      {
+        "name": "fab",
+        "value": "0 6px 16px rgba(26,20,32,0.18)",
+        "purpose": "The Material extended FAB only (Android elevation 6). Nothing else in the app casts a shadow."
+      }
+    ],
+    "motion": [
+      {
+        "name": "duration-instant",
+        "value": "100ms",
+        "purpose": "Defined for feedback; no shipped screen uses it yet."
+      },
+      {
+        "name": "duration-quick",
+        "value": "160ms",
+        "purpose": "Feedback: digit columns and glyphs fading in and out, a row leaving, the Gate ring rewinding on early release."
+      },
+      {
+        "name": "duration-standard",
+        "value": "240ms",
+        "purpose": "State changes: layout travel on devices, content revealed over skeletons."
+      },
+      {
+        "name": "duration-slow",
+        "value": "320ms",
+        "purpose": "The Gate ring clearing after a confirmed hold."
+      },
+      {
+        "name": "duration-readout",
+        "value": "560ms",
+        "purpose": "Roll to Zero: the critically damped digit roll."
+      },
+      {
+        "name": "duration-hold",
+        "value": "600ms",
+        "purpose": "The Gate: touch-and-hold length, linear, runs even under Reduce Motion (it is a progress bar)."
+      },
+      {
+        "name": "duration-focal",
+        "value": "800ms",
+        "purpose": "Half a skeleton breath (out and back in, repeating); still under Reduce Motion."
+      },
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Quick feedback timings."
+      },
+      {
+        "name": "ease-emphasizedDecelerate",
+        "value": "cubic-bezier(0.05, 0.7, 0.1, 1)",
+        "purpose": "Standard and slow timings, and the 600 ms settle-map morph."
+      },
+      {
+        "name": "ease-emphasizedAccelerate",
+        "value": "cubic-bezier(0.3, 0, 0.8, 0.15)",
+        "purpose": "Defined for exits; no shipped screen uses it yet."
+      },
+      {
+        "name": "ease-linear",
+        "value": "linear",
+        "purpose": "The hold ring."
+      },
+      {
+        "name": "spring-press",
+        "value": "damping 22, stiffness 420, mass 0.7",
+        "purpose": "Buttons, cards and the FAB press to 0.97 (FAB 0.96) and back."
+      },
+      {
+        "name": "spring-sheet",
+        "value": "damping 28, stiffness 240, mass 1",
+        "purpose": "Defined for sheets; the platform presents sheets itself."
+      },
+      {
+        "name": "spring-gate",
+        "value": "damping 18, stiffness 200, mass 1",
+        "purpose": "Defined for the gate; the hold itself is linear timing."
+      },
+      {
+        "name": "spring-roll",
+        "value": "duration 560ms, dampingRatio 1, overshootClamping true",
+        "purpose": "Readout digits: money never overshoots, so a readout never shows a value it never had."
+      },
+      {
+        "name": "settle-map-morph",
+        "value": "600ms",
+        "purpose": "All debts and Fewest payments morph from one shared progress value; leaving chips fade early, arriving chips late. Reduce Motion switches instantly."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "web-column",
+        "value": "600px",
+        "purpose": "Web preview windows wider than this centre the app in a phone column."
+      },
+      {
+        "name": "web-column-width",
+        "value": "440px",
+        "purpose": "The centred phone column on a wide web window."
+      },
+      {
+        "name": "compact-text-width",
+        "value": "290",
+        "purpose": "Layout width in text units (points / font scale) below which rows stack."
+      },
+      {
+        "name": "stack-font-scale",
+        "value": "1.35",
+        "purpose": "At and above this system font scale, rows with a readout beside text stack."
+      },
+      {
+        "name": "readout-max-scale",
+        "value": "1.6",
+        "purpose": "Readouts follow the system text size up to this multiplier, then shrink to fit."
+      },
+      {
+        "name": "group-card-wide",
+        "value": "600px",
+        "purpose": "At this layout width and up a group card takes the ID-1 ratio (1.586) instead of 16:9."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Filled Button",
+      "kind": "button",
+      "refersTo": "button-filled",
+      "description": "The one primary action on a screen: a graphite capsule, headline label.",
+      "html": "<button class=\"ds-btn-filled\">Save expense</button>",
+      "css": ".ds-btn-filled { height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid transparent; background: #4A4652; color: #FFFFFF; font: 600 17px/22px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; transition: transform 160ms cubic-bezier(0.2, 0, 0, 1), opacity 160ms; } .ds-btn-filled:hover { opacity: 0.92; } .ds-btn-filled:active { transform: scale(0.97); opacity: 0.85; } .ds-btn-filled:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tonal Button, small (Settle up)",
+      "kind": "button",
+      "refersTo": "button-tonal-small",
+      "description": "The list Settle up: a 36 pt wash capsule inside a full 44/48 target.",
+      "html": "<span class=\"ds-target\"><button class=\"ds-btn-tonal-sm\">Settle up</button></span>",
+      "css": ".ds-target { display: inline-flex; align-items: center; min-height: 44px; } .ds-btn-tonal-sm { height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid transparent; background: #ECE9EF; color: #2E2935; font: 600 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; transition: transform 160ms cubic-bezier(0.2, 0, 0, 1), opacity 160ms; } .ds-btn-tonal-sm:active { transform: scale(0.97); opacity: 0.85; } .ds-btn-tonal-sm:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; }"
+    },
+    {
+      "name": "Hold to Confirm (the Gate)",
+      "kind": "custom",
+      "refersTo": "hold-to-confirm",
+      "description": "Money actions: hold 600 ms while the ring closes; releasing early rewinds it in 160 ms.",
+      "html": "<button class=\"ds-hold\" aria-label=\"Paid, settle now. Touch and hold to confirm\"><svg class=\"ds-hold-ring\" width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" aria-hidden=\"true\"><circle cx=\"20\" cy=\"20\" r=\"18\" fill=\"none\" stroke=\"rgba(255,255,255,0.3)\" stroke-width=\"4\"/><circle class=\"ds-hold-arc\" cx=\"20\" cy=\"20\" r=\"18\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-dasharray=\"113.1 113.1\" stroke-dashoffset=\"113.1\" transform=\"rotate(-90 20 20)\"/><path d=\"M14 20.5l4 4 8-9\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\"0.6\"/></svg><span class=\"ds-hold-labels\"><span class=\"ds-hold-label\">Paid, settle now</span><span class=\"ds-hold-hint\">Hold to confirm</span></span></button>",
+      "css": ".ds-hold { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 24px 8px 8px; border: 0; border-radius: 999px; background: #4A4652; color: #FFFFFF; text-align: left; cursor: pointer; transition: transform 160ms cubic-bezier(0.2, 0, 0, 1); } .ds-hold-arc { transition: stroke-dashoffset 160ms cubic-bezier(0.2, 0, 0, 1); } .ds-hold:active { transform: scale(0.97); } .ds-hold:active .ds-hold-arc { stroke-dashoffset: 0; transition: stroke-dashoffset 600ms linear; } .ds-hold-labels { display: flex; flex-direction: column; gap: 1px; } .ds-hold-label { font: 600 17px/22px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-hold-hint { font: 400 13px/18px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; opacity: 0.85; } .ds-hold:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; }"
+    },
+    {
+      "name": "Choice Chips",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Single-choice capsules: selected fills with the wash and shows a check, never colour alone.",
+      "html": "<div class=\"ds-chips\" role=\"radiogroup\" aria-label=\"Currency\"><button class=\"ds-chip ds-chip-on\" role=\"radio\" aria-checked=\"true\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>GBP</button><button class=\"ds-chip\" role=\"radio\" aria-checked=\"false\">JPY</button><button class=\"ds-chip\" role=\"radio\" aria-checked=\"false\">USD</button></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #E4DEE6; background: #FFFFFF; color: #1A1420; font: 400 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; } .ds-chip:hover { background: rgba(26,20,32,0.08); } .ds-chip-on, .ds-chip-on:hover { background: #ECE9EF; border-color: transparent; color: #2E2935; font-weight: 600; } .ds-chip:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; }"
+    },
+    {
+      "name": "Group Card",
+      "kind": "card",
+      "refersTo": "card-group",
+      "description": "A white card with the group's line colour as a 6 pt leading band and in its name chip; your position as words over readouts.",
+      "html": "<article class=\"ds-group\"><span class=\"ds-group-band\" aria-hidden=\"true\"></span><div class=\"ds-group-top\"><span class=\"ds-line-chip\">Lisbon trip</span><span class=\"ds-sample\">Sample</span><span class=\"ds-group-cur\">GBP</span></div><div class=\"ds-group-people\">4 people</div><div class=\"ds-group-pos\"><span class=\"ds-group-word\">You’re owed</span><span class=\"ds-readout-m\">£185.92</span></div></article>",
+      "css": ".ds-group { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 12px; min-height: 176px; padding: 16px 16px 16px 22px; border-radius: 12px; background: #FFFFFF; color: #1A1420; cursor: pointer; transition: transform 160ms cubic-bezier(0.2, 0, 0, 1); } .ds-group:active { transform: scale(0.97); } .ds-group-band { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #6D3FC8; } .ds-group-top { display: flex; align-items: center; gap: 8px; } .ds-line-chip { padding: 3px 12px; border-radius: 999px; background: #6D3FC8; color: #FFFFFF; font: 600 13px/18px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-sample { padding: 1px 8px; border: 1px solid #5F5564; border-radius: 999px; color: #5F5564; font: 600 12px/16px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-group-cur { margin-left: auto; color: #5F5564; font: 400 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; } .ds-group-people { color: #5F5564; font: 400 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-group-pos { margin-top: auto; display: flex; flex-direction: column; } .ds-group-word { color: #1F7A4D; font: 600 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-readout-m { color: #1F7A4D; font: 600 22px/28px 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "FinBuddy Card",
+      "kind": "card",
+      "refersTo": "card-finbuddy",
+      "description": "The one card in the tint: one readout per currency, its direction word above, largest first; never summed.",
+      "html": "<section class=\"ds-fb\"><div class=\"ds-fb-top\"><span class=\"ds-fb-name\">FinBuddy</span><span class=\"ds-fb-sample\">Sample</span></div><div class=\"ds-fb-block\"><span class=\"ds-fb-word\">You’re owed</span><span class=\"ds-fb-xl\">£185.92</span></div><div class=\"ds-fb-block\"><span class=\"ds-fb-word\">You owe</span><span class=\"ds-fb-m\">JP¥21,486</span></div></section>",
+      "css": ".ds-fb { display: flex; flex-direction: column; gap: 16px; padding: 16px; border-radius: 12px; background: #4A4652; color: #FFFFFF; } .ds-fb-top { display: flex; align-items: center; justify-content: space-between; } .ds-fb-name { font: 600 17px/22px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-fb-sample { padding: 1px 8px; border: 1px solid rgba(255,255,255,0.78); border-radius: 999px; color: rgba(255,255,255,0.78); font: 600 12px/16px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-fb-block { display: flex; flex-direction: column; } .ds-fb-word { color: rgba(255,255,255,0.78); font: 400 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-fb-xl { font: 700 40px/44px 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; } .ds-fb-m { font: 600 22px/28px 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Label above, a fill box with 10 pt corners; focus is the graphite border plus the web ring; errors name the problem underneath.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">What was it for</span><input class=\"ds-field-input\" placeholder=\"Dinner at Tasca\" /><span class=\"ds-field-hint\">Shown in the group and in your spending</span></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; } .ds-field-label { color: #5F5564; font: 400 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-field-input { box-sizing: border-box; min-height: 44px; padding: 10px 12px; border: 1.5px solid transparent; border-radius: 10px; background: #EFEAF1; color: #1A1420; font: 400 17px/22px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; caret-color: #4A4652; outline: none; } .ds-field-input::placeholder { color: #726778; } .ds-field-input:focus-visible { border-color: #4A4652; outline: 2px solid #4A4652; outline-offset: 2px; } .ds-field-input[aria-invalid=\"true\"] { border-color: #B3261E; } .ds-field-hint { color: #5F5564; font: 400 13px/18px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }"
+    },
+    {
+      "name": "Needs Settling Row",
+      "kind": "custom",
+      "refersTo": "list-row",
+      "description": "A sentence row in an inset group: words and readout on one line, the group's mark and name under, a compact Settle up beside; you-owe in ink, never red.",
+      "html": "<div class=\"ds-list\"><div class=\"ds-settle-row\"><div class=\"ds-settle-text\"><div class=\"ds-settle-first\"><span class=\"ds-settle-words\">You owe Casey</span><span class=\"ds-readout-s\">£57.55</span></div><div class=\"ds-settle-group\"><span class=\"ds-mark\" aria-hidden=\"true\"></span><span>Flat share</span><span class=\"ds-sample\">Sample</span></div></div><button class=\"ds-btn-tonal-sm\">Settle up</button></div></div>",
+      "css": ".ds-list { border-radius: 12px; overflow: hidden; background: #FFFFFF; } .ds-settle-row { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 12px 16px; } .ds-settle-text { flex: 1; display: flex; flex-direction: column; gap: 2px; } .ds-settle-first { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .ds-settle-words { color: #1A1420; font: 400 17px/22px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-readout-s { color: #1A1420; font: 600 17px/22px 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; } .ds-settle-group { display: flex; align-items: center; gap: 6px; color: #5F5564; font: 400 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-mark { width: 10px; height: 10px; border-radius: 3px; background: #7A4A2B; } .ds-sample { padding: 1px 8px; border: 1px solid #5F5564; border-radius: 999px; color: #5F5564; font: 600 12px/16px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-btn-tonal-sm { height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #ECE9EF; color: #2E2935; font: 600 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; } .ds-btn-tonal-sm:active { transform: scale(0.97); opacity: 0.85; } .ds-btn-tonal-sm:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; }"
+    },
+    {
+      "name": "Status Chip, attention",
+      "kind": "chip",
+      "refersTo": "status-chip-attention",
+      "description": "One word of state on the amber wash; red never appears in a status chip.",
+      "html": "<span class=\"ds-status\">Pending</span>",
+      "css": ".ds-status { display: inline-block; padding: 3px 10px; border-radius: 999px; background: #FFF0D6; color: #9A5B00; font: 600 12px/16px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }"
+    },
+    {
+      "name": "Navigation Bar (Material, web preview)",
+      "kind": "nav",
+      "description": "Material 3 navigation bar: 80 tall, the active destination wears the wash indicator pill and the tint; devices use NativeTabs.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Sections\"><a class=\"ds-nav-item ds-nav-on\" aria-current=\"page\" href=\"#\"><span class=\"ds-nav-pill\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 10.5L12 4l8 6.5V20h-5v-6h-6v6H4z\" fill=\"currentColor\"/></svg></span>Home</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-pill\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"8\" r=\"3.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><circle cx=\"16.5\" cy=\"9\" r=\"2.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M14.5 14.2c2.6-.4 4.9 1.1 5.6 4.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></span>Groups</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-pill\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 20V11M12 20V5M19 20v-7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\"/></svg></span>Spending</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-pill\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 7.5V12l3 2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></span>Activity</a></nav>",
+      "css": ".ds-nav { display: flex; height: 80px; padding-top: 8px; background: #FFFFFF; border-top: 1px solid #E4DEE6; } .ds-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #726778; text-decoration: none; font: 600 12px/16px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-nav-pill { display: flex; align-items: center; justify-content: center; width: 64px; height: 32px; border-radius: 16px; } .ds-nav-on { color: #4A4652; } .ds-nav-on .ds-nav-pill { background: #ECE9EF; } .ds-nav-item:hover .ds-nav-pill { background: rgba(26,20,32,0.08); } .ds-nav-on:hover .ds-nav-pill { background: #ECE9EF; } .ds-nav-item:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; border-radius: 16px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Fare Card and the Gate",
+    "overview": "Every balance is a gate readout: one exact number, in its own currency, that you can read in a second and settle with one hold. The world lends the app four things and no more: a palette, a type voice for figures, a density, and one signature ritual. Layout, navigation and controls stay native to each phone (the HIG on iPhone, Material 3 on Android), so the brand lives in the layer the platform leaves open: the large readouts, the white group cards with their line-colour band, the one graphite card on Home, and the hold that closes a ring before money moves.\n\nThe system is quiet. Surfaces are white and tinted grey; the single brand tint is Graphite, and it marks what you can act on rather than painting the screen. Density is low on purpose: one big number at a time, generous air around it, rows that read as sentences (\"You owe Blake\", \"Avery owes you\") with the figure beside the words. Honesty is a visual rule here, not a tone: owing is set in ink and never in red, being owed is green with the words, and red appears only for overdue, failure and destructive actions. Sample data always wears a \"Sample\" chip.\n\n**The graphite decision (2026-10-11).** The direction chose Fare Magenta as the one tint. The founder replaced it with Graphite (tint `#4A4652` light, `#CFC8D6` dark) and asked for quieter surfaces: the tint appears only on the FinBuddy card, filled buttons, links, the active tab and the mark; group cards became white cards on the ground with the group's line colour as a 6 pt band on the leading edge and in the name chip; the line-colour set lost magenta (retired with the old tint, `#C2187A`) and graphite (now the tint) and gained cobalt and teal. Magenta does not appear anywhere in the build: not in the tokens, the mark, the app icons or the splash (`app.json` sets `#4A4652` for the adaptive icon and splash backgrounds). In the build the tint's list widened from that decision to the states of action: selection checks, focus, switches, header controls and the FAB (Colors lists every use, including the few on data that go further).",
+    "keyCharacteristics": [
+      "One tint, Graphite, used for action and selection, never for money state.",
+      "Money is a readout: Mona Sans with tabular figures, one per currency, never summed, never truncated.",
+      "Direction is carried by words first (\"You owe\", \"You're owed\"), colour second.",
+      "Flat surfaces: no decorative shadows; the Material FAB is the one shadow in the app.",
+      "Twelve-point card corners from the ID-1 card; capsules for every button and chip.",
+      "Native shells: NativeTabs, iOS large titles and sheets, Material navigation bar and FAB."
+    ],
+    "rules": [
+      {
+        "name": "The Graphite Rule",
+        "body": "The tint marks what you can act on or have chosen, plus the FinBuddy card and the mark. It never colours money state, and it never fills a screen.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Debt Rule",
+        "body": "\"You owe\" is set in ink (`debit` equals `label`). Debts between friends are not alarms; red is for overdue, failure and destructive actions only.",
+        "section": "colors"
+      },
+      {
+        "name": "The Words-First Rule",
+        "body": "Every balance carries its direction in words (\"You're owed\", \"You owe\", \"Settled up\") and its currency in the figure; colour only supports the words, and screen readers hear the currency name.",
+        "section": "colors"
+      },
+      {
+        "name": "The Line Belongs to the Group Rule",
+        "body": "Line colours identify groups. They are never assigned to currencies, never used for state, and red and blue-for-links are absent from the set.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every readout sets `fontVariant: ['tabular-nums']`. Mona Sans ships proportional digits by default; tabular ones (600/1000 em, with a slashed zero) sit behind `tnum`, and without them digit columns jitter as values roll.",
+        "section": "typography"
+      },
+      {
+        "name": "The Never-Clip Rule",
+        "body": "Readouts follow the system text size up to 1.6x (`READOUT_MAX_SCALE`), with the size pre-multiplied so digits and symbols agree, then shrink to fit their row. An amount is never truncated.",
+        "section": "typography"
+      },
+      {
+        "name": "The Whole-Figure Fallback Rule",
+        "body": "If a formatted amount uses a glyph Mona Sans lacks (₫, ₱, ₽, ₴, fullwidth ￥, Arabic-script abbreviations), the whole readout switches to the platform face with tabular figures, never a stitched fallback glyph (`readoutFamilyFor`, `fontCoverage.ts`).",
+        "section": "typography"
+      },
+      {
+        "name": "The One Shadow Rule",
+        "body": "Nothing casts a shadow except the Material FAB. Cards, chips, sheets and the FinBuddy card are flat; separation is colour and hairline.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** format every amount through the engine with its currency (`formatMoney`, `formatMoneyToParts`) and show one readout per currency; never add currencies together.",
+      "**Do** put the direction in words beside or above every balance (\"You owe\", \"You're owed\", \"Settled up\"), with owed-to-you in credit green and you-owe in ink.",
+      "**Do** keep the tint to action and selection (filled and tonal buttons, links, checks, focus, the active tab), the FinBuddy card and the mark.",
+      "**Do** give every group a line colour and show it as the 6 pt card band, the name chip and the 10 pt mark, nowhere else.",
+      "**Do** set every readout in Mona Sans with tabular figures, cap it at 1.6x and let it shrink to fit rather than clip.",
+      "**Do** confirm money actions with Hold to confirm (600 ms) and route screen readers, Reduce Motion and the dialog preference to the two-step confirmation.",
+      "**Do** label sample data with the Sample chip wherever it appears.",
+      "**Do** dock the Material FAB in its own strip of ground so it covers nothing."
+    ],
+    "donts": [
+      "**Don't** colour a debt red. Red is for overdue, failure and destructive actions only.",
+      "**Don't** use Fare Magenta (`#C2187A`) anywhere; it was retired with the graphite decision.",
+      "**Don't** fill a screen, a group card or a section with the tint or a line colour; group cards are white with a band.",
+      "**Don't** add shadows to cards, chips or sheets; the FAB is the only shadow.",
+      "**Don't** assign line colours to currencies or use them for state.",
+      "**Don't** let colour carry meaning alone: selections show a check mark, insight severity an icon shape and a spoken label, balances their words.",
+      "**Don't** set a caption or eyebrow above a title to announce its kind; the leading icon or the words carry it."
+    ]
+  }
+}
