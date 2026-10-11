@@ -1,0 +1,316 @@
+@import 'tailwindcss';
+
+/*
+ * FinBuddy site tokens. Values are DIRECTION.md section 3 with the DECISIONS.md change of
+ * 2026-10-11: the tint is Graphite, surfaces are white and tinted grey, no magenta anywhere.
+ * Every colour is a semantic variable that flips with the colour scheme, so components never
+ * carry a dark variant of their own.
+ */
+:root {
+  color-scheme: light;
+  --ground: #f5f3f6;
+  --surface: #ffffff;
+  --surface-alt: #f0ecf2;
+  --surface-raised: #ffffff;
+  --fill: #efeaf1;
+  --label: #1a1420;
+  --label-2: #5f5564;
+  --label-3: #726778;
+  --separator: #e4dee6;
+  --tint: #4a4652;
+  --on-tint: #ffffff;
+  --tint-wash: #ece9ef;
+  --on-tint-wash: #1a1420;
+  --credit: #1f7a4d;
+  --credit-wash: #d9f2e4;
+  --attention: #9a5b00;
+  --attention-wash: #fff0d6;
+  --danger: #b3261e;
+  --danger-wash: #f9dedc;
+  --pressed: rgba(26, 20, 32, 0.08);
+  --bone: #e9e4eb;
+  --chart-muted: #958a9c;
+  --card-shadow: 0 6px 16px rgba(26, 20, 32, 0.18);
+  --fan-card: #ffffff;
+  --fan-separator: #e4dee6;
+  --fan-fill: #efeaf1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --ground: #121016;
+    --surface: #1c1922;
+    --surface-alt: #1f1b25;
+    --surface-raised: #2a252f;
+    --fill: #2a2431;
+    --label: #f6f2f7;
+    --label-2: #b9afbe;
+    --label-3: #9a8fa0;
+    --separator: #332c3a;
+    --tint: #cfc8d6;
+    --on-tint: #1a1420;
+    --tint-wash: #2e2935;
+    --on-tint-wash: #f6f2f7;
+    --credit: #5fd39a;
+    --credit-wash: #123d28;
+    --attention: #ffb857;
+    --attention-wash: #4a2e00;
+    --danger: #ffb4ab;
+    --danger-wash: #93000a;
+    --pressed: rgba(246, 242, 247, 0.1);
+    --bone: #2a252f;
+    --chart-muted: #6e6475;
+    --card-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+    --fan-card: #2a252f;
+    --fan-separator: #3a3340;
+    --fan-fill: #3a3340;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ground: #121016;
+  --surface: #1c1922;
+  --surface-alt: #1f1b25;
+  --surface-raised: #2a252f;
+  --fill: #2a2431;
+  --label: #f6f2f7;
+  --label-2: #b9afbe;
+  --label-3: #9a8fa0;
+  --separator: #332c3a;
+  --tint: #cfc8d6;
+  --on-tint: #1a1420;
+  --tint-wash: #2e2935;
+  --on-tint-wash: #f6f2f7;
+  --credit: #5fd39a;
+  --credit-wash: #123d28;
+  --attention: #ffb857;
+  --attention-wash: #4a2e00;
+  --danger: #ffb4ab;
+  --danger-wash: #93000a;
+  --pressed: rgba(246, 242, 247, 0.1);
+  --bone: #2a252f;
+  --chart-muted: #6e6475;
+  --card-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  --fan-card: #2a252f;
+  --fan-separator: #3a3340;
+  --fan-fill: #3a3340;
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-surface-raised: var(--surface-raised);
+  --color-fill: var(--fill);
+  --color-label: var(--label);
+  --color-label-2: var(--label-2);
+  --color-label-3: var(--label-3);
+  --color-separator: var(--separator);
+  --color-tint: var(--tint);
+  --color-on-tint: var(--on-tint);
+  --color-tint-wash: var(--tint-wash);
+  --color-on-tint-wash: var(--on-tint-wash);
+  --color-credit: var(--credit);
+  --color-credit-wash: var(--credit-wash);
+  --color-attention: var(--attention);
+  --color-attention-wash: var(--attention-wash);
+  --color-danger: var(--danger);
+  --color-danger-wash: var(--danger-wash);
+  --color-pressed: var(--pressed);
+  --color-bone: var(--bone);
+  --color-chart-muted: var(--chart-muted);
+  --color-white: #ffffff;
+  --color-ink: #1a1420;
+  --color-transparent: transparent;
+
+  --font-sans: 'Mona Sans Variable', 'Mona Sans Fallback', system-ui, sans-serif;
+
+  --radius-card: 12px;
+  --radius-input: 10px;
+  --radius-tile: 8px;
+
+  --shadow-card: var(--card-shadow);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-gate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+
+/*
+ * A metric-matched fallback so the swap to Mona Sans barely moves a line: Arial-metric faces
+ * scaled to Mona Sans' average advance (measured: 102.7%) with its ascent and descent.
+ */
+@font-face {
+  /* impeccable-disable-next-line overused-font -- Mona Sans is the brand face fixed by design/DIRECTION.md section 3 */
+  font-family: 'Mona Sans Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Liberation Sans');
+  size-adjust: 102.7%;
+  ascent-override: 106%;
+  descent-override: 31%;
+  line-gap-override: 0%;
+}
+
+@layer base {
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--ground);
+    color: var(--label);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.45;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    caret-color: var(--tint);
+  }
+  ::selection {
+    background: var(--tint);
+    color: var(--on-tint);
+  }
+  :focus-visible {
+    outline: 2px solid var(--tint);
+    outline-offset: 2px;
+  }
+  a {
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+  }
+  button,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  summary {
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  * {
+    scrollbar-color: var(--label-3) transparent;
+    scrollbar-width: thin;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 1ms !important;
+      animation-duration: 1ms !important;
+    }
+  }
+}
+
+@utility display {
+  font-weight: 700;
+  font-stretch: 110%;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+@utility title {
+  font-weight: 600;
+  font-stretch: 105%;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+/*
+ * Readouts use Mona Sans' proportional figures: its tabular set is drawn for code (slashed zero,
+ * a serifed 1), which reads as a terminal on money. Where digits must hold their place (the
+ * rolling Odometer) each digit sits in a fixed cell as wide as the widest figure instead.
+ */
+@utility readout {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+@utility measure {
+  max-width: 62ch;
+}
+
+/* The Split Card's input: the amount is the readout itself. */
+@utility amount-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+  width: 100%;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  outline: none;
+}
+.amount-input::-webkit-outer-spin-button,
+.amount-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+/* The currency rail: native horizontal scroll on phones and under Reduce Motion, scrubbed on desktop. */
+.rail {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 16px;
+}
+.rail > * {
+  scroll-snap-align: start;
+}
+[data-pan] .rail {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+/* A visible mask for SplitText lines while the hero sequence runs. */
+.line-mask {
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/*
+ * The hero's entrance. An inline script in index.html adds .intro before first paint when motion
+ * is welcome; the hero's parts then wait at most 0.7 s for the GSAP sequence, and CSS shows them
+ * if it has not started by then. With scripts blocked or Reduce Motion there is no wait at all.
+ */
+.intro [data-intro] {
+  visibility: hidden;
+  animation: intro-reveal 1ms linear 0.7s forwards;
+}
+@keyframes intro-reveal {
+  to {
+    visibility: visible;
+  }
+}
+
+/* The settle diagram before hydration: only the active picture shows. */
+[data-mode='all'] [data-set='fewest'],
+[data-mode='fewest'] [data-set='all'] {
+  visibility: hidden;
+}
