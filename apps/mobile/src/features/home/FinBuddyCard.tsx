@@ -7,12 +7,13 @@
 // (the settle sheet, a pushed screen) the card holds what it showed, so the roll plays on return.
 import type { Money } from '@finbuddy/shared';
 import { useIsFocused } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import { Card, DURATION, Readout, SPACE, SampleChip, Text, fitRole, useCardColors, useTheme } from '@/design';
 
+import { useLayoutTransition } from './motion';
 import { useCardReadouts } from './rolling';
 
 export interface FinBuddyCardProps {
@@ -32,26 +33,42 @@ function useHeldWhileCovered<T>(value: T): T {
   return focused ? value : held;
 }
 
+/**
+ * Layout transitions only once the screen has been in front for one slow beat. A covered screen can
+ * report a zero size (the web preview hides it), and a layout transition would animate from that
+ * on return; the readouts' roll is a transform and plays either way.
+ */
+function useSettledFocus(): boolean {
+  const focused = useIsFocused();
+  const [settled, setSettled] = useState(focused);
+  useEffect(() => {
+    const timer = setTimeout(() => setSettled(focused), focused ? DURATION.slow : 0);
+    return () => clearTimeout(timer);
+  }, [focused]);
+  return focused && settled;
+}
+
 export function FinBuddyCard(props: FinBuddyCardProps) {
   const { reduceMotion } = useTheme();
-  const layout = reduceMotion ? undefined : LinearTransition.duration(DURATION.standard);
+  const animate = useSettledFocus() && !reduceMotion;
+  const layout = useLayoutTransition(animate);
   return (
     <Animated.View layout={layout}>
       <Card tone="tint" testID="home-card">
-        <CardBody {...props} />
+        <CardBody {...props} animate={animate} />
       </Card>
     </Animated.View>
   );
 }
 
-function CardBody({ nets, hasEntries, sample, locale }: FinBuddyCardProps) {
+function CardBody({ nets, hasEntries, sample, locale, animate }: FinBuddyCardProps & { animate: boolean }) {
   const theme = useTheme();
   const card = useCardColors();
   const on = card?.on ?? theme.colors.onTint;
   const muted = card?.onMuted ?? theme.colors.onTint;
   const shownNets = useHeldWhileCovered(nets);
   const readouts = useCardReadouts(shownNets);
-  const layout = theme.reduceMotion ? undefined : LinearTransition.duration(DURATION.standard);
+  const layout = useLayoutTransition(animate);
   const longest = Math.max(0, ...readouts.map((r) => String(Math.abs(r.money.amountMinor)).length));
 
   return (
@@ -82,8 +99,8 @@ function CardBody({ nets, hasEntries, sample, locale }: FinBuddyCardProps) {
               <Animated.View
                 key={r.money.currency}
                 layout={layout}
-                entering={theme.reduceMotion ? undefined : FadeIn.duration(DURATION.quick)}
-                exiting={theme.reduceMotion ? undefined : FadeOut.duration(DURATION.quick)}
+                entering={animate ? FadeIn.duration(DURATION.quick) : undefined}
+                exiting={animate ? FadeOut.duration(DURATION.quick) : undefined}
                 style={styles.block}
               >
                 <Text role="subhead" style={{ color: muted }}>

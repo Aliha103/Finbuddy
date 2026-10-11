@@ -2,10 +2,12 @@
 // "This month": your own share of spending, one readout per currency (never summed), each with the
 // change against last month in words and a six-bar sketch of the last six months. Rows open Spending.
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useSpending, type CurrencySpending } from '@/data';
 import { ListSection, Readout, Row, SPACE, useTheme } from '@/design';
+import { currencyNames } from '@/features/common/currency';
 import type { Formatter } from '@/features/common/format';
 
 import { SectionEmpty } from './SectionEmpty';
@@ -42,6 +44,7 @@ const BAR_HEIGHT = 24;
 
 export function ThisMonth({ f }: { f: Formatter }) {
   const spending = useSpending(6);
+  const nameOf = useMemo(() => currencyNames(f.locale), [f.locale]);
   const rows = (spending?.byCurrency ?? []).filter((s) => (s.monthly[s.monthly.length - 1]?.current.amountMinor ?? 0) > 0);
   if (rows.length === 0) {
     return (
@@ -58,7 +61,8 @@ export function ThisMonth({ f }: { f: Formatter }) {
         return (
           <Row
             key={s.currency}
-            title={f.currencyName(s.currency)}
+            title={nameOf(s.currency)}
+            titleSpoken={`${nameOf(s.currency)}, your share this month`}
             subtitle={change ?? undefined}
             leading={<MonthBars spending={s} />}
             detail={<Readout money={total} locale={f.locale} role="readoutM" inline testID={`month-${s.currency}`} />}

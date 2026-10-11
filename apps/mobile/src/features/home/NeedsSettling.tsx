@@ -5,13 +5,14 @@
 import type { Transfer } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import Animated, { FadeOut, LinearTransition } from 'react-native-reanimated';
+import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { useGroups, useMySettleUps, type SettleUpItem } from '@/data';
 import { Button, DURATION, ListSection, Readout, Row, SPACE, useTheme } from '@/design';
 import { transferSentence, type Formatter, type Spoken } from '@/features/common/format';
 
 import { cleanName } from './formatter';
+import { useLayoutTransition } from './motion';
 import { SectionEmpty } from './SectionEmpty';
 
 /** Rows beyond this many hand over to Groups, which lists every plan in full. */
@@ -36,7 +37,7 @@ export function NeedsSettling({ f }: { f: Formatter }) {
   const theme = useTheme();
   const groups = useGroups();
   const settleUps = useMySettleUps();
-  const layout = theme.reduceMotion ? undefined : LinearTransition.duration(DURATION.standard);
+  const layout = useLayoutTransition();
 
   if (groups.length === 0) {
     return (

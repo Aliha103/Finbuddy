@@ -97,7 +97,7 @@ function InsightDetail({ insightId }: { insightId: string }) {
 
       <View style={[styles.section, ios ? styles.gutter : null]}>
         <Text role={ios ? 'footnote' : 'subhead'} color="labelSecondary" accessibilityRole="header" style={[styles.header, ios ? styles.upper : null]}>
-          {ios ? 'WHY AM I SEEING THIS' : 'Why am I seeing this'}
+          {ios ? 'WHAT IT IS BASED ON' : 'What it is based on'}
         </Text>
         <Animated.View layout={layout} style={[styles.group, { backgroundColor: c.surface }, ios ? styles.groupInset : null]}>
           <Pressable
