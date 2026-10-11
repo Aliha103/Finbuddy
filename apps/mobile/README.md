@@ -15,6 +15,23 @@ Then open the app in Expo Go (scan the QR code), press `a` / `i` for an Android 
 
 From this folder the usual Expo commands work too: `npm start`, `npm run typecheck`, `npm run lint`, `npx expo install <package>` (always use this instead of `npm install` for Expo and React Native packages, so versions match the SDK).
 
+## Build an installable Android app (APK)
+
+The app uses native modules (Skia, Reanimated, SecureStore, the date picker), so an installable build needs a native build; Expo Go can only preview it. `eas.json` defines two profiles:
+
+- `preview`: an `.apk` for internal distribution, installable on any Android phone that allows installs from unknown sources.
+- `production`: an `.aab` for Google Play (needs a Google Play developer account), with the build number incremented by EAS.
+
+From this folder, with an Expo account:
+
+```bash
+npx eas-cli@latest login
+npx eas-cli@latest init                                   # first time only: links the project and adds its id to app.json
+npx eas-cli@latest build --platform android --profile preview
+```
+
+When the build finishes, EAS prints a download link and a QR code for the `.apk`. With Android Studio installed you can also build locally with `npx expo run:android --variant release`.
+
 ## Layout
 
 - `src/app/` holds the Expo Router routes. `_layout.tsx` is the root layout (gesture handler root, safe-area provider, stack). Every other file there is a screen.
