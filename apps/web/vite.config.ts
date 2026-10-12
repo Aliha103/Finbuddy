@@ -11,7 +11,8 @@ const sharedEntry = fileURLToPath(new URL('../../packages/shared/src/index.ts', 
 const sharedDir = fileURLToPath(new URL('../../packages/shared', import.meta.url));
 
 export default defineConfig({
-  // '/' on Netlify (the site root); GitHub Pages sets BASE_PATH=/Finbuddy/ in its workflow.
+  // '/' for a site of its own. The finbuddych Netlify build (scripts/build-netlify.mjs at the repo
+  // root) sets BASE_PATH=/web/, and GitHub Pages sets /Finbuddy/ in its workflow.
   base: process.env.BASE_PATH || '/',
   plugins: [react(), tailwindcss()],
   resolve: {

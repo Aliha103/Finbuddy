@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { SampleChip } from '../components/Chip';
 import { cn } from '../lib/cn';
+import { APP_URL } from '../lib/links';
 import { CURRENT_MONTH, SAMPLE_ANCHOR, SAMPLE_LOCALE, SPENDING, SPENDING_CHANGE, SPIKE, categoryLabel } from '../lib/sample';
 import { MOTION, NO_PREFERENCE, ScrollTrigger, gsap, useGSAP } from '../motion';
 
@@ -226,7 +227,7 @@ export function Spending() {
                   </div>
                 ))}
               </dl>
-              <p className="mt-auto pt-6 text-[15px] font-medium">Worked out on the phone. Nothing is sent anywhere.</p>
+              <p className="mt-auto pt-6 text-[15px] font-medium">{APP_URL ? 'Worked out on your phone, or in your browser. Nothing is sent anywhere.' : 'Worked out on the phone. Nothing is sent anywhere.'}</p>
             </aside>
           ) : null}
         </div>

@@ -47,6 +47,9 @@ jobs:
       env:
         BASE_PATH: /Finbuddy/
         SITE_URL: https://aliha103.github.io/Finbuddy
+        # The page links to the web app on the Netlify site. No VITE_ANDROID_URL: the /android
+        # download exists only on Netlify.
+        VITE_APP_URL: https://finbuddych.netlify.app/
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

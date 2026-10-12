@@ -80,6 +80,30 @@ npm run web:dev       # Vite dev server
 npm run web:build     # production build into apps/web/dist
 ```
 
+## Deploying
+
+One Netlify site, **finbuddych** (https://finbuddych.netlify.app), builds `main` and serves:
+
+| Path | What it serves |
+| --- | --- |
+| `/` | The FinBuddy app's web export (`apps/mobile`). It keeps its data in that browser only. |
+| `/web/` | The website (`apps/web`, built for the `/web/` base path). Any other path under `/web/` shows the website too. |
+| `/android` | A redirect to the pre-launch Android APK, only when `ANDROID_APK_URL` is set (see below). |
+
+The root `netlify.toml` runs `npm run build:netlify` (`scripts/build-netlify.mjs`) from the repository root, whatever the site's Base directory setting says. The script exports the app into `apps/mobile/dist` (the publish folder), builds the website and copies it into `apps/mobile/dist/web`, and writes the routing rules (`_redirects`) and `robots.txt` there. It stops with an error if any step fails. To run it locally: `npm ci`, then `npm run build:netlify`. CI runs the same build on pull requests and on `main`, but deploys nothing.
+
+GitHub Pages also serves the website, under `/Finbuddy/` (`.github/workflows/deploy.yml`). There, the website's web app links point to the Netlify site.
+
+### The Android download
+
+Netlify cannot build the Android app; EAS does (see [`apps/mobile/README.md`](apps/mobile/README.md)). Netlify only points visitors to the APK:
+
+1. Build the APK with EAS (the `preview` profile) and upload it somewhere permanent. A GitHub release asset is a stable place, for example `https://github.com/Aliha103/Finbuddy/releases/download/<tag>/<file>.apk`. A download link from EAS may not stay valid.
+2. In Netlify, open **Site configuration > Environment variables** (newer dashboards call it Project configuration) and add `ANDROID_APK_URL` with that address, scoped to Builds, for the Production context.
+3. Trigger a new deploy. The variable is read when the site is built, so changing or deleting it also needs a new deploy.
+
+With the variable set, `/android` redirects (302) to the APK and the website offers an Android download next to the web app. Without it, neither exists, and the App Store and Google Play buttons keep saying "At launch". If the value is not a single `https://` URL, the build fails and says why. Nothing changes for iOS.
+
 ---
 
 ## Quick Start

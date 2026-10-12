@@ -11,7 +11,7 @@ The product is a native mobile app for iOS and Android, built once with Expo / R
 ## Stack
 
 - Mobile app: Expo (React Native) + TypeScript, one codebase shipping to iOS and Android. Confirmed by the team.
-- Website: marketing site only. It sells the app and links to the App Store and Google Play. The product does not run in the browser. Confirmed by the team.
+- Website: marketing site. It sells the app; App Store and Google Play listings come at launch. The app also runs in the browser: the Netlify site (finbuddych) serves its web export at `/`, the website at `/web/` and, when a pre-launch APK exists, a download at `/android`. Decided 2026-10-11 (see `design/DECISIONS.md`).
 - Repository: monorepo in this repo (`apps/mobile`, `apps/web`, `packages/shared`). Confirmed by the team.
 - No backend exists yet. The README describes a Django API, but it is not in this repo, and every current API call targets `localhost`.
 
@@ -57,7 +57,7 @@ Constraints:
 - No backend yet. The app must work local-first on the device, behind a data layer that a real API can replace later.
 - AI cannot depend on a local Ollama server (it cannot work on a phone). Insights must run on the device or wait for a backend endpoint, and must never send financial data anywhere without the user's consent.
 - Security, encryption, GDPR or bank-sync claims must not be made until they are implemented and verifiable.
-- The marketing site deploys to GitHub Pages under the `/Finbuddy/` base path.
+- The marketing site builds for any base path through `BASE_PATH`: `/web/` on the Netlify site, `/Finbuddy/` on GitHub Pages.
 
 Undecided:
 

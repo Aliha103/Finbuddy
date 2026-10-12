@@ -1,6 +1,7 @@
-# For a separate Netlify site that serves the marketing website. Set that site's base
-# directory to apps/web; Netlify then reads this file and installs apps/web on its own
-# (it is not part of the root npm workspaces).
+# Optional: a separate Netlify site that serves only the marketing website at its root. The
+# finbuddych site does not read this file; it serves the website at /web/ through the root
+# netlify.toml. For a separate site, set its base directory to apps/web; Netlify then reads this
+# file and installs apps/web on its own (it is not part of the root npm workspaces).
 [build]
   command = "npm run build"
   publish = "dist"
@@ -8,9 +9,12 @@
 [build.environment]
   NODE_VERSION = "22"
   BASE_PATH = "/"
+  # The page's "open the web app" links lead to the app on finbuddych. No VITE_ANDROID_URL: the
+  # /android download exists only on finbuddych.
+  VITE_APP_URL = "https://finbuddych.netlify.app/"
 
-# The site is one prerendered page whose links are all in-page anchors. Any other
-# path (old bookmarks from the previous web app, for example) lands on that page.
+# The site is one prerendered page. Its links are in-page anchors, the web app and GitHub. Any
+# other path (old bookmarks from the previous web app, for example) lands on that page.
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -32,6 +32,8 @@ npx eas-cli@latest build --platform android --profile preview
 
 When the build finishes, EAS prints a download link and a QR code for the `.apk`. With Android Studio installed you can also build locally with `npx expo run:android --variant release`.
 
+The Netlify site serves this app's web export (`npm run build:web`) at its root. It can also offer the APK at `/android`: upload the `.apk` somewhere permanent, such as a GitHub release asset, and set `ANDROID_APK_URL` in Netlify. See "Deploying" in the [root README](../../README.md#deploying).
+
 ## Layout
 
 - `src/app/` holds the Expo Router routes. `_layout.tsx` is the root layout (gesture handler root, safe-area provider, stack). Every other file there is a screen.
