@@ -11,7 +11,7 @@ import { Button, Card, Field, Readout, SPACE, Text, useTheme } from '@/design';
 
 import { CurrencyPicker } from '../common/CurrencyPicker';
 import { currencyNames, exampleMoney, useRegionCurrency } from '../common/currency';
-import { THIS_DEVICE } from '../common/device';
+import { ON_THIS_DEVICE, onDevice } from '../common/device';
 import { Screen } from '../common/Screen';
 
 export function ProfileSetup() {
@@ -75,7 +75,7 @@ export function ProfileSetup() {
             Amounts will look like this
           </Text>
           <Text role="footnote" color="labelTertiary">
-            {`${nameOf(currency)} · follows your phone's language (${locale})`}
+            {`${nameOf(currency)} · follows ${onDevice("your phone's", "your browser's")} language (${locale})`}
           </Text>
         </View>
         <Readout money={exampleMoney(currency)} locale={locale} role="readoutXL" live />
@@ -94,7 +94,7 @@ export function ProfileSetup() {
         <Button label={replacing ? 'Replace sample data and start' : 'Start'} fullWidth onPress={save} loading={saving} testID="save-profile" />
         {replacing ? (
           <Text role="footnote" color="labelSecondary" style={{ color: colors.labelSecondary }}>
-            {`Starting replaces the sample data on ${THIS_DEVICE} with your own, empty ledger.`}
+            {`Starting replaces the sample data ${ON_THIS_DEVICE} with your own, empty ledger.`}
           </Text>
         ) : null}
       </View>

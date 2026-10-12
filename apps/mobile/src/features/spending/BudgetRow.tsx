@@ -1,8 +1,9 @@
 // apps/mobile/src/features/spending/BudgetRow.tsx
 // One monthly budget: its category (or "All spending"), the pace in words from the engine's
 // budget_pace insight ("£159.50 of £200.00, 20 days left, ahead of pace") and a bar of spent against
-// the limit with a tick where an even pace would be today. The words carry the state; the bar adds
-// attention amber when ahead of pace and red only once the budget is exceeded.
+// the limit with a tick where an even pace would be today. The words carry the state; the bar is the
+// data-mark neutral on pace, attention amber when ahead of pace and red only once the budget is
+// exceeded.
 import type { Budget } from '@finbuddy/shared';
 
 import { BarRow } from '@/design';
@@ -33,7 +34,7 @@ export function BudgetRow({ budget, pace, f, onPress, accessibilityHint, highlig
       title={label}
       subtitle={sentence.text}
       sample={budget.isSample === true}
-      bar={pace ? { fraction, marker, tone: pace.status === 'over' ? 'danger' : pace.status === 'ahead' ? 'attention' : 'tint' } : null}
+      bar={pace ? { fraction, marker, tone: pace.status === 'over' ? 'danger' : pace.status === 'ahead' ? 'attention' : 'dataMark' } : null}
       onPress={onPress}
       accessibilityLabel={`${label} budget, ${sentence.spoken}`}
       accessibilityHint={accessibilityHint}

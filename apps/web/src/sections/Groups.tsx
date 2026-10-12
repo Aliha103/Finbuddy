@@ -245,7 +245,7 @@ export function Groups() {
               </span>
             </li>
             <li className="border-l border-separator pl-4">
-              <strong className="font-semibold">Members without the app still count.</strong> <span className="text-label-2">They are names on your phone. You record what they paid and what they owe.</span>
+              <strong className="font-semibold">Members without the app still count.</strong> <span className="text-label-2">They are names you add. You record what they paid and what they owe.</span>
             </li>
             <li className="border-l border-separator pl-4">
               <strong className="font-semibold">Your share joins your own spending.</strong> <span className="text-label-2">Your part of the rent shows up in your month next to your groceries, so the picture is whole.</span>

@@ -6,10 +6,15 @@
 // size pre-multiplied by the capped font scale (<= 1.6x), so nothing misaligns at large text sizes.
 // An amount is never truncated: when the row is narrower than the figure, the whole readout scales
 // down to fit. Screen readers hear the currency-name form, and a live readout announces each change.
+//
+// Motion: a column that joins a figure already on screen fades in, and one that leaves fades out;
+// a readout appearing with its screen or row does not fade on its own (LayoutAnimationConfig
+// skipEntering), so an amount never arrives after the words beside it. A long list that renders its
+// rows in batches would otherwise show each batch's amounts fading in late.
 import { formatMoney, formatMoneyToParts, type Money } from '@finbuddy/shared';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, Text as RNText, View, type LayoutChangeEvent, type TextStyle, type ViewStyle } from 'react-native';
-import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, LayoutAnimationConfig, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 
 import { readoutFamilyFor, readoutWeightFor } from './fonts';
 import { useLayoutTransition } from './motion';
@@ -125,23 +130,26 @@ export function Readout({ money, locale, role = 'readoutL', signDisplay = 'auto'
           : null,
       ]}
     >
-      {tokens.map((token, i) => {
-        const key = keys[i] ?? String(i);
-        return token.kind === 'digit' ? (
-          <DigitColumn key={key} digit={token.value} glyph={glyph} lineHeight={lineHeight} reduceMotion={theme.reduceMotion} />
-        ) : (
-          <Animated.Text
-            key={key}
-            entering={theme.reduceMotion ? undefined : FadeIn.duration(TIMING.quick.duration ?? 160)}
-            exiting={theme.reduceMotion ? undefined : FadeOut.duration(TIMING.quick.duration ?? 160)}
-            style={[glyph, styles.glyph, { height: lineHeight }]}
-            allowFontScaling={false}
-            importantForAccessibility="no"
-          >
-            {token.value}
-          </Animated.Text>
-        );
-      })}
+      {/* The columns present when the readout mounts appear with it; only later arrivals fade in. */}
+      <LayoutAnimationConfig skipEntering>
+        {tokens.map((token, i) => {
+          const key = keys[i] ?? String(i);
+          return token.kind === 'digit' ? (
+            <DigitColumn key={key} digit={token.value} glyph={glyph} lineHeight={lineHeight} reduceMotion={theme.reduceMotion} />
+          ) : (
+            <Animated.Text
+              key={key}
+              entering={theme.reduceMotion ? undefined : FadeIn.duration(TIMING.quick.duration ?? 160)}
+              exiting={theme.reduceMotion ? undefined : FadeOut.duration(TIMING.quick.duration ?? 160)}
+              style={[glyph, styles.glyph, { height: lineHeight }]}
+              allowFontScaling={false}
+              importantForAccessibility="no"
+            >
+              {token.value}
+            </Animated.Text>
+          );
+        })}
+      </LayoutAnimationConfig>
     </Animated.View>
   );
 

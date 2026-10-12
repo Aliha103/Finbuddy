@@ -1,21 +1,41 @@
-# The finbuddych Netlify site serves the FinBuddy app's web export (apps/mobile).
-# The base is set here so the publish path never depends on the site's UI settings.
-# npm finds the workspace root above apps/mobile, so the workspaces install,
-# including packages/shared, which the app imports as source.
+# The finbuddych Netlify site serves the FinBuddy app and its website from one build:
+#   /          the app's web export (apps/mobile)
+#   /web/      the marketing website (apps/web, built for the /web/ base path)
+#   /android   a 302 to the pre-launch Android APK, only when the ANDROID_APK_URL environment
+#              variable is set (Site configuration > Environment variables; redeploy after a change)
+# scripts/build-netlify.mjs builds both into apps/mobile/dist and writes the routing rules there
+# (_redirects) with the root robots.txt. See "Deploying" in README.md.
 #
-# The marketing website in apps/web has its own netlify.toml; connect it to a separate
-# Netlify site with apps/web as the base directory.
+# base = "/" runs the build from the repository root whatever the site's UI "Base directory" says
+# (this setting overrides it), so the existing site, whose UI base is apps/mobile, and a newly
+# connected one build the same way. npm installs the workspaces, including packages/shared, at
+# the root. Do not add a netlify.toml inside apps/mobile: with that UI base Netlify would read it
+# instead of this file.
 [build]
-  base = "apps/mobile"
-  command = "npm run build:web"
-  publish = "dist"
+  base = "/"
+  command = "npm run build:netlify"
+  publish = "apps/mobile/dist"
 
 [build.environment]
   NODE_VERSION = "22"
 
-# The export is a single-page app: every path serves index.html so refreshes and
-# deep links reach the router.
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# No [[redirects]] here: the generated _redirects holds the routing, because /android exists only
+# on builds that have ANDROID_APK_URL, and its rules run before any declared in this file.
+
+# Every file under these paths has a content hash in its name, so a changed file always gets a new
+# URL and browsers may keep these for a year. HTML, robots.txt, the sitemaps and /web/brand/ keep
+# Netlify's default (always revalidated).
+[[headers]]
+  for = "/_expo/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/web/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

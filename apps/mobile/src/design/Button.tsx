@@ -3,6 +3,9 @@
 // outlined and plain; on the tint field (the FinBuddy card) the inverse pair swaps the roles.
 // Presses with the press spring; the label names the action. A small button draws a 36-point
 // capsule inside a full 44 (iOS) / 48 (Material) pressable, since hitSlop does nothing on the web.
+// `reserveLabels` sizes the capsule to the widest of several labels (laid out invisibly under the
+// real one), so compact controls in neighbouring rows share a width at every text size and keep it
+// while loading.
 import { ActivityIndicator, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -23,13 +26,15 @@ export interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
+  /** Labels whose width the capsule keeps room for (the widest wins), so controls in a list share a width. */
+  reserveLabels?: readonly string[];
   accessibilityLabel?: string;
   accessibilityHint?: string;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
-export function Button({ label, onPress, variant = 'filled', intent = 'tint', size = 'regular', icon, disabled, loading, fullWidth, accessibilityLabel, accessibilityHint, style, testID }: ButtonProps) {
+export function Button({ label, onPress, variant = 'filled', intent = 'tint', size = 'regular', icon, disabled, loading, fullWidth, reserveLabels, accessibilityLabel, accessibilityHint, style, testID }: ButtonProps) {
   const theme = useTheme();
   const c = theme.colors;
   const haptic = useHaptic();
@@ -46,6 +51,7 @@ export function Button({ label, onPress, variant = 'filled', intent = 'tint', si
   const solid = variant === 'filled' || variant === 'tonal' || variant === 'inverse';
   const height = size === 'small' ? SMALL_HEIGHT : Math.max(theme.minTouch, 48);
   const inactive = disabled || loading;
+  const labelRole = size === 'small' ? 'subhead' : 'headline';
 
   return (
     <Pressable
@@ -85,11 +91,18 @@ export function Button({ label, onPress, variant = 'filled', intent = 'tint', si
           ) : (
             <View style={styles.content}>
               {icon ? <Icon name={icon} size={size === 'small' ? 16 : 20} color={foreground} /> : null}
-              <Text role={size === 'small' ? 'subhead' : 'headline'} style={{ color: foreground, fontWeight: '600' }} numberOfLines={1}>
+              <Text role={labelRole} style={{ color: foreground, fontWeight: '600' }} numberOfLines={1}>
                 {label}
               </Text>
             </View>
           )}
+          {reserveLabels?.map((reserved) => (
+            <View key={reserved} style={styles.reserve} aria-hidden accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+              <Text role={labelRole} style={styles.reserveText} numberOfLines={1}>
+                {reserved}
+              </Text>
+            </View>
+          ))}
         </Animated.View>
       )}
     </Pressable>
@@ -104,4 +117,7 @@ const styles = StyleSheet.create({
   full: { alignSelf: 'stretch' },
   button: { borderRadius: 999, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   content: { flexDirection: 'row', alignItems: 'center', gap: SPACE.s },
+  // Width without height: the capsule takes the widest reserved label's width, and nothing shows.
+  reserve: { height: 0, overflow: 'hidden', opacity: 0 },
+  reserveText: { fontWeight: '600' },
 });

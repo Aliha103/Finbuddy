@@ -1,7 +1,8 @@
 // apps/mobile/src/design/Card.tsx
 // The fare card. A flat ID-1-cornered card on the surface colour. A group's card wears its line
 // colour as a 6-point band on the leading edge and in its name chip (DECISIONS.md), never as a
-// full fill; the FinBuddy card on Home is the one card in the tint. Presses with the press spring.
+// full fill, in the scheme's own swatch (lighter fills in dark mode where the light one would not
+// reach 3:1); the FinBuddy card on Home is the one card in the tint. Presses with the press spring.
 import { createContext, use, useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -9,7 +10,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { useHaptic } from './haptics';
 import { Text } from './Text';
 import { useTheme } from './theme';
-import { RADIUS, SPACE, SPRING, type LineColor } from './tokens';
+import { RADIUS, SPACE, SPRING, lineSwatch, type LineColor } from './tokens';
 
 /** The colours text inside a tinted card should use; null when the card is a plain surface. */
 export interface CardColors {
@@ -51,7 +52,7 @@ export interface CardProps {
 const muted = (on: string) => (on === '#FFFFFF' ? 'rgba(255,255,255,0.78)' : 'rgba(26,20,32,0.78)');
 
 export function Card({ line, aspect, onPress, accessibilityLabel, accessibilityHint, padding = SPACE.l, tone = 'surface', style, testID, children }: CardProps) {
-  const { colors, reduceMotion } = useTheme();
+  const { colors, reduceMotion, scheme } = useTheme();
   const haptic = useHaptic();
   const scale = useSharedValue(1);
   const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
@@ -70,7 +71,7 @@ export function Card({ line, aspect, onPress, accessibilityLabel, accessibilityH
         : { backgroundColor: tone === 'surfaceAlt' ? colors.surfaceAlt : colors.surface };
 
   const visual = [styles.card, surface, { padding, paddingLeft: line ? padding + LINE_BAND : padding }];
-  const band = line ? <View style={[styles.band, { backgroundColor: line.fill }]} importantForAccessibility="no" /> : null;
+  const band = line ? <View style={[styles.band, { backgroundColor: lineSwatch(line, scheme).fill }]} importantForAccessibility="no" /> : null;
 
   if (!onPress) {
     return (
@@ -108,9 +109,10 @@ export function Card({ line, aspect, onPress, accessibilityLabel, accessibilityH
 
 /** The group's name in its line colour: the one place the colour carries text (label colour per swatch). */
 export function LineChip({ line, label, testID }: { line: LineColor; label: string; testID?: string }) {
+  const { fill, on } = lineSwatch(line, useTheme().scheme);
   return (
-    <View style={[styles.lineChip, { backgroundColor: line.fill }]} testID={testID}>
-      <Text role="footnote" style={{ color: line.on, fontWeight: '600' }} numberOfLines={1}>
+    <View style={[styles.lineChip, { backgroundColor: fill }]} testID={testID}>
+      <Text role="footnote" style={{ color: on, fontWeight: '600' }} numberOfLines={1}>
         {label}
       </Text>
     </View>

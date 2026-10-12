@@ -1,7 +1,8 @@
 import { GithubLogoIcon } from '@phosphor-icons/react/dist/csr/GithubLogo';
 
 import { Lockup } from '../components/Brand';
-import { REPO_URL, StoreButtons } from '../components/StoreButtons';
+import { StoreButtons } from '../components/StoreButtons';
+import { APP_URL, REPO_URL } from '../lib/links';
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -11,7 +12,7 @@ export function Footer() {
         <div className="md:col-span-5">
           <Lockup height={34} className="text-label" />
           <p className="mt-4 max-w-[36ch] text-[16px] text-label-2">Shared costs and your own spending in one exact ledger.</p>
-          <StoreButtons className="mt-6" tone="secondary" />
+          <StoreButtons className="mt-6" tone="secondary" note={false} />
         </div>
         <div className="md:col-span-7 md:pl-8">
           <h2 id="privacy" className="text-[15px] font-semibold">
@@ -19,6 +20,7 @@ export function Footer() {
           </h2>
           <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-label-2">
             This site collects nothing: no analytics, no cookies, no sign-up forms. The split you try above runs in your browser and what you type never leaves it. The only thing kept is your light or dark choice, in your own browser.
+            {APP_URL ? ' The web app is separate from this page: it keeps your entries in your browser, and sends them nowhere.' : null}
           </p>
           <h2 className="mt-8 text-[15px] font-semibold">Sample data</h2>
           <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-label-2">

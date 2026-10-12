@@ -16,7 +16,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { cancelAnimation, useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { FONT, RADIUS, SPACE, TIMING, Text, bestOn, fireHaptic, readoutFamilyFor, readoutWeightFor, scaledType, useTheme, type HapticKind, type LineColor } from '@/design';
+import { FONT, RADIUS, SPACE, TIMING, Text, bestOn, fireHaptic, lineSwatch, readoutFamilyFor, readoutWeightFor, scaledType, useTheme, type HapticKind, type LineColor } from '@/design';
 import { PersonAvatar } from '@/features/common/PersonAvatar';
 
 import { adjustShare, dragStep, formatMinorWorklet, moneyFormatSpec, moveBoundary, shareColour, snapBoundary, type MoneyFormatSpec } from '../splitMath';
@@ -95,7 +95,8 @@ export function SplitBar({ people, totalMinor, currency, locale, line, draggable
   const spec = useMemo(() => moneyFormatSpec(currency, locale), [currency, locale]);
   const step = dragStep(decimals, denominator, width);
   const unit = 10 ** decimals;
-  const colours = people.map((_, i) => shareColour(line.fill, i, theme.scheme));
+  const lineFill = lineSwatch(line, theme.scheme).fill;
+  const colours = people.map((_, i) => shareColour(lineFill, i, theme.scheme));
   const money = (minor: number) => formatMoney({ amountMinor: minor, currency }, { locale });
   const spoken = (minor: number) => formatMoney({ amountMinor: minor, currency }, { locale, currencyDisplay: 'name' });
   // The widest label any share can show, so the live labels never clip as they change.
@@ -122,7 +123,7 @@ export function SplitBar({ people, totalMinor, currency, locale, line, draggable
       >
         <View style={[styles.bar, { backgroundColor: c.fill }]} accessibilityRole={canDrag ? undefined : 'image'} accessible={!canDrag} accessibilityLabel={canDrag ? undefined : barSummary(people, amounts, remainderMinor, spoken)}>
           {people.map((p, i) => (
-            <Segment key={p.id} index={i} parts={parts} denom={denom} barWidth={barWidth} color={colours[i] ?? line.fill} />
+            <Segment key={p.id} index={i} parts={parts} denom={denom} barWidth={barWidth} color={colours[i] ?? lineFill} />
           ))}
           {remainderMinor > 0 && width > 0 ? <Remainder parts={parts} denom={denom} barWidth={barWidth} width={width} stripe={c.labelTertiary} ground={c.surfaceAlt} testID={testID ? `${testID}-remainder` : undefined} /> : null}
           {!canDrag ? people.slice(0, -1).map((p, i) => <Separator key={`sep-${p.id}`} index={i} parts={parts} denom={denom} barWidth={barWidth} color={c.surface} />) : null}
@@ -171,7 +172,7 @@ export function SplitBar({ people, totalMinor, currency, locale, line, draggable
       {legend ? (
         <View style={styles.legend} accessibilityElementsHidden={canDrag} importantForAccessibility={canDrag ? 'no-hide-descendants' : 'auto'}>
           {people.map((p, i) => (
-            <LegendItem key={p.id} person={dragging ? { ...p, remainder: false } : p} index={i} parts={parts} spec={spec} sizer={sizer} initial={money(amounts[i] ?? 0)} spokenAmount={spoken(amounts[i] ?? 0)} colour={colours[i] ?? line.fill} unit={spoken(1)} testID={testID ? `${testID}-legend-${i}` : undefined} />
+            <LegendItem key={p.id} person={dragging ? { ...p, remainder: false } : p} index={i} parts={parts} spec={spec} sizer={sizer} initial={money(amounts[i] ?? 0)} spokenAmount={spoken(amounts[i] ?? 0)} colour={colours[i] ?? lineFill} unit={spoken(1)} testID={testID ? `${testID}-legend-${i}` : undefined} />
           ))}
           {remainderMinor > 0 ? (
             <View style={styles.item} accessible accessibilityLabel={`Not assigned yet, ${spoken(remainderMinor)}`} testID={testID ? `${testID}-legend-unassigned` : undefined}>

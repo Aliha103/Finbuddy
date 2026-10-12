@@ -57,6 +57,12 @@ export interface SemanticColors {
   pressed: string;
   /** Skeleton bone */
   bone: string;
+  /**
+   * Data marks: chart bars, proportion bars, the This month sketch. A quiet neutral, never the tint
+   * (DECISIONS.md keeps the tint for action), that still reaches 3:1 on the surface, the ground, the
+   * alternate surface and the fill a proportion bar runs on. A selected bar takes the tint.
+   */
+  dataMark: string;
 }
 
 export const LIGHT: SemanticColors = {
@@ -83,6 +89,7 @@ export const LIGHT: SemanticColors = {
   onDanger: '#FFFFFF',
   pressed: 'rgba(26,20,32,0.08)',
   bone: '#E9E4EB',
+  dataMark: '#857A8C', // 4.1:1 on surface, 3.7:1 on ground, 3.4:1 on fill
 };
 
 export const DARK: SemanticColors = {
@@ -109,6 +116,7 @@ export const DARK: SemanticColors = {
   onDanger: '#690005',
   pressed: 'rgba(246,242,247,0.10)',
   bone: '#2A252F',
+  dataMark: '#7F7585', // 4:1 on surface, 4.3:1 on ground, 3.4:1 on fill
 };
 
 export type ColorRole = keyof SemanticColors;
@@ -117,22 +125,40 @@ export type ColorRole = keyof SemanticColors;
  * Line colours: each group's colour, worn as a band on the leading edge of its (white) card and in
  * its name chip (DECISIONS.md). Assigned per group (hash of id, user can change), never per
  * currency. Each ships with the one label colour that passes 4.5:1 on it (white: violet 6.6, leaf
- * 5.3, moss 5.0, cocoa 7.8, cobalt 6.6, teal 5.0; ink: tangerine 5.2, marigold 10.2).
+ * 5.3, moss 4.7, cocoa 7.4, cobalt 6.6, teal 5.0; ink: tangerine 5.3, marigold 9.9).
  * Red is absent on purpose (it is the danger role); magenta was retired with the old tint and
  * graphite became the tint, so neither is a line colour.
+ *
+ * `dark` is the pair drawn in dark mode where the light fill falls under 3:1 on the dark surface
+ * (#1C1922): violet (2.6), cocoa (2.4) and cobalt (2.6) lighten along their own hue to 3.4:1 on
+ * the surface and 3.7:1 on the ground, and white still reads 5.0:1 or better on each. The other
+ * five already clear 3:1 there (tangerine 5.1, marigold 9.5, leaf 3.3, moss 3.7, teal 3.5) and keep
+ * their light pair (null). Draw through lineSwatch, never `fill` directly.
  */
 export const LINE_COLORS = [
-  { id: 'violet', fill: '#6D3FC8', on: '#FFFFFF', name: 'Violet' },
-  { id: 'tangerine', fill: '#E8620A', on: '#1A1420', name: 'Tangerine' },
-  { id: 'marigold', fill: '#F2B705', on: '#1A1420', name: 'Marigold' },
-  { id: 'leaf', fill: '#1F7A4D', on: '#FFFFFF', name: 'Leaf' },
-  { id: 'moss', fill: '#6B7A1E', on: '#FFFFFF', name: 'Moss' },
-  { id: 'cocoa', fill: '#7A4A2B', on: '#FFFFFF', name: 'Cocoa' },
-  { id: 'cobalt', fill: '#1F4FD8', on: '#FFFFFF', name: 'Cobalt' },
-  { id: 'teal', fill: '#0F7B86', on: '#FFFFFF', name: 'Teal' },
+  { id: 'violet', fill: '#6D3FC8', on: '#FFFFFF', dark: { fill: '#7E53DD', on: '#FFFFFF' }, name: 'Violet' },
+  { id: 'tangerine', fill: '#E8620A', on: '#1A1420', dark: null, name: 'Tangerine' },
+  { id: 'marigold', fill: '#F2B705', on: '#1A1420', dark: null, name: 'Marigold' },
+  { id: 'leaf', fill: '#1F7A4D', on: '#FFFFFF', dark: null, name: 'Leaf' },
+  { id: 'moss', fill: '#6B7A1E', on: '#FFFFFF', dark: null, name: 'Moss' },
+  { id: 'cocoa', fill: '#7A4A2B', on: '#FFFFFF', dark: { fill: '#956344', on: '#FFFFFF' }, name: 'Cocoa' },
+  { id: 'cobalt', fill: '#1F4FD8', on: '#FFFFFF', dark: { fill: '#2F63ED', on: '#FFFFFF' }, name: 'Cobalt' },
+  { id: 'teal', fill: '#0F7B86', on: '#FFFFFF', dark: null, name: 'Teal' },
 ] as const;
 export type LineColor = (typeof LINE_COLORS)[number];
 export type LineColorId = LineColor['id'];
+
+/** A line colour as one scheme draws it: the fill, and the label colour that reads on it. */
+export interface LineSwatch {
+  readonly fill: string;
+  readonly on: string;
+}
+
+/** The pair to draw a line colour with in a scheme: its dark pair in dark mode, where it has one. */
+export function lineSwatch(line: LineColor, scheme: 'light' | 'dark'): LineSwatch {
+  const pair = scheme === 'dark' && line.dark ? line.dark : line;
+  return { fill: pair.fill, on: pair.on };
+}
 
 export function lineColorFor(id: string, overrides: Readonly<Record<string, LineColorId>> = {}): LineColor {
   const forced = overrides[id];

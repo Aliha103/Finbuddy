@@ -1,6 +1,7 @@
-// The first viewport: the headline, one sentence, the two honest store buttons, and the Split Card,
-// which is the primary object. One rehearsed sequence (masked lines, the card rising, the buttons)
-// under 1.4 s; under Reduce Motion nothing is tweened and the content is simply there.
+// The first viewport: the headline, one sentence, the platform buttons (the web app and the APK when
+// this build has them, then the two honest pre-launch store buttons), and the Split Card, which is
+// the primary object. One rehearsed sequence (masked lines, the card rising, the buttons) under
+// 1.4 s; under Reduce Motion nothing is tweened and the content is simply there.
 import { useRef } from 'react';
 
 import { SplitCard } from '../components/SplitCard';
@@ -38,7 +39,16 @@ export function Hero() {
         const tl = gsap.timeline({ defaults: { ease: 'gate' }, delay: 0.25 });
         tl.from('[data-hero-copy]', { y: 16, autoAlpha: 0, duration: MOTION.slow })
           .from('[data-hero-card]', { y: 40, rotateX: -8, autoAlpha: 0, duration: MOTION.focal, transformPerspective: 1200, transformOrigin: '50% 100%' }, 0.05)
-          .from('[data-hero-cta] button', { y: 12, autoAlpha: 0, duration: MOTION.standard, stagger: 0.06 }, 0.3);
+          // fromTo, not from: the buttons transition transform in CSS, and a from() tween reads its
+          // end value from the computed style when it starts playing, while that transition still
+          // shows the 12 px start, so the buttons stayed 12 px low. clearProps then hands the
+          // transform back to CSS (the press scale).
+          .fromTo(
+            '[data-hero-cta] [data-platform], [data-hero-cta] [data-cta-note]',
+            { y: 12, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: MOTION.standard, stagger: 0.06, clearProps: 'transform' },
+            0.3,
+          );
         return () => split.revert();
       }, release);
     },

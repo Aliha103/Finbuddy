@@ -1,11 +1,12 @@
-// Writes public/sitemap.xml and public/robots.txt for the one-page site.
-// SITE_URL is set by the GitHub Pages workflow; Netlify provides URL for the site's main address.
+// Writes public/sitemap.xml and public/robots.txt for the one-page site, for this copy's address
+// (SITE_URL, see site.js).
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { SITE_URL as BASE_URL } from './site.js'
+
 const here = path.dirname(fileURLToPath(import.meta.url))
-const BASE_URL = (process.env.SITE_URL || process.env.URL || 'https://aliha103.github.io/Finbuddy').replace(/\/$/, '')
 const today = new Date().toISOString().split('T')[0]
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

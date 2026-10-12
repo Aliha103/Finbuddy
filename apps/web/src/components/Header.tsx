@@ -1,4 +1,6 @@
+import { APP_URL } from '../lib/links';
 import { Lockup } from './Brand';
+import { Button } from './Button';
 import { ThemeToggle } from './ThemeToggle';
 
 const LINKS = [
@@ -26,7 +28,14 @@ export function Header() {
           ))}
         </ul>
       </nav>
-      <ThemeToggle />
+      <div className="flex items-center gap-3">
+        {APP_URL ? (
+          <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
+            <a href={APP_URL}>Open the web app</a>
+          </Button>
+        ) : null}
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

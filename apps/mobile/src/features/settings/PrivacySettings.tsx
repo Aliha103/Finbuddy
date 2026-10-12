@@ -1,12 +1,13 @@
 // apps/mobile/src/features/settings/PrivacySettings.tsx
-// "Your data stays on this phone", with the facts, and the explanation of the storage-refused bar.
+// "Your data stays on this phone" ("in this browser" on the web build), with the facts, and the
+// explanation of the storage-refused bar.
 import { StyleSheet, View } from 'react-native';
 
 import { useDataStatus } from '@/data';
 import { Icon, ListSection, Row, SPACE, Text, useTheme } from '@/design';
 
-import { StorageBar } from '../common/Banners';
-import { THIS_DEVICE } from '../common/device';
+import { StorageBar, UNSAVED } from '../common/Banners';
+import { ON_THIS_DEVICE, onDevice } from '../common/device';
 import { Screen } from '../common/Screen';
 
 export function PrivacySettings() {
@@ -16,26 +17,26 @@ export function PrivacySettings() {
     <Screen flush={theme.platform !== 'ios'} testID="privacy">
       <View style={styles.gutter}>
         <View style={styles.hero}>
-          <Icon name="lock" size={28} color={theme.colors.tint} />
+          <Icon name="lock" size={28} color={theme.colors.labelSecondary} />
           <Text role="title" accessibilityRole="header">
-            {`Your data stays on ${THIS_DEVICE}`}
+            {`Your data stays ${ON_THIS_DEVICE}`}
           </Text>
         </View>
         <StorageBar explain={false} />
       </View>
       <ListSection header="The facts">
         <Row title="No account" subtitle="There is nothing to sign in to. Accounts and sync arrive with the online service." />
-        <Row title="No server" subtitle="Expenses, groups, balances and insights are stored and worked out on this device." />
+        <Row title="No server" subtitle={`Expenses, groups, balances and insights are stored and worked out ${onDevice('on this device', 'in this browser')}.`} />
         <Row title="No analytics" subtitle="FinBuddy does not measure how you use it and sends nothing anywhere." />
         <Row title="Insights are rules, not a model" subtitle="They compare your own entries with your own history. Nothing is sent for processing." />
       </ListSection>
-      <ListSection header="Keeping your data" footer="Export makes a JSON file you can keep or move to another device. Deleting removes everything from this device.">
+      <ListSection header="Keeping your data" footer={`Export makes a JSON file you can keep or move to another device. Deleting removes everything from ${onDevice('this device', 'this browser')}.`}>
         <Row title="Export your data" subtitle="Settings › Your data" />
         <Row title="Delete all data" subtitle="Settings › Your data" />
       </ListSection>
       <ListSection header={persistent ? 'If storage is refused' : 'Storage is refused right now'}>
         <Row
-          title={persistent ? 'Changes stay only until the app closes' : 'Changes won\'t be saved on this device'}
+          title={persistent ? 'Changes stay only until the app closes' : UNSAVED}
           subtitle="Some private browsing modes, a full disk or a restricted profile can stop the app from writing to storage. FinBuddy keeps working from memory and tells you so with the amber bar on Home and here, instead of failing quietly."
         />
       </ListSection>

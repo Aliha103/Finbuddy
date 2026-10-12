@@ -8,7 +8,7 @@ import { StyleSheet, View } from 'react-native';
 import { deleteAllData, exportData, removeSampleData, resetSampleData, useDataStatus, useDataStore } from '@/data';
 import { Button, HoldToConfirm, ListSection, Row, SPACE, Text, gateUsesDialog, useTheme } from '@/design';
 
-import { THIS_DEVICE } from '../common/device';
+import { ON_THIS_DEVICE, THIS_DEVICE, onDevice } from '../common/device';
 import { Screen } from '../common/Screen';
 import { shareExport } from './exportFile';
 
@@ -37,7 +37,7 @@ export function DataSettings() {
       const outcome = await shareExport(json, `finbuddy-${stamp}.json`);
       setExportNote(
         outcome === 'unavailable'
-          ? { tone: 'error', text: 'Sharing is not available on this device, so the file could not be handed over.' }
+          ? { tone: 'error', text: onDevice('Sharing is not available on this device, so the file could not be handed over.', 'This browser cannot save files, so the export could not be downloaded.') }
           : { tone: 'ok', text: outcome === 'saved' ? `Saved finbuddy-${stamp}.json (${(json.length / 1024).toFixed(0)} KB).` : `Shared finbuddy-${stamp}.json (${(json.length / 1024).toFixed(0)} KB).` },
       );
     });
@@ -46,7 +46,7 @@ export function DataSettings() {
     <Screen flush={theme.platform !== 'ios'} testID="data-settings">
       <ListSection
         header="Export"
-        footer={`A JSON file with every record on ${THIS_DEVICE}: ${counts.expenses} expenses, ${counts.groups} groups, ${counts.settlements} payments. The same file can be imported on another device when that arrives.`}
+        footer={`A JSON file with every record ${ON_THIS_DEVICE}: ${counts.expenses} expenses, ${counts.groups} groups, ${counts.settlements} payments. The same file can be imported on another device when that arrives.`}
       >
         <View style={styles.block}>
           <Button label="Export your data" icon="share" onPress={doExport} loading={busy === 'export'} testID="export-data" />
@@ -58,7 +58,7 @@ export function DataSettings() {
         </View>
       </ListSection>
 
-      <ListSection header="Sample data" footer={sampleCount ? `${sampleCount} records on ${THIS_DEVICE} are sample data, each labelled.` : `No sample data on ${THIS_DEVICE}.`}>
+      <ListSection header="Sample data" footer={sampleCount ? `${sampleCount} records ${ON_THIS_DEVICE} are sample data, each labelled.` : `No sample data ${ON_THIS_DEVICE}.`}>
         <Row title="Reset sample data" subtitle="Replaces everything with a fresh, labelled sample set" onPress={() => run('reset', resetSampleData)} chevron={false} testID="reset-sample" />
         {sampleCount ? <Row title="Remove sample data" subtitle="Drops every labelled record; a sample profile goes back to the welcome screen" onPress={() => run('remove', () => removeSampleData().then(() => afterWipe()))} chevron={false} testID="remove-sample" /> : null}
       </ListSection>

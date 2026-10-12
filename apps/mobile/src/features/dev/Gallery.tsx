@@ -34,6 +34,7 @@ import {
   Text,
   Wordmark,
   lineColorFor,
+  lineSwatch,
   useCardColors,
   useTheme,
   type Appearance,
@@ -215,7 +216,7 @@ export function Gallery() {
                 <View style={styles.cardTop}>
                   <LineChip line={line} label={line.name} />
                   <Text role="caption" color="labelTertiary" tabular>
-                    {line.fill}
+                    {lineSwatch(line, theme.scheme).fill}
                   </Text>
                 </View>
                 <View style={styles.flex} />
@@ -250,7 +251,7 @@ export function Gallery() {
 
       <Section title="Colour roles">
         <View style={styles.swatches}>
-          {(['ground', 'surface', 'surfaceAlt', 'fill', 'separator', 'label', 'labelSecondary', 'labelTertiary', 'tint', 'tintWash', 'credit', 'creditWash', 'debit', 'attention', 'attentionWash', 'danger', 'dangerWash'] as ColorRole[]).map((role) => (
+          {(['ground', 'surface', 'surfaceAlt', 'fill', 'separator', 'label', 'labelSecondary', 'labelTertiary', 'tint', 'tintWash', 'credit', 'creditWash', 'debit', 'attention', 'attentionWash', 'danger', 'dangerWash', 'dataMark'] as ColorRole[]).map((role) => (
             <View key={role} style={styles.swatch}>
               <View style={[styles.swatchBox, { backgroundColor: c[role], borderColor: c.separator }]} />
               <Text role="caption" color="labelSecondary" numberOfLines={1}>

@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ListSection, Mark, Row, SPACE, Text } from '@/design';
 
-import { THIS_DEVICE } from '../common/device';
+import { ON_THIS_DEVICE, onDevice } from '../common/device';
 import { Screen } from '../common/Screen';
 
 export function SignInPlaceholder() {
@@ -14,14 +14,14 @@ export function SignInPlaceholder() {
       <View style={styles.hero}>
         <Mark size={56} />
         <Text role="title" accessibilityRole="header">
-          {`Your data stays on ${THIS_DEVICE}`}
+          {`Your data stays ${ON_THIS_DEVICE}`}
         </Text>
         <Text role="body" color="labelSecondary">
           Accounts and sync arrive with the online service. Until then there is nothing to sign in to, so FinBuddy asks for no email, password or phone number.
         </Text>
       </View>
       <ListSection header="What that means today">
-        <Row title="Everything is stored on this device" subtitle="Expenses, groups and settings live in the app's own storage." />
+        <Row title={onDevice('Everything is stored on this device', 'Everything is stored in this browser')} subtitle="Expenses, groups and settings live in the app's own storage." />
         <Row title="Nothing is sent anywhere" subtitle="No server, no account, no analytics." />
         <Row title="Keep a copy" subtitle="Export your data from Settings whenever you like." />
       </ListSection>
