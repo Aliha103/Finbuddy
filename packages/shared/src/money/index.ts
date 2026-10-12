@@ -2,3 +2,4 @@ export * from './currencies';
 export * from './money';
 export * from './format';
 export * from './parse';
+export * from './regions';

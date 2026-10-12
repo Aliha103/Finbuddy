@@ -16,7 +16,7 @@ import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { EASING, SPACE, Segmented, Text, graphicColor, useHaptic, useTheme, type LineColor, type SegmentOption } from '@/design';
+import { EASING, SPACE, Segmented, Text, graphicColor, lineSwatch, useHaptic, useTheme, type LineColor, type SegmentOption } from '@/design';
 
 import type { Spoken } from '../common/format';
 import { useSkiaReady } from '../common/skiaWeb';
@@ -164,7 +164,7 @@ export function SettleMap({ members, all, fewest, mode, onModeChange, line, mone
                 meId={meId}
                 slots={slots}
                 progress={progress}
-                lineColor={graphicColor(line.fill, c.surface, c.label)}
+                lineColor={graphicColor(lineSwatch(line, theme.scheme).fill, c.surface, c.label)}
                 surfaceColor={c.surface}
                 railColor={c.separator}
               />

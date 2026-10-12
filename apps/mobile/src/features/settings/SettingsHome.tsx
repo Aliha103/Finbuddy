@@ -39,7 +39,8 @@ export function SettingsHome() {
     }
     setNameError(null);
     setDraft(null);
-    if (trimmed !== profile.displayName) void updateProfile({ displayName: trimmed }).catch(() => {});
+    // Compared with the name as shown: leaving a sample profile's "You" as it was keeps its stored "You (sample)".
+    if (trimmed !== cleanName(profile.displayName)) void updateProfile({ displayName: trimmed }).catch(() => {});
   };
 
   const version = Constants.expoConfig?.version ?? '1.0.0';

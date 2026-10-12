@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-11T23:51:02.848Z",
+  "generatedAt": "2026-10-12T00:31:38.767Z",
   "title": "Design System: FinBuddy",
   "extensions": {
     "colorMeta": {
@@ -654,6 +654,38 @@
           "#F2EBF9"
         ]
       },
+      "data-mark": {
+        "role": "neutral",
+        "displayName": "Data Mark",
+        "canonical": "#857A8C",
+        "oklch": "oklch(59.5% 0.030 312.4)",
+        "tonalRamp": [
+          "#0F0714",
+          "#2A2130",
+          "#473E4E",
+          "#675D6E",
+          "#887D90",
+          "#ABA0B3",
+          "#D0C4D8",
+          "#F5E9FD"
+        ]
+      },
+      "data-mark-dark": {
+        "role": "neutral",
+        "displayName": "Data Mark (dark)",
+        "canonical": "#7F7585",
+        "oklch": "oklch(57.7% 0.027 313.0)",
+        "tonalRamp": [
+          "#0F0813",
+          "#2A212E",
+          "#473E4C",
+          "#675D6C",
+          "#887E8E",
+          "#ABA0B1",
+          "#CFC4D6",
+          "#F5EAFC"
+        ]
+      },
       "line-violet": {
         "role": "tertiary",
         "displayName": "Line: Violet",
@@ -673,6 +705,38 @@
       "line-violet-on": {
         "role": "tertiary",
         "displayName": "Text on Violet",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-violet-dark": {
+        "role": "tertiary",
+        "displayName": "Line: Violet (dark)",
+        "canonical": "#7E53DD",
+        "oklch": "oklch(56.2% 0.200 293.2)",
+        "tonalRamp": [
+          "#0F002A",
+          "#2D0063",
+          "#4D0D9F",
+          "#6B3CC5",
+          "#8B62ED",
+          "#AA8FFE",
+          "#CBBFFE",
+          "#EFECFE"
+        ]
+      },
+      "line-violet-on-dark": {
+        "role": "tertiary",
+        "displayName": "Text on Violet (dark)",
         "canonical": "#FFFFFF",
         "oklch": "oklch(100.0% 0.000 89.9)",
         "tonalRamp": [
@@ -846,6 +910,38 @@
           "#EEEEEE"
         ]
       },
+      "line-cocoa-dark": {
+        "role": "tertiary",
+        "displayName": "Line: Cocoa (dark)",
+        "canonical": "#956344",
+        "oklch": "oklch(54.6% 0.079 52.2)",
+        "tonalRamp": [
+          "#170600",
+          "#3D1A01",
+          "#623415",
+          "#855435",
+          "#A87555",
+          "#CD9777",
+          "#F3BB9A",
+          "#FEEADE"
+        ]
+      },
+      "line-cocoa-on-dark": {
+        "role": "tertiary",
+        "displayName": "Text on Cocoa (dark)",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
       "line-cobalt": {
         "role": "tertiary",
         "displayName": "Line: Cobalt",
@@ -865,6 +961,38 @@
       "line-cobalt-on": {
         "role": "tertiary",
         "displayName": "Text on Cobalt",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "line-cobalt-dark": {
+        "role": "tertiary",
+        "displayName": "Line: Cobalt (dark)",
+        "canonical": "#2F63ED",
+        "oklch": "oklch(55.1% 0.216 264.5)",
+        "tonalRamp": [
+          "#000036",
+          "#01017B",
+          "#0527B1",
+          "#2050D9",
+          "#4076FF",
+          "#78A2FF",
+          "#AFC9FE",
+          "#E7EFFF"
+        ]
+      },
+      "line-cobalt-on-dark": {
+        "role": "tertiary",
+        "displayName": "Text on Cobalt (dark)",
         "canonical": "#FFFFFF",
         "oklch": "oklch(100.0% 0.000 89.9)",
         "tonalRamp": [
@@ -1092,7 +1220,7 @@
       "name": "Tonal Button, small (Settle up)",
       "kind": "button",
       "refersTo": "button-tonal-small",
-      "description": "The list Settle up: a 36 pt wash capsule inside a full 44/48 target.",
+      "description": "The list Settle up and Confirm: a 36 pt wash capsule inside a full 44/48 target.",
       "html": "<span class=\"ds-target\"><button class=\"ds-btn-tonal-sm\">Settle up</button></span>",
       "css": ".ds-target { display: inline-flex; align-items: center; min-height: 44px; } .ds-btn-tonal-sm { height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid transparent; background: #ECE9EF; color: #2E2935; font: 600 15px/20px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; transition: transform 160ms cubic-bezier(0.2, 0, 0, 1), opacity 160ms; } .ds-btn-tonal-sm:active { transform: scale(0.97); opacity: 0.85; } .ds-btn-tonal-sm:focus-visible { outline: 2px solid #4A4652; outline-offset: 2px; }"
     },
@@ -1162,7 +1290,7 @@
   ],
   "narrative": {
     "northStar": "The Fare Card and the Gate",
-    "overview": "Every balance is a gate readout: one exact number, in its own currency, that you can read in a second and settle with one hold. The world lends the app four things and no more: a palette, a type voice for figures, a density, and one signature ritual. Layout, navigation and controls stay native to each phone (the HIG on iPhone, Material 3 on Android), so the brand lives in the layer the platform leaves open: the large readouts, the white group cards with their line-colour band, the one graphite card on Home, and the hold that closes a ring before money moves.\n\nThe system is quiet. Surfaces are white and tinted grey; the single brand tint is Graphite, and it marks what you can act on rather than painting the screen. Density is low on purpose: one big number at a time, generous air around it, rows that read as sentences (\"You owe Blake\", \"Avery owes you\") with the figure beside the words. Honesty is a visual rule here, not a tone: owing is set in ink and never in red, being owed is green with the words, and red appears only for overdue, failure and destructive actions. Sample data always wears a \"Sample\" chip.\n\n**The graphite decision (2026-10-11).** The direction chose Fare Magenta as the one tint. The founder replaced it with Graphite (tint `#4A4652` light, `#CFC8D6` dark) and asked for quieter surfaces: the tint appears only on the FinBuddy card, filled buttons, links, the active tab and the mark; group cards became white cards on the ground with the group's line colour as a 6 pt band on the leading edge and in the name chip; the line-colour set lost magenta (retired with the old tint, `#C2187A`) and graphite (now the tint) and gained cobalt and teal. Magenta does not appear anywhere in the build: not in the tokens, the mark, the app icons or the splash (`app.json` sets `#4A4652` for the adaptive icon and splash backgrounds). In the build the tint's list widened from that decision to the states of action: selection checks, focus, switches, header controls and the FAB (Colors lists every use, including the few on data that go further).",
+    "overview": "Every balance is a gate readout: one exact number, in its own currency, that you can read in a second and settle with one hold. The world lends the app four things and no more: a palette, a type voice for figures, a density, and one signature ritual. Layout, navigation and controls stay native to each phone (the HIG on iPhone, Material 3 on Android), so the brand lives in the layer the platform leaves open: the large readouts, the white group cards with their line-colour band, the one graphite card on Home, and the hold that closes a ring before money moves.\n\nThe system is quiet. Surfaces are white and tinted grey; the single brand tint is Graphite, and it marks what you can act on rather than painting the screen. Density is low on purpose: one big number at a time, generous air around it, rows that read as sentences (\"You owe Blake\", \"Avery owes you\") with the figure beside the words. Honesty is a visual rule here, not a tone: owing is set in ink and never in red, being owed is green with the words, and red appears only for overdue, failure and destructive actions. Sample data always wears a \"Sample\" chip.\n\n**The graphite decision (2026-10-11).** The direction chose Fare Magenta as the one tint. The founder replaced it with Graphite (tint `#4A4652` light, `#CFC8D6` dark) and asked for quieter surfaces: the tint appears only on the FinBuddy card, filled buttons, links, the active tab and the mark; group cards became white cards on the ground with the group's line colour as a 6 pt band on the leading edge and in the name chip; the line-colour set lost magenta (retired with the old tint, `#C2187A`) and graphite (now the tint) and gained cobalt and teal. Magenta does not appear anywhere in the build: not in the tokens, the mark, the app icons or the splash (`app.json` sets `#4A4652` for the adaptive icon and splash backgrounds). In the build the tint's list widened from that decision to the states of action: selection checks, focus, switches, header controls and the FAB (Colors lists every use). Data stays neutral: chart and proportion bars are the data-mark grey.",
     "keyCharacteristics": [
       "One tint, Graphite, used for action and selection, never for money state.",
       "Money is a readout: Mona Sans with tabular figures, one per currency, never summed, never truncated.",

@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import type { BarsDrawingProps } from './barGeometry';
 
-export function ViewBars({ layout, width, height, selectedIndex, barColor, mutedOpacity, baselineColor, radius = 3 }: BarsDrawingProps) {
+export function ViewBars({ layout, width, height, selectedIndex, barColor, selectedColor, baselineColor, radius = 3 }: BarsDrawingProps) {
   return (
     <View style={{ width, height }} pointerEvents="none">
       {layout.bars.map((bar, i) => (
@@ -19,8 +19,7 @@ export function ViewBars({ layout, width, height, selectedIndex, barColor, muted
             height: bar.height,
             borderTopLeftRadius: bar.zero ? 0 : radius,
             borderTopRightRadius: bar.zero ? 0 : radius,
-            backgroundColor: barColor,
-            opacity: i === selectedIndex ? 1 : mutedOpacity,
+            backgroundColor: i === selectedIndex ? selectedColor : barColor,
           }}
         />
       ))}

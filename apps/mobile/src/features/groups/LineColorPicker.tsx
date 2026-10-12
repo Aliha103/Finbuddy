@@ -1,9 +1,10 @@
 // apps/mobile/src/features/groups/LineColorPicker.tsx
-// The eight line colours as named swatches. Selection is shown by a check in the swatch's own
-// label colour and the bold name, never by colour alone.
+// The eight line colours as named swatches, in the scheme's own fills (as the cards will wear them).
+// Selection is shown by a check in the swatch's own label colour and the bold name, never by colour
+// alone.
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Icon, LINE_COLORS, RADIUS, SPACE, Text, useHaptic, useTheme, type LineColorId } from '@/design';
+import { Icon, LINE_COLORS, RADIUS, SPACE, Text, lineSwatch, useHaptic, useTheme, type LineColorId } from '@/design';
 
 export interface LineColorPickerProps {
   value: LineColorId | null;
@@ -12,12 +13,13 @@ export interface LineColorPickerProps {
 }
 
 export function LineColorPicker({ value, onChange, testID }: LineColorPickerProps) {
-  const { colors: c } = useTheme();
+  const { colors: c, scheme } = useTheme();
   const haptic = useHaptic();
   return (
     <View accessibilityRole="radiogroup" accessibilityLabel="Line colour" style={styles.grid} testID={testID}>
       {LINE_COLORS.map((line) => {
         const selected = line.id === value;
+        const swatch = lineSwatch(line, scheme);
         return (
           <Pressable
             key={line.id}
@@ -31,7 +33,7 @@ export function LineColorPicker({ value, onChange, testID }: LineColorPickerProp
             testID={`line-${line.id}`}
             style={({ pressed }) => [styles.item, { opacity: pressed ? 0.8 : 1 }]}
           >
-            <View style={[styles.swatch, { backgroundColor: line.fill, borderColor: selected ? c.label : 'transparent' }]}>{selected ? <Icon name="check" size={20} color={line.on} /> : null}</View>
+            <View style={[styles.swatch, { backgroundColor: swatch.fill, borderColor: selected ? c.label : 'transparent' }]}>{selected ? <Icon name="check" size={20} color={swatch.on} /> : null}</View>
             <Text role="caption" color={selected ? 'label' : 'labelSecondary'} style={selected ? styles.bold : null} numberOfLines={1}>
               {line.name}
             </Text>

@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 
 import { deleteExpense, useDataStore, useExpense, useGroups } from '@/data';
-import { Card, CategoryIcon, HoldToConfirm, ListSection, Readout, Row, SPACE, SampleChip, Text, bestOn, useTheme } from '@/design';
+import { Card, CategoryIcon, HoldToConfirm, ListSection, Readout, Row, SPACE, SampleChip, Text, bestOn, lineSwatch, useTheme } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
 import { THIS_DEVICE } from '@/features/common/device';
 import { EmptyState } from '@/features/common/EmptyState';
@@ -74,7 +74,8 @@ function ExpenseDetail({ expense, onDeleted }: { expense: Expense; onDeleted: ()
   const shareFooter = only
     ? `${!group ? 'A personal expense: you carry' : f.isMe(only.personId) ? 'You carry' : `${f.name(only.personId)} carries`} all of ${f.money(total)}.`
     : `${splitSentence(f, expense.split)}. The shares add up exactly to ${f.money(total)}.`;
-  const colour = (i: number) => shareColour(line.fill, i, theme.scheme);
+  const lineFill = lineSwatch(line, theme.scheme).fill;
+  const colour = (i: number) => shareColour(lineFill, i, theme.scheme);
   const shareIndex = new Map(expense.splits.map((s, i) => [s.personId, i]));
   // A person keeps one colour on this screen: their share's, wherever they appear.
   const fillFor = (personId: PersonId) => {

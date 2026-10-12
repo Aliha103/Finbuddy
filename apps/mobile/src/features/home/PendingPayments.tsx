@@ -1,16 +1,18 @@
 // apps/mobile/src/features/home/PendingPayments.tsx
 // Pending payments that involve you: recorded, not yet counted in balances. The words say who is
-// paying whom and whether it is overdue (the only place red appears) or due soon; Confirm marks
-// the payment as made through the platform's two-step confirmation.
+// paying whom, the group sits under them, and the state sits under the amount: overdue (the only
+// place red appears), due soon or due on a date. Each is the same two-line row as Needs settling
+// (TransferRow) with a compact Confirm, which marks the payment as made through the platform's
+// two-step confirmation.
 import { daysBetween, type Settlement } from '@finbuddy/shared';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
 import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { confirmSettlement, useGroups, useMyPendingSettlements, useToday } from '@/data';
-import { Button, DURATION, ListSection, Readout, Row, SPACE, Text, confirmDialog, useHaptic, useLayoutTransition, useTheme } from '@/design';
+import { Button, DURATION, ListSection, confirmDialog, useHaptic, useLayoutTransition, useTheme } from '@/design';
 import { cleanName, settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
 
+import { TransferRow } from './TransferRow';
 
 /** The pending sentence without its amount: "Devon is paying you", "You're paying Casey". */
 export function pendingWords(f: Formatter, s: Settlement): Spoken {
@@ -60,35 +62,31 @@ export function PendingPayments({ f }: { f: Formatter }) {
     <Animated.View layout={layout}>
       <ListSection header="Pending payments" footer={failure ?? 'Pending payments do not change a balance until they are confirmed.'}>
         {pending.map((s) => {
-          const words = pendingWords(f, s);
-          const due = dueWords(f, s, today);
           const group = s.groupId ? groups.find((g) => g.group.id === s.groupId) : undefined;
           return (
             <Animated.View key={s.id} layout={layout} exiting={theme.reduceMotion ? undefined : FadeOut.duration(DURATION.quick)}>
-              <Row
-                title={words.text}
-                titleSpoken={words.spoken}
-                subtitle={group ? cleanName(group.group.name) : 'Outside a group'}
+              <TransferRow
+                words={pendingWords(f, s)}
+                amount={s.amount}
+                locale={f.locale}
+                place={group ? cleanName(group.group.name) : 'Outside a group'}
+                // No line-colour mark: this row's second line also carries the due state, which then
+                // still fits beside the group's name on a 390-point phone.
+                line={null}
                 sample={s.isSample === true}
-                detail={
-                  <View style={styles.detail}>
-                    <Readout money={s.amount} locale={f.locale} role="readoutS" inline />
-                    {due ? (
-                      <Text role="caption" color={due.tone} style={styles.due}>
-                        {due.text}
-                      </Text>
-                    ) : null}
-                    <Button
-                      label="Confirm"
-                      variant="tonal"
-                      loading={busy === s.id}
-                      disabled={busy !== null && busy !== s.id}
-                      onPress={() => void confirm(s)}
-                      accessibilityLabel={`Confirm payment. ${settlementSentence(f, s).spoken}`}
-                      accessibilityHint="Asks you to confirm, then counts the payment in balances"
-                      testID={`confirm-${s.id}`}
-                    />
-                  </View>
+                note={dueWords(f, s, today)}
+                control={
+                  <Button
+                    label="Confirm"
+                    size="small"
+                    variant="tonal"
+                    loading={busy === s.id}
+                    disabled={busy !== null && busy !== s.id}
+                    onPress={() => void confirm(s)}
+                    accessibilityLabel={`Confirm payment. ${settlementSentence(f, s).spoken}`}
+                    accessibilityHint="Asks you to confirm, then counts the payment in balances"
+                    testID={`confirm-${s.id}`}
+                  />
                 }
                 testID={`pending-${s.id}`}
               />
@@ -99,8 +97,3 @@ export function PendingPayments({ f }: { f: Formatter }) {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  detail: { alignItems: 'flex-end', gap: SPACE.xs + 2 },
-  due: { fontWeight: '600' },
-});

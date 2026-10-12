@@ -2,8 +2,8 @@
 // Currency names, the device region's currency, and the example readout a person sees before
 // typing an amount. Names come from Intl.DisplayNames where the runtime has it; the code stands
 // alone otherwise.
-import { CURRENCY_CODES, isCurrencyCode, minorUnits, type CurrencyCode, type Money } from '@finbuddy/shared';
-import { useLocales } from 'expo-localization';
+import { CURRENCY_CODES, currencyForRegion, isCurrencyCode, minorUnits, regionOfLanguageTag, type CurrencyCode, type Money } from '@finbuddy/shared';
+import { useLocales, type Locale } from 'expo-localization';
 import { useMemo } from 'react';
 
 type DisplayNames = { of(code: string): string | undefined };
@@ -36,11 +36,23 @@ export function exampleMoney(code: CurrencyCode): Money {
   return { amountMinor: whole * 10 ** digits + frac, currency: code };
 }
 
-/** The device region's currency when the engine knows it, else USD. */
+/**
+ * The currency of the first locale that tells us one: the region currency a device reports, or
+ * (the web reports none) the currency of the region in the language tag, so an en-GB browser starts
+ * in GBP and a de-DE one in EUR. USD only when no locale names a region the table knows.
+ */
+export function regionCurrencyOf(locales: readonly Pick<Locale, 'currencyCode' | 'regionCode' | 'languageTag'>[]): CurrencyCode {
+  for (const locale of locales) {
+    if (locale.currencyCode && isCurrencyCode(locale.currencyCode)) return locale.currencyCode;
+    const fromRegion = currencyForRegion(locale.regionCode ?? regionOfLanguageTag(locale.languageTag));
+    if (fromRegion) return fromRegion;
+  }
+  return 'USD';
+}
+
+/** The device region's currency (see regionCurrencyOf). */
 export function useRegionCurrency(): CurrencyCode {
-  const locales = useLocales();
-  const code = locales[0]?.currencyCode;
-  return code && isCurrencyCode(code) ? code : 'USD';
+  return regionCurrencyOf(useLocales());
 }
 
 export interface CurrencyOption {

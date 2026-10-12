@@ -43,7 +43,7 @@ export function bestOn(background: string, candidates: readonly string[]): strin
 
 /**
  * Lines and rings that carry meaning need 3:1 against what they sit on (WCAG 1.4.11). Most line
- * colours clear that on the white card; marigold does not (about 1.9:1), so its drawn strokes are
+ * colours clear that on the white card; marigold does not (about 1.8:1), so its drawn strokes are
  * mixed toward `toward` (the label colour) just far enough to pass. A card's band and name chip keep
  * the true line colour; only drawn strokes use this. Returns `color` as is when it already passes.
  */

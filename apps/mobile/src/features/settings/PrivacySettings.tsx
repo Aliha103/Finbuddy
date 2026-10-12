@@ -16,7 +16,7 @@ export function PrivacySettings() {
     <Screen flush={theme.platform !== 'ios'} testID="privacy">
       <View style={styles.gutter}>
         <View style={styles.hero}>
-          <Icon name="lock" size={28} color={theme.colors.tint} />
+          <Icon name="lock" size={28} color={theme.colors.labelSecondary} />
           <Text role="title" accessibilityRole="header">
             {`Your data stays on ${THIS_DEVICE}`}
           </Text>

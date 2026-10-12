@@ -1,9 +1,10 @@
 // apps/mobile/src/features/spending/MonthBars.tsx
-// Six months of your own spending as bars: the selected month at full tint, the others muted, month
-// labels under each column. Scrub to read: a pan across the bars (or a tap on one) selects a month,
-// with a selection tick each time the month changes; the caller's readout follows. For screen
-// readers the chart is one adjustable element (increment and decrement move the month), and the
-// screen offers the same months as a list of rows.
+// Six months of your own spending as bars: the months in the data-mark neutral (3:1 on the card),
+// the selected one in the tint (a selection is a state of action), month labels under each column.
+// Scrub to read: a pan across the bars (or a tap on one) selects a month, with a selection tick
+// each time the month changes; the caller's readout follows. For screen readers the chart is one
+// adjustable element (increment and decrement move the month), and the screen offers the same
+// months as a list of rows.
 import type { MonthChange, MonthKey } from '@finbuddy/shared';
 import { useState } from 'react';
 import { StyleSheet, View, type AccessibilityActionEvent, type LayoutChangeEvent } from 'react-native';
@@ -29,9 +30,6 @@ export interface MonthBarsProps {
   height?: number;
   testID?: string;
 }
-
-/** Opacity of the months that are not selected: lighter graphite on the surface, never a second hue. */
-const MUTED = 0.32;
 
 export function MonthBars({ months, currentMonth, selected, onSelect, locale, spokenSelected, height = 120, testID }: MonthBarsProps) {
   const theme = useTheme();
@@ -112,7 +110,7 @@ export function MonthBars({ months, currentMonth, selected, onSelect, locale, sp
         testID={testID}
       >
         {width > 0 ? (
-          <BarsDrawing layout={layout} width={width} height={height} selectedIndex={selectedIndex} barColor={c.tint} mutedOpacity={MUTED} baselineColor={c.separator} />
+          <BarsDrawing layout={layout} width={width} height={height} selectedIndex={selectedIndex} barColor={c.dataMark} selectedColor={c.tint} baselineColor={c.separator} />
         ) : (
           <View style={{ height }} />
         )}

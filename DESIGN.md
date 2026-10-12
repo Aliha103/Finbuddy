@@ -44,8 +44,12 @@ colors:
   pressed-dark: "rgba(246,242,247,0.10)"
   bone: "#E9E4EB"
   bone-dark: "#2A252F"
+  data-mark: "#857A8C"
+  data-mark-dark: "#7F7585"
   line-violet: "#6D3FC8"
   line-violet-on: "#FFFFFF"
+  line-violet-dark: "#7E53DD"
+  line-violet-on-dark: "#FFFFFF"
   line-tangerine: "#E8620A"
   line-tangerine-on: "#1A1420"
   line-marigold: "#F2B705"
@@ -56,8 +60,12 @@ colors:
   line-moss-on: "#FFFFFF"
   line-cocoa: "#7A4A2B"
   line-cocoa-on: "#FFFFFF"
+  line-cocoa-dark: "#956344"
+  line-cocoa-on-dark: "#FFFFFF"
   line-cobalt: "#1F4FD8"
   line-cobalt-on: "#FFFFFF"
+  line-cobalt-dark: "#2F63ED"
+  line-cobalt-on-dark: "#FFFFFF"
   line-teal: "#0F7B86"
   line-teal-on: "#FFFFFF"
 typography:
@@ -263,7 +271,7 @@ Every balance is a gate readout: one exact number, in its own currency, that you
 
 The system is quiet. Surfaces are white and tinted grey; the single brand tint is Graphite, and it marks what you can act on rather than painting the screen. Density is low on purpose: one big number at a time, generous air around it, rows that read as sentences ("You owe Blake", "Avery owes you") with the figure beside the words. Honesty is a visual rule here, not a tone: owing is set in ink and never in red, being owed is green with the words, and red appears only for overdue, failure and destructive actions. Sample data always wears a "Sample" chip.
 
-**The graphite decision (2026-10-11).** The direction chose Fare Magenta as the one tint. The founder replaced it with Graphite (tint `#4A4652` light, `#CFC8D6` dark) and asked for quieter surfaces: the tint appears only on the FinBuddy card, filled buttons, links, the active tab and the mark; group cards became white cards on the ground with the group's line colour as a 6 pt band on the leading edge and in the name chip; the line-colour set lost magenta (retired with the old tint, `#C2187A`) and graphite (now the tint) and gained cobalt and teal. Magenta does not appear anywhere in the build: not in the tokens, the mark, the app icons or the splash (`app.json` sets `#4A4652` for the adaptive icon and splash backgrounds). In the build the tint's list widened from that decision to the states of action: selection checks, focus, switches, header controls and the FAB (Colors lists every use, including the few on data that go further).
+**The graphite decision (2026-10-11).** The direction chose Fare Magenta as the one tint. The founder replaced it with Graphite (tint `#4A4652` light, `#CFC8D6` dark) and asked for quieter surfaces: the tint appears only on the FinBuddy card, filled buttons, links, the active tab and the mark; group cards became white cards on the ground with the group's line colour as a 6 pt band on the leading edge and in the name chip; the line-colour set lost magenta (retired with the old tint, `#C2187A`) and graphite (now the tint) and gained cobalt and teal. Magenta does not appear anywhere in the build: not in the tokens, the mark, the app icons or the splash (`app.json` sets `#4A4652` for the adaptive icon and splash backgrounds). In the build the tint's list widened from that decision to the states of action: selection checks, focus, switches, header controls and the FAB (Colors lists every use). Data stays neutral: chart and proportion bars are the data-mark grey.
 
 **Key Characteristics:**
 - One tint, Graphite, used for action and selection, never for money state.
@@ -278,9 +286,8 @@ The system is quiet. Surfaces are white and tinted grey; the single brand tint i
 A graphite-on-grey neutral system with three meaning colours (green for owed to you, amber for attention, red for real trouble) and eight flat line colours that belong to groups, never to currencies. Every role has a dark value (the `-dark` keys); `theme.tsx` swaps the whole table by scheme, and the in-app appearance override also calls `Appearance.setColorScheme` so native alerts, sheets and pickers follow. Material dynamic colour is off: the static scheme is the Material theme.
 
 ### Primary
-- **Graphite** (tint `#4A4652`, white on it 9.2:1; dark `#CFC8D6` with ink `#1A1420` on it): filled buttons, the Hold to confirm control, the FAB and the iOS "Add expense" accessory, links and the leading icon of action rows ("Add your first expense", "Set a budget"), the header's back control and text buttons (the navigation theme's primary), selection checks and checkbox fills, a selected category tile's border and badge, the focused field's border and caret, the on-state of switches, the active tab, the FinBuddy card on Home, and the mark.
-- **Graphite on data (as built, beyond the decision):** the tint also draws the selected month's bar in Spending (other months at 32 percent), the current month's bar in This month (other months in tertiary label at 40 percent), an on-pace budget's proportion bar, and the decorative lock on the privacy screen. DECISIONS.md does not list these; they are recorded as the build stands, not as a pattern for new surfaces.
-- **Graphite Wash** (`#ECE9EF`, dark `#2E2935`) with **Deep Graphite** text (`#2E2935`, dark `#E8E2EC`): tonal buttons (every "Settle up" in a list), selected chips and selected Material segments, person avatars outside a split.
+- **Graphite** (tint `#4A4652`, white on it 9.2:1; dark `#CFC8D6` with ink `#1A1420` on it): filled buttons, the Hold to confirm control, the FAB and the iOS "Add expense" accessory, links and the leading icon of action rows ("Add your first expense", "Set a budget"), the header's back control and text buttons (the navigation theme's primary), selection checks and checkbox fills, a selected category tile's border and badge, the focused field's border and caret, the on-state of switches, the selected month's bar in the Spending and category charts (a selection; the other months are the data mark), the active tab, the FinBuddy card on Home, and the mark.
+- **Graphite Wash** (`#ECE9EF`, dark `#2E2935`) with **Deep Graphite** text (`#2E2935`, dark `#E8E2EC`): tonal buttons (every "Settle up" and "Confirm" in a list), selected chips and selected Material segments, person avatars outside a split.
 
 ### Secondary
 - **Leaf Credit** (`#1F7A4D`, dark `#5FD39A`): money owed to you, as text and readouts only. Always beside the words "You're owed" or "owes you"; it never fills a surface.
@@ -295,16 +302,19 @@ A graphite-on-grey neutral system with three meaning colours (green for owed to 
 - **Surface Alt** (`#F0ECF2`, dark `#1F1B25`): a card inside a surface, the row being edited, neutral status chips.
 - **Fill** (`#EFEAF1`, dark `#2A2431`): text field boxes, switch off-tracks, proportion-bar tracks, member initials on a group card.
 - **Ink** (label `#1A1420`, dark `#F6F2F7`): all primary text, and the debit role (you owe) uses the same value on purpose.
-- **Secondary Label** (`#5F5564`, 7.1:1 on surface; dark `#B9AFBE`): subtitles, section headers, the Sample chip, informational insight icons.
+- **Secondary Label** (`#5F5564`, 7.1:1 on surface; dark `#B9AFBE`): subtitles, section headers, the Sample chip, informational insight icons, the lock on the privacy screen.
 - **Tertiary Label** (`#726778`, 4.8:1 on ground; dark `#9A8FA0`): placeholders, chevrons, inactive web tab labels.
 - **Separator** (`#E4DEE6`, dark `#332C3A`): hairlines between rows, chip outlines, segmented borders.
 - **Pressed** (`rgba(26,20,32,0.08)`, dark `rgba(246,242,247,0.10)`): the pressed overlay on rows, chips and outlined buttons.
 - **Bone** (`#E9E4EB`, dark `#2A252F`): skeleton loading shapes.
+- **Data Mark** (`#857A8C`, 4.1:1 on surface and 3.4:1 on fill; dark `#7F7585`, 4:1 and 3.4:1): marks that carry data, not action: the month bars in Spending and a category's chart (the selected month takes the tint), category and on-pace budget proportion bars (ahead of pace is amber, over is red), and the six-month sketch in This month, where the current month is ink.
 
 `tokens.ts` also defines `surfaceRaised`, `creditWash` and a `callout` type role. No shipped screen uses them (only the dev gallery shows `creditWash`), so they stay out of the frontmatter until one does.
 
 ### Line colours
 Eight flat colours, one per group, from a hash of the group id (`lineColorFor`) and changeable in the group's settings. Each ships with the one label colour that passes 4.5:1 on it: Violet `#6D3FC8`, Tangerine `#E8620A` (ink text), Marigold `#F2B705` (ink text), Leaf `#1F7A4D`, Moss `#6B7A1E`, Cocoa `#7A4A2B`, Cobalt `#1F4FD8`, Teal `#0F7B86` (white text unless noted). A group wears its colour as the 6 pt leading band of its card, as the fill of its name chip, as the 10 pt mark before its name in "Needs settling", and as the rings and arcs of its settle map (the rail under them is a separator-grey hairline). Drawn strokes that must reach 3:1 on the card (marigold does not, at about 1.8:1) are mixed toward the label colour by `graphicColor`; the band and chip keep the true colour.
+
+In dark mode the three whose light fill falls under 3:1 on the dark surface `#1C1922` lighten along their own hue: Violet `#7E53DD`, Cocoa `#956344` and Cobalt `#2F63ED`, each 3.4:1 on the surface and 3.7:1 on the ground, still with white text at 5.0:1 or better. The other five clear 3:1 there and keep their light pair (Tangerine 5.1:1, Marigold 9.5:1, Leaf 3.3:1, Moss 3.7:1, Teal 3.5:1). Everything that draws a line colour (the band, the chip, the marks, the picker's swatches, the split and payer colours, the settle map) takes it from `lineSwatch(line, scheme)`.
 
 ### Named Rules
 **The Graphite Rule.** The tint marks what you can act on or have chosen, plus the FinBuddy card and the mark. It never colours money state, and it never fills a screen.
@@ -375,7 +385,7 @@ Corners come from the ID-1 fare card: 12 pt on cards and list groups (3.18 mm of
 Tactile capsules that press to 0.97 with a stiff spring and a selection haptic.
 - **Shape:** capsule (999).
 - **Filled:** graphite with white text (ink on light graphite in dark mode), 48 tall, 24 side padding, headline label; the one primary action on a screen.
-- **Tonal:** graphite wash with deep graphite text. The small tonal capsule (36 tall in a 44/48 target, subhead label) is the list "Settle up".
+- **Tonal:** graphite wash with deep graphite text. The small tonal capsule (36 tall in a 44/48 target, subhead label) is the list "Settle up" and "Confirm".
 - **Outlined / Plain:** a graphite outline or graphite text on nothing; pressed adds the pressed overlay.
 - **Destructive:** the same shapes in the danger role.
 - **Disabled / Loading:** 0.45 opacity; loading swaps the label for an activity indicator in the button's text colour.
@@ -405,9 +415,10 @@ Money as a gate display. The figure comes from the engine's `formatMoneyToParts`
 - **Style:** a fill-coloured box with 10 pt corners, label above in subhead secondary label, at least 44/48 tall; the amount field is 64 tall and set in Readout XL with tabular figures.
 - **Focus:** a 1.5 pt graphite border, the graphite caret and selection, plus a 2 pt graphite ring offset 2 on the web preview.
 - **Error:** the border turns danger red and the error names the problem under the field in footnote, announced to screen readers.
+- **Date (web preview):** a 48-tall fill box that shows the date the app's way (the caption's format, never the browser's), with the browser's own date input transparent over it: a click or Enter/Space opens the browser's picker and the arrow keys edit the date.
 
 ### Lists and rows
-Rows are sentences: a body title, subhead subtitles in secondary label, a trailing readout or control, and a chevron on iOS navigation rows. Amounts in titles and subtitles are never truncated. "Needs settling" rows put the words and the amount on the first line, the group's line-colour mark and name under them, and the compact tonal Settle up beside both.
+Rows are sentences: a body title, subhead subtitles in secondary label, a trailing readout or control, and a chevron on iOS navigation rows. Amounts in titles and subtitles are never truncated. "Needs settling" rows put the words and the amount on the first line, the group's line-colour mark and name under them, and the compact tonal Settle up beside both. "Pending payments" rows are the same two-line row with a compact Confirm; their second line names the group without the mark and puts the due state under the amount (overdue in red, due soon in amber).
 
 ### Navigation
 Native on each OS: NativeTabs (UITabBarController with Liquid Glass on iOS 26, the Material 3 navigation bar on Android) with Home, Groups, Spending and Activity. Only the selected tab takes the tint; unselected stays the platform's grey. iOS uses large titles in Mona Sans Bold that collapse into the system material bar; Add expense and Settle up are form sheets on iOS and full-screen dialogs on Android. The web preview's JS tabs follow the Material bar (80 tall, wash indicator pill, tertiary-label inactive labels).

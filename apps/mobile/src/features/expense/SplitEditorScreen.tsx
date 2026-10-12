@@ -10,7 +10,7 @@ import { Stack, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { Card, INPUT_RESET, Icon, ListSection, Readout, SPACE, SampleChip, Segmented, Text, bestOn, focusRing, useHaptic, useTheme } from '@/design';
+import { Card, INPUT_RESET, Icon, ListSection, Readout, SPACE, SampleChip, Segmented, Text, bestOn, focusRing, lineSwatch, useHaptic, useTheme } from '@/design';
 import { EmptyState } from '@/features/common/EmptyState';
 import { cleanName } from '@/features/common/format';
 import { HeaderButton } from '@/features/common/HeaderButton';
@@ -82,7 +82,8 @@ function SplitEditor({ model, groupId }: { model: ExpenseModel; groupId: string 
   const carriers = resolvedList && total ? remainderCarriers(result.spec, resolvedList, total.amountMinor) : new Set<PersonId>();
   const excluded = (id: PersonId) => (form.method === 'equal' || form.method === 'adjustment') && form.included[id] === false;
   const people: SplitBarPerson[] = members.map((id, i) => ({ id, name: f.name(id), amountMinor: parts[i] ?? 0, remainder: carriers.has(id), excluded: excluded(id) }));
-  const colours = members.map((_, i) => shareColour(line.fill, i, theme.scheme));
+  const lineFill = lineSwatch(line, theme.scheme).fill;
+  const colours = members.map((_, i) => shareColour(lineFill, i, theme.scheme));
   const [dragging, setDragging] = useState(false);
 
   // The running line above already states a sum that is off ("£70.00 of £100.00 assigned"), so the same fact is not repeated in red.
@@ -144,7 +145,7 @@ function SplitEditor({ model, groupId }: { model: ExpenseModel; groupId: string 
 
       <ListSection header={rowsHeader(form.method)} footer={rowsFooter(form.method, members.length)} style={styles.flushList}>
         {members.map((id, i) => (
-          <MethodRow key={id} model={model} id={id} colour={colours[i] ?? line.fill} spec={spec} onSet={setPer} onToggle={toggle} />
+          <MethodRow key={id} model={model} id={id} colour={colours[i] ?? lineFill} spec={spec} onSet={setPer} onToggle={toggle} />
         ))}
       </ListSection>
     </Screen>

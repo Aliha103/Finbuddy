@@ -23,7 +23,7 @@ export function changeWords(f: Formatter, spending: CurrencySpending): string | 
   return `${up ? 'Up' : 'Down'}${ratio ? ` ${ratio}` : ''} on last month, ${diff} ${up ? 'more' : 'less'}`;
 }
 
-/** Six flat bars, one per month, the current month in the tint: a sketch, not a chart (Spending has the chart). */
+/** Six flat bars, one per month, in the data-mark neutral with the current month in ink: a sketch, not a chart (Spending has the chart). */
 function MonthBars({ spending }: { spending: CurrencySpending }) {
   const { colors } = useTheme();
   const months = spending.monthly.slice(-6);
@@ -33,7 +33,7 @@ function MonthBars({ spending }: { spending: CurrencySpending }) {
       {months.map((m, i) => {
         const h = Math.max(2, Math.round((m.current.amountMinor / max) * BAR_HEIGHT));
         const current = i === months.length - 1;
-        return <View key={m.month} style={[styles.bar, { height: h, backgroundColor: current ? colors.tint : colors.labelTertiary, opacity: current ? 1 : 0.4 }]} />;
+        return <View key={m.month} style={[styles.bar, { height: h, backgroundColor: current ? colors.label : colors.dataMark }]} />;
       })}
     </View>
   );

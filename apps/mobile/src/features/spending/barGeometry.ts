@@ -58,10 +58,10 @@ export interface BarsDrawingProps {
   readonly width: number;
   readonly height: number;
   readonly selectedIndex: number;
-  /** The bar colour (the tint). */
+  /** Every month's bar: the data-mark neutral. */
   readonly barColor: string;
-  /** Opacity of the months that are not selected. */
-  readonly mutedOpacity: number;
+  /** The selected month's bar: the tint (a selection is a state of action). */
+  readonly selectedColor: string;
   readonly baselineColor: string;
   readonly radius?: number;
 }

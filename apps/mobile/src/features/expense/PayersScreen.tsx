@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Icon, ListSection, SPACE, Segmented, Text, bestOn, useTheme } from '@/design';
+import { Icon, ListSection, SPACE, Segmented, Text, bestOn, lineSwatch, useTheme } from '@/design';
 import { EmptyState } from '@/features/common/EmptyState';
 import { PersonRow } from '@/features/common/PersonRow';
 import { Screen } from '@/features/common/Screen';
@@ -45,7 +45,8 @@ function Payers({ model, groupId }: { model: ExpenseModel; groupId: string }) {
   const line = useGroupLineColor(groupId);
   const { f, form, result, members } = model;
   const spec = useMemo(() => moneyFormatSpec(form.currency, f.locale), [form.currency, f.locale]);
-  const colour = (i: number) => shareColour(line.fill, i, theme.scheme);
+  const lineFill = lineSwatch(line, theme.scheme).fill;
+  const colour = (i: number) => shareColour(lineFill, i, theme.scheme);
   const currencyWord = f.currencyName(form.currency);
 
   return (

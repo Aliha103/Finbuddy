@@ -14,7 +14,7 @@ describe('colour helpers', () => {
   });
 
   it('lifts a drawn stroke to 3:1 only when it needs it', () => {
-    // Cobalt already clears 3:1 on the white card; marigold (about 1.9:1) is mixed toward the label colour.
+    // Cobalt already clears 3:1 on the white card; marigold (about 1.8:1) is mixed toward the label colour.
     expect(graphicColor('#1F4FD8', '#FFFFFF', '#1A1420')).toBe('#1F4FD8');
     const marigold = graphicColor('#F2B705', '#FFFFFF', '#1A1420');
     expect(marigold).not.toBe('#F2B705');
