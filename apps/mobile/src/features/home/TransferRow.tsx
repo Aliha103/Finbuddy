@@ -5,7 +5,8 @@
 // amount; one compact control (a 36-point capsule in a full-size target) beside both lines, so
 // every row is one two-line row high. Every row's control keeps room for the widest of the row
 // controls' labels (ROW_CONTROL_LABELS), so Settle up and Confirm are one width and the amounts of
-// both sections line up. At large text sizes the amount and the control move under the words.
+// both sections line up. At large text sizes the amount and the control move under the words, and
+// the state moves with the amount (under it), so the state never drifts away from its figure.
 import type { Money } from '@finbuddy/shared';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -40,7 +41,7 @@ export function TransferRow({ words, amount, locale, amountColor, place, line, s
   const stacked = theme.largeText;
   const readout = <Readout money={amount} locale={locale} role="readoutS" color={amountColor} inline />;
   const state = note ? (
-    <Text role="caption" color={note.tone} style={styles.note}>
+    <Text role="caption" color={note.tone} style={stacked ? styles.note : [styles.note, styles.trailing]}>
       {note.text}
     </Text>
   ) : null;
@@ -54,7 +55,7 @@ export function TransferRow({ words, amount, locale, amountColor, place, line, s
             </Text>
             {stacked ? null : readout}
           </View>
-          {place || sample || state ? (
+          {place || sample || (state && !stacked) ? (
             <View style={styles.secondLine}>
               <View style={styles.groupLine}>
                 {place && line ? <View style={[styles.mark, { backgroundColor: lineSwatch(line, theme.scheme).fill }]} importantForAccessibility="no" accessibilityElementsHidden /> : null}
@@ -65,12 +66,19 @@ export function TransferRow({ words, amount, locale, amountColor, place, line, s
                 ) : null}
                 {sample ? <SampleChip /> : null}
               </View>
-              {state}
+              {stacked ? null : state}
             </View>
           ) : null}
           {stacked ? (
             <View style={styles.stackedActions}>
-              {readout}
+              {state ? (
+                <View style={styles.stackedAmount}>
+                  {readout}
+                  {state}
+                </View>
+              ) : (
+                readout
+              )}
               {control}
             </View>
           ) : null}
@@ -94,7 +102,10 @@ const styles = StyleSheet.create({
   groupLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', flexShrink: 1, columnGap: SPACE.s - 2, rowGap: 2 },
   mark: { width: MARK, height: MARK, borderRadius: 3 },
   place: { flexShrink: 1 },
-  // Pushed to the end, so when it wraps under the group's name it still sits under the amount.
-  note: { fontWeight: '600', marginLeft: 'auto' },
+  note: { fontWeight: '600' },
+  // Side by side, pushed to the end, so when it wraps under the group's name it still sits under the amount.
+  trailing: { marginLeft: 'auto' },
   stackedActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: SPACE.s, marginTop: SPACE.xs },
+  // Stacked, the state sits under the amount at the leading edge.
+  stackedAmount: { flexShrink: 1, gap: 2 },
 });

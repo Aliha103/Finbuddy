@@ -1,10 +1,10 @@
 // apps/mobile/src/features/spending/SkiaBars.tsx
 // The month chart drawn in Skia: flat bars in the data-mark neutral, the selected month in the tint,
-// standing on a hairline baseline. The month still running is hatched (an outline and 45-degree
-// stripes in the bar's colour, the way the split bar marks what is not yet settled), and a month the
-// engine flagged with a spike carries a small attention triangle above its bar. No gradients, no
-// shadows; the labels are real Text outside the canvas. The web preview requires this module only
-// once CanvasKit is loaded.
+// standing on a hairline baseline. The month still running is drawn open: an outline in the bar's
+// colour, with 45-degree stripes inside when the bar is tall enough (the way the split bar marks what
+// is not yet settled). A month the engine flagged with a spike carries a small attention triangle
+// above its bar. No gradients, no shadows; the labels are real Text outside the canvas. The web
+// preview requires this module only once CanvasKit is loaded.
 import { Canvas, Group, Line, Path, RoundedRect, Skia, rect, rrect, vec, type SkPath } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
@@ -29,7 +29,7 @@ function triangle(bar: Bar): SkPath | null {
 
 export function SkiaBars({ layout, width, height, selectedIndex, barColor, selectedColor, baselineColor, markerColor, radius = 3 }: BarsDrawingProps) {
   const hair = StyleSheet.hairlineWidth;
-  const paths = useMemo(() => layout.bars.map((bar) => ({ hatch: bar.partial ? stripes(bar) : null, marker: triangle(bar) })), [layout]);
+  const paths = useMemo(() => layout.bars.map((bar) => ({ hatch: bar.hatched ? stripes(bar) : null, marker: triangle(bar) })), [layout]);
   const o = HATCH.outline;
   return (
     <Canvas style={{ width, height }} pointerEvents="none">
@@ -37,13 +37,15 @@ export function SkiaBars({ layout, width, height, selectedIndex, barColor, selec
       <Group clip={rect(0, 0, width, layout.baseline)}>
         {layout.bars.map((bar, i) => {
           const color = i === selectedIndex ? selectedColor : barColor;
+          if (!bar.partial) return <RoundedRect key={i} x={bar.x} y={bar.y} width={bar.width} height={bar.height + (bar.zero ? 0 : radius)} r={bar.zero ? 0 : radius} color={color} />;
           const hatch = paths[i]?.hatch;
-          if (!hatch) return <RoundedRect key={i} x={bar.x} y={bar.y} width={bar.width} height={bar.height + (bar.zero ? 0 : radius)} r={bar.zero ? 0 : radius} color={color} />;
           return (
             <Group key={i}>
-              <Group clip={rrect(rect(bar.x, bar.y, bar.width, bar.height + radius), radius, radius)}>
-                <Path path={hatch} color={color} style="stroke" strokeWidth={HATCH.stroke} />
-              </Group>
+              {hatch ? (
+                <Group clip={rrect(rect(bar.x, bar.y, bar.width, bar.height + radius), radius, radius)}>
+                  <Path path={hatch} color={color} style="stroke" strokeWidth={HATCH.stroke} />
+                </Group>
+              ) : null}
               <RoundedRect x={bar.x + o / 2} y={bar.y + o / 2} width={bar.width - o} height={bar.height + radius} r={Math.max(0, radius - o / 2)} color={color} style="stroke" strokeWidth={o} />
             </Group>
           );

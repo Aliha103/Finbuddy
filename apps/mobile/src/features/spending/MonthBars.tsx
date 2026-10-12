@@ -2,9 +2,10 @@
 // Six months of your own spending as bars: the months in the data-mark neutral (3:1 on the card),
 // the selected one in the tint (a selection is a state of action), month labels under each column.
 // The tint and the data mark are too close to tell apart by colour alone, so the selected month's
-// label also sits in a tint pill. The month still running is hatched (it is partial, never drawn as
-// a finished month), and a month the engine flagged with a category spike carries a small attention
-// triangle above its bar. Scrub to read: a pan across the bars (or a tap on one) selects a month,
+// label also sits in a tint pill, the only label with emphasis. The month still running is drawn
+// open, an outline hatched when the bar is tall enough (it is partial, never drawn as a finished
+// month), and a month the engine flagged with a category spike carries a small attention triangle
+// above its bar. Scrub to read: a pan across the bars (or a tap on one) selects a month,
 // with a selection tick each time the month changes; the caller's readout follows. For screen
 // readers the chart is one adjustable element (increment and decrement move the month), and the
 // screen offers the same months as a list of rows.
@@ -18,7 +19,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { RADIUS, SPACE, Text, useHaptic, useTheme } from '@/design';
 import { monthName } from '@/features/common/format';
 
-import { CHART_HEIGHT, indexAtX, layoutBars, monthCues } from './barGeometry';
+import { CHART_HEIGHT, indexAtX, layoutBars, monthCues, type PartialMark } from './barGeometry';
 import { BarsDrawing } from './BarsDrawing';
 
 export interface MonthBarsProps {
@@ -135,7 +136,7 @@ export function MonthBars({ months, currentMonth, selected, onSelect, spikes = N
             return (
               <View key={m.month} style={[styles.cell, { width: layout.column || undefined, flex: layout.column ? undefined : 1 }]} testID={isSelected ? `${testID ?? 'chart'}-selected-label` : undefined}>
                 <View style={[styles.pill, isSelected ? { backgroundColor: c.tint } : null]}>
-                  <Text role="caption" color={isSelected ? 'onTint' : 'labelSecondary'} align="center" numberOfLines={1} style={isSelected || cue?.partial ? styles.strong : null}>
+                  <Text role="caption" color={isSelected ? 'onTint' : 'labelSecondary'} align="center" numberOfLines={1} style={isSelected ? styles.strong : null}>
                     {monthName(locale, m.month, 'short')}
                   </Text>
                 </View>
@@ -165,8 +166,8 @@ export interface ChartKeyProps {
   lead?: string;
   /** The current month's name: "October". */
   thisMonth: string;
-  /** The current month's bar is drawn hatched. */
-  partial: boolean;
+  /** How the current month's bar is drawn (partialMark); null when it is not marked. */
+  partial: PartialMark | null;
   /** A spike marker is drawn. */
   spike: boolean;
   /** What a marker means here: "a category spike", "a spike in this category". */
@@ -178,7 +179,7 @@ export interface ChartKeyProps {
 /** The chart's own marks in words, in the card's foot: "October so far is hatched. ▲ marks a category spike." */
 export function ChartKey({ lead, thisMonth, partial, spike, spikeMeaning = 'a category spike', style, testID }: ChartKeyProps) {
   if (!lead && !partial && !spike) return null;
-  const parts = [lead, partial ? `${thisMonth} so far is hatched.` : null].filter((x): x is string => !!x).join(' ');
+  const parts = [lead, partial ? `${thisMonth} so far is ${partial}.` : null].filter((x): x is string => !!x).join(' ');
   const spoken = [parts, spike ? `A triangle marks ${spikeMeaning}.` : null].filter(Boolean).join(' ');
   return (
     <Text role="footnote" color="labelTertiary" accessibilityLabel={spoken} style={style} testID={testID}>

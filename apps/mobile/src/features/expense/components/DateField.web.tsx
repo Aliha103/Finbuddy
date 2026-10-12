@@ -62,7 +62,11 @@ export function DateField({ f, value, today, onChange, testID }: DateFieldProps)
   const [focused, setFocused] = useState(false);
   /** The input is showing: keyboard editing is under way. */
   const [editing, setEditing] = useState(false);
-  /** A pointer went down on the input, so the focus that follows is not the keyboard's. */
+  /**
+   * A pointer went down on the input while it did not have focus, so the focus that follows is not
+   * the keyboard's. Set only when a focus will follow, and cleared by that focus, a cancelled pointer
+   * or blur, so it never outlives one click and never hides the next Tab's reveal.
+   */
   const pointer = useRef(false);
   const showInput = () => setEditing(true);
 
@@ -120,8 +124,13 @@ export function DateField({ f, value, today, onChange, testID }: DateFieldProps)
               const next = e.currentTarget.value;
               if (isLocalDate(next) && next <= today) onChange(next);
             }}
-            onPointerDown={() => {
-              pointer.current = true;
+            onPointerDown={(e) => {
+              // Already focused: no focus event follows, so nothing would clear the flag.
+              pointer.current = document.activeElement !== e.currentTarget;
+            }}
+            onPointerCancel={() => {
+              // A touch that became a scroll: no focus follows.
+              pointer.current = false;
             }}
             onClick={(e) => openPicker(e.currentTarget, showInput)}
             onKeyDown={(e) => {
@@ -140,6 +149,7 @@ export function DateField({ f, value, today, onChange, testID }: DateFieldProps)
               pointer.current = false;
             }}
             onBlur={() => {
+              pointer.current = false;
               setFocused(false);
               setEditing(false);
             }}

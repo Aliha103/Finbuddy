@@ -5,7 +5,8 @@
 // Under it, that month by category (proportional bars, each opening the category), then budgets with
 // their pace, then Insights. Every figure comes from the engine: spendingByMonth, monthOverMonth,
 // spendingByCategory, the budget_pace insight, and the category_spike insight that marks a month in
-// the chart. The month still running is hatched in the chart, and the card's foot says so.
+// the chart. The month still running is drawn open in the chart (hatched, or outlined while its bar
+// is short), and the card's foot says so.
 import { firstDayOfMonth, lastDayOfMonth, spendingByCategory, spendingRecords, type CategorySpending, type CurrencyCode, type MonthChange, type MonthKey } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { Fragment, useState } from 'react';
@@ -18,7 +19,7 @@ import { EmptyState } from '@/features/common/EmptyState';
 import { categoryLabel, changeInWords, monthName, useFormat, type Formatter, type Spoken } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
-import { CHART_HEIGHT, partialHatched, spikeMonths } from './barGeometry';
+import { CHART_HEIGHT, partialMark, spikeMonths } from './barGeometry';
 import { findPace } from './budgetPace';
 import { BudgetRow } from './BudgetRow';
 import { CategoryRow } from './CategoryRow';
@@ -79,7 +80,7 @@ function SpendingBody() {
   const spokenSelected = `${monthLabel}, ${f.spokenMoney(selected.current)}${spikes.has(selected.month) ? ', a category spike' : ''}`;
   const spikeFlags = current.monthly.map((m) => spikes.has(m.month));
   const spikeShown = spikeFlags.some(Boolean);
-  const partialShown = partialHatched(
+  const partialShown = partialMark(
     current.monthly.map((m) => m.current.amountMinor),
     current.monthly.findIndex((m) => m.month === summary.thisMonth),
     CHART_HEIGHT.spending,
@@ -127,7 +128,7 @@ function SpendingBody() {
               )}
             </View>
             <View style={styles.cardFoot}>
-              <ChartKey lead={`Your own share, personal and group, in ${currencyName}.`} thisMonth={monthName(locale, summary.thisMonth)} partial={!showList && partialShown} spike={!showList && spikeShown} style={styles.grow} testID="spending-foot" />
+              <ChartKey lead={`Your own share, personal and group, in ${currencyName}.`} thisMonth={monthName(locale, summary.thisMonth)} partial={showList ? null : partialShown} spike={!showList && spikeShown} style={styles.grow} testID="spending-foot" />
               {theme.screenReader ? null : (
                 // A full 44/48-point target that reaches into the card's padding, so the foot keeps its height.
                 <Pressable

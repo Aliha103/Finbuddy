@@ -6,7 +6,7 @@ import { changeInWords, monthName, paceSentence, type Formatter } from '@/featur
 
 import { findPace } from './budgetPace';
 import { excludedNote, expenseCount } from './copy';
-import { HATCH, SPIKE_MARKER, indexAtX, layoutBars, monthCues, partialHatched, spikeMonths } from './barGeometry';
+import { HATCH, SPIKE_MARKER, indexAtX, layoutBars, monthCues, partialMark, spikeMonths } from './barGeometry';
 
 /** A Formatter for en-GB without the data layer (the real one is a hook). */
 function formatter(locale = 'en-GB'): Formatter {
@@ -113,6 +113,7 @@ describe('chart geometry', () => {
   test('the month still running is partial and a spike leaves room for its marker', () => {
     const { bars } = layoutBars([50, 100, 80], 300, 120, { partialIndex: 2, spikes: [false, true, false] });
     expect(bars.map((b) => b.partial)).toEqual([false, false, true]);
+    expect(bars.map((b) => b.hatched)).toEqual([false, false, true]);
     const tallest = bars[1]!;
     expect(tallest.spike).not.toBeNull();
     expect(tallest.spike!.bottom).toBe(tallest.y - SPIKE_MARKER.gap);
@@ -120,13 +121,39 @@ describe('chart geometry', () => {
     expect(tallest.spike!.cx).toBe(tallest.x + tallest.width / 2);
     expect(bars[0]!.spike).toBeNull();
   });
-  test('a partial month too short to show stripes is drawn plain, and the key leaves the hatch out', () => {
-    const { bars } = layoutBars([10_000, 5], 300, 120, { partialIndex: 1 });
-    expect(bars[1]!.height).toBeLessThan(HATCH.minHeight);
+  test('a partial month too short for stripes stays partial: outlined, and open enough to read', () => {
+    // The first days of a month: 2 to 9 points tall on the 120-point and 72-point charts.
+    for (const [values, height] of [
+      [[10_000, 5], 120],
+      [[10_000, 400], 120],
+      [[10_000, 700], 120],
+      [[10_000, 900], 72],
+    ] as const) {
+      const { bars } = layoutBars(values, 300, height, { partialIndex: 1 });
+      const bar = bars[1]!;
+      expect(bar.partial).toBe(true);
+      expect(bar.hatched).toBe(false);
+      // Room inside the outline: the open box is never a solid stub.
+      expect(bar.height).toBeGreaterThanOrEqual(HATCH.minOpen);
+      expect(HATCH.minOpen - HATCH.outline).toBeGreaterThanOrEqual(3);
+      expect(bar.height).toBeLessThan(HATCH.minHeight);
+      expect(bar.y + bar.height).toBe(height);
+      expect(partialMark(values, 1, height)).toBe('outlined');
+    }
+    expect(partialMark([10_000, 8_000], 1, 120)).toBe('hatched');
+    expect(partialMark([10_000, 8_000], 1, 72)).toBe('hatched');
+  });
+  test('a month still running with nothing spent is a stub, not marked', () => {
+    const { bars } = layoutBars([10_000, 0], 300, 120, { partialIndex: 1 });
     expect(bars[1]!.partial).toBe(false);
-    expect(partialHatched([10_000, 5], 1, 120)).toBe(false);
-    expect(partialHatched([10_000, 8_000], 1, 120)).toBe(true);
-    expect(partialHatched([10_000, 0], 1, 120)).toBe(false);
+    expect(bars[1]!.height).toBe(2);
+    expect(partialMark([10_000, 0], 1, 120)).toBeNull();
+    expect(partialMark([10_000, 8_000], -1, 120)).toBeNull();
+  });
+  test('only the month still running is drawn open; finished months keep their true height', () => {
+    const { bars } = layoutBars([5, 10_000, 5], 300, 120, { partialIndex: 1 });
+    expect(bars.map((b) => b.partial)).toEqual([false, true, false]);
+    expect(bars[0]!.height).toBe(2);
   });
   test('without a spike the bars keep the full height', () => {
     expect(layoutBars([100], 100, 120).bars[0]!.y).toBe(2);

@@ -2,8 +2,9 @@
 // One category in one currency: the selected month's total (this month by default) with its change
 // against the month before, six months of bars to scrub, then your share of every expense in the
 // category, newest first and grouped by month, each opening Expense detail. Sample records wear
-// their chip. The month still running is hatched, and a month the engine flagged with a spike in
-// this category carries a marker; the card's foot names both. Reads: useCategoryRecords
+// their chip. The month still running is drawn open (hatched, or outlined while its bar is short),
+// and a month the engine flagged with a spike in this category carries a marker; the card's foot
+// names both. Reads: useCategoryRecords
 // (spendingRecords), spendingByMonth / monthOverMonth and the category_spike insight.
 import { addMonths, monthOf, monthOverMonth, monthRange, spendingByMonth, zero, type CategoryId, type CurrencyCode, type MonthChange, type MonthKey, type SpendingRecord } from '@finbuddy/shared';
 import { router } from 'expo-router';
@@ -17,7 +18,7 @@ import { EmptyState } from '@/features/common/EmptyState';
 import { categoryLabel, changeInWords, monthName, useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
-import { CHART_HEIGHT, partialHatched, spikeMonths } from './barGeometry';
+import { CHART_HEIGHT, partialMark, spikeMonths } from './barGeometry';
 import { expenseCount } from './copy';
 import { ChartKey, MonthBars } from './MonthBars';
 
@@ -80,7 +81,7 @@ function CategoryBody({ categoryId, currency }: CategoryScreenProps) {
   const spokenSelected = `${monthLabel}, ${f.spokenMoney(selected.current)}${spikes.has(selectedMonth) ? ', a spike in this category' : ''}`;
   const spikeFlags = series.map((m) => spikes.has(m.month));
   const spikeShown = spikeFlags.some(Boolean);
-  const partialShown = partialHatched(
+  const partialShown = partialMark(
     series.map((m) => m.current.amountMinor),
     series.findIndex((m) => m.month === thisMonth),
     CHART_HEIGHT.category,

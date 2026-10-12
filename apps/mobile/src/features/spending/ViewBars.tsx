@@ -1,7 +1,7 @@
 // apps/mobile/src/features/spending/ViewBars.tsx
 // The month chart drawn with plain Views: the web preview shows this until CanvasKit has loaded,
 // and it is the same geometry as the Skia drawing, so the team reviews the same chart. Only the web
-// preview draws it, so the partial month's hatch is a CSS stripe pattern under the same outline.
+// preview draws it, so the partial month's hatch is a CSS stripe pattern inside the same outline.
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { HATCH, type BarsDrawingProps } from './barGeometry';
@@ -18,7 +18,6 @@ export function ViewBars({ layout, width, height, selectedIndex, barColor, selec
     <View style={{ width, height }} pointerEvents="none">
       {layout.bars.map((bar, i) => {
         const color = i === selectedIndex ? selectedColor : barColor;
-        const hatched = bar.partial;
         return (
           <View
             key={i}
@@ -32,7 +31,7 @@ export function ViewBars({ layout, width, height, selectedIndex, barColor, selec
                 borderTopLeftRadius: bar.zero ? 0 : radius,
                 borderTopRightRadius: bar.zero ? 0 : radius,
               },
-              hatched ? [{ borderWidth: HATCH.outline, borderBottomWidth: 0, borderColor: color }, hatchStyle(color)] : { backgroundColor: color },
+              bar.partial ? [{ borderWidth: HATCH.outline, borderBottomWidth: 0, borderColor: color }, bar.hatched ? hatchStyle(color) : null] : { backgroundColor: color },
             ]}
           />
         );

@@ -1,19 +1,25 @@
 // apps/mobile/src/features/spending/barGeometry.ts
 // The month chart's geometry, as plain numbers: one column per month, a bar centred in each,
 // heights scaled to the largest month, a 2-point stub for a month with nothing. The month still
-// running is marked partial (drawn hatched), and a month the engine flagged with a category spike
-// carries a small marker above its bar, for which the layout keeps room at the top. Pure, so the
-// Skia canvas, the plain-View fallback and the tests all draw the same picture.
+// running is marked partial (drawn open: an outline, hatched when it is tall enough), and a month
+// the engine flagged with a category spike carries a small marker above its bar, for which the
+// layout keeps room at the top. Pure, so the Skia canvas, the plain-View fallback and the tests all
+// draw the same picture.
 import { isMoney, type Insight, type MonthKey } from '@finbuddy/shared';
 
 /** The month chart's height on Spending, and on a category's screen. */
 export const CHART_HEIGHT = { spending: 120, category: 72 } as const;
 
 /**
- * The hatch of a partial month: stripes this far apart, this thick, with an outline this thick. A
- * bar shorter than `minHeight` cannot show stripes, so it is drawn plain (and the key says nothing).
+ * The partial month's marks: an outline this thick, and stripes this far apart and this thick. A bar
+ * shorter than `minHeight` has no room for stripes, so it keeps only the outline (the key then says
+ * "outlined"); and a partial bar is never shorter than `minOpen`, so its outline still reads as an
+ * open box rather than a solid stub.
  */
-export const HATCH = { gap: 6, stroke: 1.5, outline: 1.5, minHeight: 10 } as const;
+export const HATCH = { gap: 6, stroke: 1.5, outline: 1.5, minHeight: 10, minOpen: 6 } as const;
+
+/** How the month still running is drawn: hatched (outline and stripes) or, when too short for stripes, outlined. */
+export type PartialMark = 'hatched' | 'outlined';
 
 /** The spike marker: a small triangle pointing up, `gap` above its bar. */
 export const SPIKE_MARKER = { width: 8, height: 6, gap: 3 } as const;
@@ -35,8 +41,10 @@ export interface Bar {
   readonly height: number;
   /** The month had no spending: the bar is only the stub. */
   readonly zero: boolean;
-  /** The month is still running (the current month) and its bar is tall enough to show it: drawn hatched, never as a finished month. */
+  /** The month is still running (the current month) and has spending: drawn open, never as a finished month. */
   readonly partial: boolean;
+  /** A partial bar tall enough for stripes (else only its outline is drawn). */
+  readonly hatched: boolean;
   /** The engine flagged a category spike in this month. */
   readonly spike: SpikeMarker | null;
 }
@@ -73,20 +81,24 @@ export function layoutBars(values: readonly number[], width: number, height: num
   const max = values.reduce((m, v) => (v > m ? v : m), 0);
   const usable = height - stub - headroom;
   const bars = values.map((value, i): Bar => {
-    const h = max > 0 && value > 0 ? Math.max(stub, Math.round((value / max) * usable)) : stub;
+    const zero = value <= 0;
+    const partial = i === options.partialIndex && !zero;
+    const scaled = max > 0 && value > 0 ? Math.max(stub, Math.round((value / max) * usable)) : stub;
+    // A partial bar keeps room inside its outline, so even the first days of a month read as open.
+    const h = partial ? Math.min(Math.max(scaled, HATCH.minOpen), Math.max(stub, usable)) : scaled;
     const x = Math.round(i * column + (column - barWidth) / 2);
     const y = height - h;
     const bottom = y - SPIKE_MARKER.gap;
     const spike = spikes[i] ? { cx: x + barWidth / 2, top: bottom - SPIKE_MARKER.height, bottom, halfWidth: SPIKE_MARKER.width / 2 } : null;
-    const zero = value <= 0;
-    return { x, y, width: barWidth, height: h, zero, partial: i === options.partialIndex && !zero && h >= HATCH.minHeight, spike };
+    return { x, y, width: barWidth, height: h, zero, partial, hatched: partial && h >= HATCH.minHeight, spike };
   });
   return { bars, baseline: height, column };
 }
 
-/** Whether the month still running is drawn hatched in a chart this tall (the key names the hatch only then). */
-export function partialHatched(values: readonly number[], partialIndex: number, height: number, spikes?: readonly boolean[]): boolean {
-  return layoutBars(values, 1, height, { partialIndex, spikes }).bars[partialIndex]?.partial === true;
+/** How the month still running is drawn in a chart this tall, for the key; null when it has no bar to mark (nothing spent yet). */
+export function partialMark(values: readonly number[], partialIndex: number, height: number, spikes?: readonly boolean[]): PartialMark | null {
+  const bar = layoutBars(values, 1, height, { partialIndex, spikes }).bars[partialIndex];
+  return bar?.partial ? (bar.hatched ? 'hatched' : 'outlined') : null;
 }
 
 /** The column under a horizontal position; clamped, so a finger past the edge reads the end month. */
@@ -100,7 +112,8 @@ export function indexAtX(x: number, width: number, count: number): number {
 /**
  * What each month's column shows besides its bar's colour. The selection must read without colour
  * (the tint and the data mark are only 2.3:1 apart in light, 2.7:1 in dark), so the selected
- * month's label sits in a tint pill; the month still running is hatched; a spike carries a marker.
+ * month's label sits in a tint pill, the only label with emphasis; the month still running is drawn
+ * open (outlined, hatched when tall enough); a spike carries a marker.
  */
 export interface MonthCue {
   readonly month: MonthKey;
