@@ -12,6 +12,8 @@
   # The page's "open the web app" links lead to the app on finbuddych. No VITE_ANDROID_URL: the
   # /android download exists only on finbuddych.
   VITE_APP_URL = "https://finbuddych.netlify.app/"
+  # finbuddych's /web/ is the website's main copy. Remove this if this site becomes the main one.
+  CANONICAL_URL = "https://finbuddych.netlify.app/web/"
 
 # The site is one prerendered page. Its links are in-page anchors, the web app and GitHub. Any
 # other path (old bookmarks from the previous web app, for example) lands on that page.

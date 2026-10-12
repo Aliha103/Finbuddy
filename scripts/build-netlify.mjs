@@ -5,7 +5,8 @@
  *   /web/      the marketing website (apps/web, built for the /web/ base path)
  *   /android   a 302 to the pre-launch Android APK, only when ANDROID_APK_URL is set
  * all from apps/mobile/dist, the publish directory. It also writes the routing rules
- * (_redirects) and the root robots.txt. Any failure stops the build with a non-zero exit.
+ * (_redirects) and the root robots.txt, and checks that the website names <URL>/web/ as its
+ * canonical address. Any failure stops the build with a non-zero exit.
  *
  * Environment:
  *   URL              the site's main address. Netlify sets it (also on deploy previews);
@@ -94,7 +95,7 @@ function main() {
   if (!fs.existsSync(path.join(publish, 'index.html'))) fail(`The app export did not write ${rel(publish)}/index.html.`);
   const appFiles = countFiles(publish);
   // This build owns these names at the root; the app's public folder must not ship them.
-  for (const name of ['web', 'web.html', 'android', 'android.html', '_redirects', '_headers', 'robots.txt']) {
+  for (const name of ['web', 'web.html', 'android', 'android.html', '_redirects', '_headers', 'robots.txt', 'sitemap.xml']) {
     if (fs.existsSync(path.join(publish, name))) {
       fail(`The app export already contains ${rel(publish)}/${name}, which this build writes or routes. Remove it from apps/mobile/public, or update scripts/build-netlify.mjs.`);
     }
@@ -104,7 +105,8 @@ function main() {
   // --include=dev keeps its build tools even if NODE_ENV=production is set on the site. Both links
   // are set (or emptied) here, so the Android button and the /android rule below share one condition.
   npm(['ci', '--prefix', 'apps/web', '--include=dev', '--no-audit', '--no-fund']);
-  const webEnv = { BASE_PATH: '/web/', SITE_URL: `${site}/web`, VITE_APP_URL: '/', VITE_ANDROID_URL: apk ? '/android' : '' };
+  // This copy is the website's main one, so its canonical address is its own (CANONICAL_URL emptied).
+  const webEnv = { BASE_PATH: '/web/', SITE_URL: `${site}/web`, CANONICAL_URL: '', VITE_APP_URL: '/', VITE_ANDROID_URL: apk ? '/android' : '' };
   keepingFiles([path.join(webDir, 'public/sitemap.xml'), path.join(webDir, 'public/robots.txt')], () => {
     npm(['run', 'build', '--prefix', 'apps/web'], webEnv);
   });
@@ -116,6 +118,8 @@ function main() {
   if (page.includes('href="/android"') !== Boolean(apk)) {
     fail(`The website ${apk ? 'lacks' : 'has'} a link to /android, but ANDROID_APK_URL is ${apk ? 'set' : 'unset'}.`);
   }
+  const canonical = new URL(`${site}/web/`).href;
+  if (!page.includes(`<link rel="canonical" href="${canonical}"`)) fail(`The website does not name ${canonical} as its canonical address.`);
   const sitemap = fs.readFileSync(path.join(webOut, 'sitemap.xml'), 'utf8');
   if (!sitemap.includes(`<loc>${site}/web/</loc>`)) fail(`The website's sitemap.xml does not list ${site}/web/.`);
 
@@ -123,25 +127,30 @@ function main() {
   fs.cpSync(webOut, webPublish, { recursive: true });
 
   // 3. Routing. First match wins, and a file that exists is served before any of these rules, so
-  // real files always load. /web/* also matches /web itself and comes before the app's catch-all,
-  // so nothing under /web reaches the app. No rule is forced (a forced /web -> /web/ would loop).
+  // real files always load. The /web rule also matches /web/, and both /web rules come before the
+  // app's catch-all, so nothing under /web reaches the app. The website is one page, so any other
+  // path under /web (a missing asset included) shows that page with a 404 status, and search engines
+  // do not index endless copies of it. No rule is forced (a forced /web -> /web/ would loop).
   const rules = [
     '# Written by scripts/build-netlify.mjs. First match wins; existing files are served before these rules.',
     '',
-    '# The website: a missing hashed file is a 404, any other path under /web shows the website.',
-    '/web/assets/*  /web/index.html  404',
-    '/web/*         /web/index.html  200',
+    '# The website: /web and /web/ show it; any other missing path under /web shows it as a 404.',
+    '/web           /web/index.html   200',
+    '/web/*         /web/index.html   404',
+    '# Crawlers that ask for a sitemap at the root get the website\'s.',
+    '/sitemap.xml   /web/sitemap.xml  200',
     '',
     ...(apk ? ['# The pre-launch Android APK (the ANDROID_APK_URL environment variable).', `/android       ${apk}  302`, ''] : []),
     '# The app: a missing hashed file is a 404, every other path opens the app and its router.',
-    '/_expo/*       /index.html      404',
-    '/assets/*      /index.html      404',
-    '/*             /index.html      200',
+    '/_expo/*       /index.html       404',
+    '/assets/*      /index.html       404',
+    '/*             /index.html       200',
   ];
   fs.writeFileSync(path.join(publish, '_redirects'), `${rules.join('\n')}\n`);
 
   // 4. Crawlers read robots.txt only at the site root; point it at the website's sitemap. The website's
-  // own web/robots.txt and web/sitemap.xml stay as built.
+  // own web/robots.txt and web/sitemap.xml stay as built (the rule above also serves the sitemap at
+  // /sitemap.xml).
   fs.writeFileSync(path.join(publish, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${site}/web/sitemap.xml\n`);
 
   const seconds = ((Date.now() - started) / 1000).toFixed(1);

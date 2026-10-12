@@ -5,7 +5,7 @@ import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
 import { CaretDownIcon } from '@phosphor-icons/react/dist/csr/CaretDown';
 import type { ReactNode } from 'react';
 
-import { ANDROID_URL, APP_URL, REPO_URL, RELEASES_URL } from '../lib/links';
+import { ANDROID_URL, APP_HOST, APP_URL, REPO_URL, RELEASES_URL } from '../lib/links';
 import { PEOPLE, SAMPLE_LOCALE } from '../lib/sample';
 
 const three = PEOPLE.slice(0, 3);
@@ -58,7 +58,7 @@ const FACTS: readonly { lead: string; body: ReactNode }[] = [
   APP_URL
     ? {
         lead: 'Everything stays on your device.',
-        body: 'Your entries, balances and insights are stored and worked out on your phone. In the web app they stay in that browser, and clearing the browser’s data for the site deletes them.',
+        body: `Your entries, balances and insights are stored and worked out on your phone. In the web app they stay in that browser, and clearing the browser’s data for ${APP_HOST ?? 'this site'} deletes them.`,
       }
     : { lead: 'Everything stays on your phone.', body: 'Your entries, balances and insights are stored and worked out on the device.' },
   { lead: 'No bank connection.', body: 'You add expenses yourself. Nothing reads your bank account.' },
@@ -109,7 +109,7 @@ const FAQ: readonly { q: string; a: ReactNode }[] = [
   {
     q: 'What happens offline?',
     a: APP_URL
-      ? 'The installed app works the same offline: FinBuddy keeps your data on the phone and does every calculation there, insights included, so there is nothing to wait for. The web app needs a connection to open; your entries and every calculation stay in your browser.'
+      ? `${ANDROID_URL ? 'On Android, the APK' : 'The phone app'} works the same offline: FinBuddy keeps your data on the phone and does every calculation there, insights included, so there is nothing to wait for. The web app needs a connection to open; your entries and every calculation stay in your browser.`
       : 'Everything works the same. FinBuddy keeps your data on the phone and does every calculation there, insights included, so there is nothing to wait for.',
   },
   { q: 'When does it launch?', a: launchAnswer() },

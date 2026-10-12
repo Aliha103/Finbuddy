@@ -77,6 +77,7 @@ Scan the QR code with Expo Go on your phone (iOS or Android), or press `w` to op
 ```bash
 npm run web:install   # npm ci in apps/web
 npm run web:dev       # Vite dev server
+npm run web:typecheck # TypeScript check (the website has no test suite yet)
 npm run web:build     # production build into apps/web/dist
 ```
 
@@ -87,12 +88,12 @@ One Netlify site, **finbuddych** (https://finbuddych.netlify.app), builds `main`
 | Path | What it serves |
 | --- | --- |
 | `/` | The FinBuddy app's web export (`apps/mobile`). It keeps its data in that browser only. |
-| `/web/` | The website (`apps/web`, built for the `/web/` base path). Any other path under `/web/` shows the website too. |
+| `/web/` | The website (`apps/web`, built for the `/web/` base path). `/web` shows it too; any other path under `/web/` shows it with a 404 status. |
 | `/android` | A redirect to the pre-launch Android APK, only when `ANDROID_APK_URL` is set (see below). |
 
 The root `netlify.toml` runs `npm run build:netlify` (`scripts/build-netlify.mjs`) from the repository root, whatever the site's Base directory setting says. The script exports the app into `apps/mobile/dist` (the publish folder), builds the website and copies it into `apps/mobile/dist/web`, and writes the routing rules (`_redirects`) and `robots.txt` there. It stops with an error if any step fails. To run it locally: `npm ci`, then `npm run build:netlify`. CI runs the same build on pull requests and on `main`, but deploys nothing.
 
-GitHub Pages also serves the website, under `/Finbuddy/` (`.github/workflows/deploy.yml`). There, the website's web app links point to the Netlify site.
+GitHub Pages also serves the website, under `/Finbuddy/` (`.github/workflows/deploy.yml`). There, the website's web app links point to the Netlify site. Every copy of the website names `https://finbuddych.netlify.app/web/` as its canonical address (`CANONICAL_URL`, read by `apps/web/scripts/site.js`), so search engines treat the Netlify copy as the main one.
 
 ### The Android download
 

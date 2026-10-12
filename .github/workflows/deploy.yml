@@ -50,6 +50,9 @@ jobs:
         # The page links to the web app on the Netlify site. No VITE_ANDROID_URL: the /android
         # download exists only on Netlify.
         VITE_APP_URL: https://finbuddych.netlify.app/
+        # The Netlify site's /web/ is the website's main copy; this one names it as canonical so
+        # search engines do not index the two as duplicates.
+        CANONICAL_URL: https://finbuddych.netlify.app/web/
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

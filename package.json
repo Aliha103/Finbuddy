@@ -20,7 +20,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "web:install": "npm --prefix apps/web ci",
     "web:dev": "npm --prefix apps/web run dev",
-    "web:test": "npm --prefix apps/web test -- --run",
+    "web:typecheck": "npm --prefix apps/web run typecheck",
     "web:build": "npm --prefix apps/web ci && npm --prefix apps/web run build",
     "build:netlify": "node scripts/build-netlify.mjs",
     "brand:icons": "node scripts/render-icons.mjs",

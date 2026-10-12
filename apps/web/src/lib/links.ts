@@ -13,5 +13,10 @@ const link = (value: string | undefined): string | null => {
 
 /** The web app: "/" on Netlify (the same site), the Netlify address on the GitHub Pages build. */
 export const APP_URL = link(import.meta.env.VITE_APP_URL);
+/**
+ * The web app's host when it lives on another site than this page (the GitHub Pages build), so copy
+ * about the browser's data for "this site" can name the right one; null when it is this site.
+ */
+export const APP_HOST = APP_URL && /^https?:\/\//i.test(APP_URL) ? new URL(APP_URL).host : null;
 /** "/android" when the Netlify build has ANDROID_APK_URL; that path redirects to the pre-launch APK. */
 export const ANDROID_URL = link(import.meta.env.VITE_ANDROID_URL);
