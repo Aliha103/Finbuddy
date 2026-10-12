@@ -286,14 +286,14 @@ The system is quiet. Surfaces are white and tinted grey; the single brand tint i
 A graphite-on-grey neutral system with three meaning colours (green for owed to you, amber for attention, red for real trouble) and eight flat line colours that belong to groups, never to currencies. Every role has a dark value (the `-dark` keys); `theme.tsx` swaps the whole table by scheme, and the in-app appearance override also calls `Appearance.setColorScheme` so native alerts, sheets and pickers follow. Material dynamic colour is off: the static scheme is the Material theme.
 
 ### Primary
-- **Graphite** (tint `#4A4652`, white on it 9.2:1; dark `#CFC8D6` with ink `#1A1420` on it): filled buttons, the Hold to confirm control, the FAB and the iOS "Add expense" accessory, links and the leading icon of action rows ("Add your first expense", "Set a budget"), the header's back control and text buttons (the navigation theme's primary), selection checks and checkbox fills, a selected category tile's border and badge, the focused field's border and caret, the on-state of switches, the selected month's bar in the Spending and category charts (a selection; the other months are the data mark), the active tab, the FinBuddy card on Home, and the mark.
+- **Graphite** (tint `#4A4652`, white on it 9.2:1; dark `#CFC8D6` with ink `#1A1420` on it): filled buttons, the Hold to confirm control, the FAB and the iOS "Add expense" accessory, links and the leading icon of action rows ("Add your first expense", "Set a budget"), the header's back control and text buttons (the navigation theme's primary), selection checks and checkbox fills, a selected category tile's border and badge, the focused field's border and caret, the on-state of switches, the selected month's bar in the Spending and category charts and the pill behind that month's label (a selection; the other months are the data mark, and the pill carries the selection without colour, since the two bars are only 2.3:1 apart in light and 2.7:1 in dark), the active tab, the FinBuddy card on Home, and the mark.
 - **Graphite Wash** (`#ECE9EF`, dark `#2E2935`) with **Deep Graphite** text (`#2E2935`, dark `#E8E2EC`): tonal buttons (every "Settle up" and "Confirm" in a list), selected chips and selected Material segments, person avatars outside a split.
 
 ### Secondary
-- **Leaf Credit** (`#1F7A4D`, dark `#5FD39A`): money owed to you, as text and readouts only. Always beside the words "You're owed" or "owes you"; it never fills a surface.
+- **Leaf Credit** (`#1F7A4D`, dark `#5FD39A`): money owed to you, as text and readouts only. Always beside the words "You're owed", "owes you" or "is paying you"; it never fills a surface. On Home the amount set beside the words follows one rule in both "Needs settling" and "Pending payments": green when the money comes to you, ink when it leaves you, whether it still needs settling or is already on its way.
 
 ### Tertiary
-- **Attention Amber** (`#9A5B00`, dark `#FFB857`) on **Amber Wash** (`#FFF0D6`, dark `#4A2E00`): pending payments, due soon, budgets running ahead of pace, and insight warnings and notices (a triangle and a circle icon; the icon's shape and spoken label carry the severity).
+- **Attention Amber** (`#9A5B00`, dark `#FFB857`) on **Amber Wash** (`#FFF0D6`, dark `#4A2E00`): pending payments, due soon, budgets running ahead of pace, insight warnings and notices (a triangle and a circle icon; the icon's shape and spoken label carry the severity), and the spike marker above a month in the Spending and category charts.
 - **Danger Red** (`#B3261E`, dark `#FFB4AB`) on **Danger Wash** (`#F9DEDC`, dark `#93000A`), with `#FFFFFF` / `#690005` text on it: overdue, a failed save, a budget exceeded, field errors and destructive actions. Nothing else.
 
 ### Neutral
@@ -307,12 +307,12 @@ A graphite-on-grey neutral system with three meaning colours (green for owed to 
 - **Separator** (`#E4DEE6`, dark `#332C3A`): hairlines between rows, chip outlines, segmented borders.
 - **Pressed** (`rgba(26,20,32,0.08)`, dark `rgba(246,242,247,0.10)`): the pressed overlay on rows, chips and outlined buttons.
 - **Bone** (`#E9E4EB`, dark `#2A252F`): skeleton loading shapes.
-- **Data Mark** (`#857A8C`, 4.1:1 on surface and 3.4:1 on fill; dark `#7F7585`, 4:1 and 3.4:1): marks that carry data, not action: the month bars in Spending and a category's chart (the selected month takes the tint), category and on-pace budget proportion bars (ahead of pace is amber, over is red), and the six-month sketch in This month, where the current month is ink.
+- **Data Mark** (`#857A8C`, 4.1:1 on surface and 3.4:1 on fill; dark `#7F7585`, 4:1 and 3.4:1): marks that carry data, not action: the month bars in Spending and a category's chart (the selected month takes the tint; the month still running is hatched in its bar's colour), category and on-pace budget proportion bars (ahead of pace is amber, over is red), and the six-month sketch in This month, where the current month is ink.
 
 `tokens.ts` also defines `surfaceRaised`, `creditWash` and a `callout` type role. No shipped screen uses them (only the dev gallery shows `creditWash`), so they stay out of the frontmatter until one does.
 
 ### Line colours
-Eight flat colours, one per group, from a hash of the group id (`lineColorFor`) and changeable in the group's settings. Each ships with the one label colour that passes 4.5:1 on it: Violet `#6D3FC8`, Tangerine `#E8620A` (ink text), Marigold `#F2B705` (ink text), Leaf `#1F7A4D`, Moss `#6B7A1E`, Cocoa `#7A4A2B`, Cobalt `#1F4FD8`, Teal `#0F7B86` (white text unless noted). A group wears its colour as the 6 pt leading band of its card, as the fill of its name chip, as the 10 pt mark before its name in "Needs settling", and as the rings and arcs of its settle map (the rail under them is a separator-grey hairline). Drawn strokes that must reach 3:1 on the card (marigold does not, at about 1.8:1) are mixed toward the label colour by `graphicColor`; the band and chip keep the true colour.
+Eight flat colours, one per group, from a hash of the group id (`lineColorFor`) and changeable in the group's settings. Each ships with the one label colour that passes 4.5:1 on it: Violet `#6D3FC8`, Tangerine `#E8620A` (ink text), Marigold `#F2B705` (ink text), Leaf `#1F7A4D`, Moss `#6B7A1E`, Cocoa `#7A4A2B`, Cobalt `#1F4FD8`, Teal `#0F7B86` (white text unless noted). A group wears its colour as the 6 pt leading band of its card, as the fill of its name chip, as the 10 pt mark before its name in "Needs settling" and "Pending payments", and as the rings and arcs of its settle map (the rail under them is a separator-grey hairline). Drawn strokes that must reach 3:1 on the card (marigold does not, at about 1.8:1) are mixed toward the label colour by `graphicColor`; the band and chip keep the true colour.
 
 In dark mode the three whose light fill falls under 3:1 on the dark surface `#1C1922` lighten along their own hue: Violet `#7E53DD`, Cocoa `#956344` and Cobalt `#2F63ED`, each 3.4:1 on the surface and 3.7:1 on the ground, still with white text at 5.0:1 or better. The other five clear 3:1 there and keep their light pair (Tangerine 5.1:1, Marigold 9.5:1, Leaf 3.3:1, Moss 3.7:1, Teal 3.5:1). Everything that draws a line colour (the band, the chip, the marks, the picker's swatches, the split and payer colours, the settle map) takes it from `lineSwatch(line, scheme)`.
 
@@ -334,8 +334,8 @@ In dark mode the three whose light fill falls under 3:1 on the dark surface `#1C
 **Character:** A wide, sturdy grotesque with tabular figures carries every amount and the large titles, like the digits on a gate display; the platform face carries everything you read as language, so controls and body text feel native on each phone.
 
 ### Hierarchy
-- **Readout XL** (Mona Sans 700, 40/44, tabular): the hero figure of a screen: the first currency on the FinBuddy card, the Settle up amount, Spending's month total, an expense's total, and the amount being typed in Add expense.
-- **Readout L** (700, 28/32, tabular): the first figure on the Group detail header card, a category's month, the split editor's total.
+- **Readout XL** (Mona Sans 700, 40/44, tabular): the hero figure of a screen: the profile currency's balance on the FinBuddy card (or its only balance), the Settle up amount, Spending's month total, an expense's total, and the amount being typed in Add expense.
+- **Readout L** (700, 28/32, tabular): the first figure on the Group detail header card, a category's month, the split editor's total, and every FinBuddy card readout when the profile currency has no balance and several others do.
 - **Readout M** (600, 22/28, tabular): further currencies on the FinBuddy card, group-card positions, "This month" totals.
 - **Readout S** (600, 17/22, tabular): amounts inside rows ("Needs settling", activity, expenses).
 - **Display** (Mona Sans 700, 34/41): the iOS large navigation title.
@@ -377,7 +377,7 @@ Flat by construction. iOS draws no shadows at all: depth comes from grouped surf
 
 ## Shapes
 
-Corners come from the ID-1 fare card: 12 pt on cards and list groups (3.18 mm of 85.6 mm, at a 320-wide card). Inputs take 10, icon tiles and skeleton blocks 8, iOS sheets 20, Material bottom sheets 28. Every button, chip, segmented control and status label is a capsule. The Material FAB keeps its own 16 pt corner, and the brand mark is a 64-unit tile with 16-unit corners. A group card is at least 16:9 on phones (1.586, the ID-1 ratio, at 600 wide and up) and grows with its content rather than clipping it. The line-colour band is the one coloured edge in the system: 6 pt, on group cards only. The group mark in "Needs settling" is a 10 pt square with 3 pt corners.
+Corners come from the ID-1 fare card: 12 pt on cards and list groups (3.18 mm of 85.6 mm, at a 320-wide card). Inputs take 10, icon tiles and skeleton blocks 8, iOS sheets 20, Material bottom sheets 28. Every button, chip, segmented control and status label is a capsule. The Material FAB keeps its own 16 pt corner, and the brand mark is a 64-unit tile with 16-unit corners. A group card is at least 16:9 on phones (1.586, the ID-1 ratio, at 600 wide and up) and grows with its content rather than clipping it. The line-colour band is the one coloured edge in the system: 6 pt, on group cards only. The group mark in "Needs settling" and "Pending payments" is a 10 pt square with 3 pt corners.
 
 ## Components
 
@@ -385,7 +385,7 @@ Corners come from the ID-1 fare card: 12 pt on cards and list groups (3.18 mm of
 Tactile capsules that press to 0.97 with a stiff spring and a selection haptic.
 - **Shape:** capsule (999).
 - **Filled:** graphite with white text (ink on light graphite in dark mode), 48 tall, 24 side padding, headline label; the one primary action on a screen.
-- **Tonal:** graphite wash with deep graphite text. The small tonal capsule (36 tall in a 44/48 target, subhead label) is the list "Settle up" and "Confirm".
+- **Tonal:** graphite wash with deep graphite text. The small tonal capsule (36 tall in a 44/48 target, subhead label) is the list "Settle up" and "Confirm". Both keep room for the wider of the two labels (`reserveLabels`, laid out invisibly under the real one), so on Home they are one width at every text size, stay that width while loading, and the amounts beside them line up across both sections.
 - **Outlined / Plain:** a graphite outline or graphite text on nothing; pressed adds the pressed overlay.
 - **Destructive:** the same shapes in the danger role.
 - **Disabled / Loading:** 0.45 opacity; loading swaps the label for an activity indicator in the button's text colour.
@@ -407,7 +407,7 @@ Money as a gate display. The figure comes from the engine's `formatMoneyToParts`
 - **Corner Style:** 12 pt.
 - **Background:** surface (white / `#1C1922`); surface alt for a card inside a surface; outlined (hairline, no fill) for quiet panels.
 - **Group card:** white with the 6 pt line-colour band on the leading edge, the line chip, member initials, and your position as words over readouts, one line per direction. The same card is the list item and the Group detail header, so the eye follows one object between screens.
-- **FinBuddy card:** the one card in the tint. "FinBuddy" and the Sample chip on top, then one readout per currency with its direction word above it, stacked largest first (Readout XL, then Readout M). Secondary text on it is the on-tint colour at 78 percent.
+- **FinBuddy card:** the one card in the tint. "FinBuddy" and the Sample chip on top, then one readout per currency with its direction word above it. The order never compares currencies, which cannot be compared without a rate (by figure alone, JP¥19,486, about US$130, outranked US$251.92): the profile's currency first, in Readout XL; then the others grouped by direction, the first readout's direction first so the same words run together, and by ISO code within a group, in Readout M (`cardOrder.ts`). Without a profile-currency balance no readout is promoted: owed comes first and every readout is Readout L; a single balance is always Readout XL. This replaces the direction's "largest first" (DECISIONS.md, 2026-10-12). Secondary text on it is the on-tint colour at 78 percent.
 - **Shadow Strategy:** none (see Elevation & Depth).
 - **Internal Padding:** 16 pt (22 on the leading side of a group card, to clear the band).
 
@@ -415,13 +415,16 @@ Money as a gate display. The figure comes from the engine's `formatMoneyToParts`
 - **Style:** a fill-coloured box with 10 pt corners, label above in subhead secondary label, at least 44/48 tall; the amount field is 64 tall and set in Readout XL with tabular figures.
 - **Focus:** a 1.5 pt graphite border, the graphite caret and selection, plus a 2 pt graphite ring offset 2 on the web preview.
 - **Error:** the border turns danger red and the error names the problem under the field in footnote, announced to screen readers.
-- **Date (web preview):** a 48-tall fill box that shows the date the app's way (the caption's format, never the browser's), with the browser's own date input transparent over it: a click or Enter/Space opens the browser's picker and the arrow keys edit the date.
+- **Date (web preview):** a 48-tall fill box that shows the date the app's way at rest (never the browser's format), with the browser's own date input transparent over it: a click or Enter/Space opens the browser's picker. Keyboard editing is shown, not done blind: when the input takes focus from the keyboard, when a key other than Enter or Space reaches it, or when the browser cannot open its picker, the input itself shows in the box (its segments, the active one highlighted, in the field's colours and the app's scheme) until focus leaves. Each committed date is announced from a visually hidden live region ("Yesterday, 11 Oct 2026"); nothing under the field repeats the date.
 
 ### Lists and rows
-Rows are sentences: a body title, subhead subtitles in secondary label, a trailing readout or control, and a chevron on iOS navigation rows. Amounts in titles and subtitles are never truncated. "Needs settling" rows put the words and the amount on the first line, the group's line-colour mark and name under them, and the compact tonal Settle up beside both. "Pending payments" rows are the same two-line row with a compact Confirm; their second line names the group without the mark and puts the due state under the amount (overdue in red, due soon in amber).
+Rows are sentences: a body title, subhead subtitles in secondary label, a trailing readout or control, and a chevron on iOS navigation rows. Amounts in titles and subtitles are never truncated. "Needs settling" rows put the words and the amount on the first line, the group's line-colour mark and name under them, and the compact tonal Settle up beside both. "Pending payments" rows are the same row with a compact Confirm: the group's mark and name under the words, and the due state under the amount (overdue in red, due soon in amber); when the group's name and the state do not fit on one line, the state drops under the name and stays at the trailing edge, under the amount. In both sections the amount is green when the money comes to you and ink when it leaves you.
 
 ### Navigation
 Native on each OS: NativeTabs (UITabBarController with Liquid Glass on iOS 26, the Material 3 navigation bar on Android) with Home, Groups, Spending and Activity. Only the selected tab takes the tint; unselected stays the platform's grey. iOS uses large titles in Mona Sans Bold that collapse into the system material bar; Add expense and Settle up are form sheets on iOS and full-screen dialogs on Android. The web preview's JS tabs follow the Material bar (80 tall, wash indicator pill, tertiary-label inactive labels).
+
+### Month chart (Spending, a category)
+Six months of your own share as flat bars on a hairline baseline, month labels under them in caption. The months are the data mark; the selected month's bar is the tint and its label sits in a tint capsule (on-tint text, 600), the selection's cue beyond colour, which the chart needs because the two bar colours are under 3:1 apart. The month still running is drawn as partial, never as a finished month: a 1.5 pt outline and 45-degree stripes (1.5 pt, 6 pt apart) in its bar's colour, selected or not; a bar too short to show stripes (under 10 pt) is drawn plain and the key leaves the hatch out. A month the engine flagged with a `category_spike` insight (any category in that currency on Spending, that category on its own screen) carries an 8 by 6 pt attention triangle 3 pt above its bar; the layout keeps room for it above the tallest bar. The card's foot names both marks in words ("October so far is hatched. ▲ marks a category spike."), and the chart's spoken value adds "a category spike" for a flagged month. Scrubbing and the list alternative are unchanged.
 
 ### Settle map (signature)
 A group's debts in one currency drawn on its white card: members are stations on a 1.5 pt separator-grey rail, each a 10 pt ring with a 3 pt stroke in the group's line colour (yours filled), and every debt is a 3 pt arc with an arrowhead from payer to payee in the same colour, lifted to 3:1 by `graphicColor` where the true colour is too light. Each amount is a real text chip above the stations: caption with tabular figures on the fill colour, a 24 pt capsule with a 1.5 pt surface-coloured outline, placed per state so no chip touches another or a station. Names sit under the stations in footnote (yours in label at 600, others in secondary label). The segmented "All debts | Fewest payments" morphs between the engine's pairwise debts and its simplified plan over 600 ms from one shared progress value; the leaving chips fade out early and the arriving ones fade in late, so two sets of labels never share the map. Reduce Motion switches instantly; until Skia can draw, the map is a plain list of the same transfers.
@@ -439,6 +442,8 @@ iOS keeps the system switch and UISegmentedControl. Material switches put the st
 - **Do** set every readout in Mona Sans with tabular figures, cap it at 1.6x and let it shrink to fit rather than clip.
 - **Do** confirm money actions with Hold to confirm (600 ms) and route screen readers, Reduce Motion and the dialog preference to the two-step confirmation.
 - **Do** label sample data with the Sample chip wherever it appears.
+- **Do** say "this browser" wherever the web preview names the place the data lives ("Your data stays in this browser", "Worked out in this browser"); every such sentence goes through `features/common/device.ts`, and the phone's words stay on iOS and Android.
+- **Do** order currencies by a rule that never compares them (the profile's currency first, then direction and code), never by the size of their figures.
 - **Do** dock the Material FAB in its own strip of ground so it covers nothing.
 
 ### Don't:
@@ -447,5 +452,5 @@ iOS keeps the system switch and UISegmentedControl. Material switches put the st
 - **Don't** fill a screen, a group card or a section with the tint or a line colour; group cards are white with a band.
 - **Don't** add shadows to cards, chips or sheets; the FAB is the only shadow.
 - **Don't** assign line colours to currencies or use them for state.
-- **Don't** let colour carry meaning alone: selections show a check mark, insight severity an icon shape and a spoken label, balances their words.
+- **Don't** let colour carry meaning alone: selections show a check mark (a chart's selected month its label capsule), insight severity an icon shape and a spoken label, balances their words.
 - **Don't** set a caption or eyebrow above a title to announce its kind; the leading icon or the words carry it.

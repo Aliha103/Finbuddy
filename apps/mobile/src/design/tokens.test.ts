@@ -48,5 +48,15 @@ describe('data marks', () => {
       expect(ratio(colors.dataMark, colors.tint)).toBeGreaterThanOrEqual(2);
       expect(ratio(colors.dataMark, colors.label)).toBeGreaterThanOrEqual(3);
     });
+    // The selected bar and the others are under 3:1 apart, so the selection also puts its month's
+    // label in a tint pill (MonthBars, monthCues): a shape that reads on the card by itself.
+    it(`give the selected month a ${scheme} label pill at 3:1 on the card, with its text at 4.5:1`, () => {
+      expect(ratio(colors.tint, colors.dataMark)).toBeLessThan(3);
+      expect(ratio(colors.tint, colors.surface)).toBeGreaterThanOrEqual(3);
+      expect(ratio(colors.onTint, colors.tint)).toBeGreaterThanOrEqual(4.5);
+    });
+    it(`draw the ${scheme} spike marker at 3:1 on the card`, () => {
+      expect(ratio(colors.attention, colors.surface)).toBeGreaterThanOrEqual(3);
+    });
   }
 });

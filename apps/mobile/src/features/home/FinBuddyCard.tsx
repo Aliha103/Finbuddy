@@ -1,13 +1,14 @@
 // apps/mobile/src/features/home/FinBuddyCard.tsx
 // The FinBuddy card: the one tint-coloured surface on Home (Card tone="tint", DECISIONS.md). One
-// readout per currency with its direction word above it, stacked largest first (readoutXL for the
-// first, readoutM for the rest), the Sample chip while the data is sample, "All settled up" or
+// readout per currency with its direction word above it: the profile's currency first in readoutXL,
+// then the rest grouped by direction and by code in readoutM (cardOrder.ts; never by size, since
+// currencies cannot be compared), the Sample chip while the data is sample, "All settled up" or
 // "Nothing to settle" when there is nothing to show. The readouts roll when balances change; a
 // currency that reaches zero rolls down to 0 before it leaves (Roll to Zero). While Home is covered
 // (the settle sheet, a pushed screen) the card holds what it showed, and it keeps holding through
 // the return transition: Home fades back in with every label and figure laid out where it was, and
 // only once Home is in front does the roll start, so the whole roll is seen.
-import type { Money } from '@finbuddy/shared';
+import type { CurrencyCode, Money } from '@finbuddy/shared';
 import { useIsFocused } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -15,6 +16,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import { Card, DURATION, Readout, SPACE, SampleChip, Text, fitRole, useCardColors, useLayoutTransition, useTheme } from '@/design';
 
+import { cardRoles } from './cardOrder';
 import { useCardReadouts } from './rolling';
 
 export interface FinBuddyCardProps {
@@ -24,6 +26,8 @@ export interface FinBuddyCardProps {
   hasEntries: boolean;
   sample: boolean;
   locale: string;
+  /** The profile's currency: first on the card, and the one hero readout. */
+  profileCurrency: CurrencyCode | null | undefined;
 }
 
 /**
@@ -65,14 +69,15 @@ export function FinBuddyCard(props: FinBuddyCardProps) {
   );
 }
 
-function CardBody({ nets, hasEntries, sample, locale, settled, animate }: FinBuddyCardProps & { settled: boolean; animate: boolean }) {
+function CardBody({ nets, hasEntries, sample, locale, profileCurrency, settled, animate }: FinBuddyCardProps & { settled: boolean; animate: boolean }) {
   const theme = useTheme();
   const card = useCardColors();
   const on = card?.on ?? theme.colors.onTint;
   const muted = card?.onMuted ?? theme.colors.onTint;
   const shownNets = useHeldUntilSettled(nets, settled);
   const shownEntries = useHeldUntilSettled(hasEntries, settled);
-  const readouts = useCardReadouts(shownNets);
+  const readouts = useCardReadouts(shownNets, profileCurrency);
+  const roles = cardRoles(readouts, profileCurrency);
   const layout = useLayoutTransition(animate);
   const longest = Math.max(0, ...readouts.map((r) => String(Math.abs(r.money.amountMinor)).length));
 
@@ -98,7 +103,7 @@ function CardBody({ nets, hasEntries, sample, locale, settled, animate }: FinBud
         <View style={styles.readouts}>
           {readouts.map((r, i) => {
             const owed = r.money.amountMinor >= 0;
-            const role = fitRole(i === 0 ? 'readoutXL' : 'readoutM', theme.fontScale, longest);
+            const role = fitRole(roles[i] ?? 'readoutM', theme.fontScale, longest);
             const amount = { amountMinor: Math.abs(r.money.amountMinor), currency: r.money.currency };
             return (
               <Animated.View

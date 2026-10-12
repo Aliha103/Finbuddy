@@ -5,10 +5,11 @@
 // engine did not compute never appears.
 import type { Insight, InsightSeverity } from '@finbuddy/shared';
 
+import { ON_YOUR_DEVICE } from '@/features/common/device';
 import { categoryLabel, valueText, type Formatter, type Spoken } from '@/features/common/format';
 
 /** The footer under every insights list: the truth about where insights come from. */
-export const INSIGHTS_FOOTER = 'Worked out on your phone from your own entries. Nothing is sent anywhere.';
+export const INSIGHTS_FOOTER = `Worked out ${ON_YOUR_DEVICE} from your own entries. Nothing is sent anywhere.`;
 /** The empty state. */
 export const INSIGHTS_EMPTY = 'Nothing to flag. Keep logging and this fills in';
 

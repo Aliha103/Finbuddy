@@ -11,7 +11,7 @@ import { Field, ListSection, Row, SPACE, SampleChip, Text, useTheme } from '@/de
 
 import { StorageBar } from '../common/Banners';
 import { currencyNames, exampleMoney } from '../common/currency';
-import { THIS_DEVICE } from '../common/device';
+import { ON_THIS_DEVICE } from '../common/device';
 import { Screen } from '../common/Screen';
 import { cleanName, useFormat } from '../common/format';
 
@@ -63,7 +63,7 @@ export function SettingsHome() {
 
       <ListSection header="App">
         <Row title="Appearance" subtitle={appearanceSummary(theme.appearance, theme.reduceMotionOverride, theme.confirmWithDialog)} onPress={() => router.push('/settings/appearance')} chevron testID="settings-appearance" />
-        <Row title="Privacy" subtitle={`Your data stays on ${THIS_DEVICE}`} onPress={() => router.push('/settings/privacy')} chevron testID="settings-privacy" />
+        <Row title="Privacy" subtitle={`Your data stays ${ON_THIS_DEVICE}`} onPress={() => router.push('/settings/privacy')} chevron testID="settings-privacy" />
         <Row title="Your data" subtitle="Export, sample data, delete everything" onPress={() => router.push('/settings/data')} chevron testID="settings-data" />
       </ListSection>
 

@@ -3,14 +3,18 @@
 // payments"): the words and the amount on the first line; under them the group, marked in its line
 // colour, the Sample chip and an optional state ("Due in 2 days", "Overdue by 3 days") under the
 // amount; one compact control (a 36-point capsule in a full-size target) beside both lines, so
-// every row is one two-line row high. At large text sizes the amount and the control move under
-// the words.
+// every row is one two-line row high. Every row's control keeps room for the widest of the row
+// controls' labels (ROW_CONTROL_LABELS), so Settle up and Confirm are one width and the amounts of
+// both sections line up. At large text sizes the amount and the control move under the words.
 import type { Money } from '@finbuddy/shared';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Readout, SPACE, SampleChip, Text, lineSwatch, useTheme, type ColorRole, type LineColor } from '@/design';
 import type { Spoken } from '@/features/common/format';
+
+/** The labels of every compact control a TransferRow carries; each control reserves the widest. */
+export const ROW_CONTROL_LABELS: readonly string[] = ['Settle up', 'Confirm'];
 
 export interface TransferRowProps {
   /** The sentence without its amount: "You owe Blake", "Devon is paying you". */
@@ -26,7 +30,7 @@ export interface TransferRowProps {
   sample: boolean;
   /** A short state set under the amount, in its own colour role. */
   note?: { text: string; tone: ColorRole } | null;
-  /** The compact control beside the two lines (a small Button). */
+  /** The compact control beside the two lines (a small Button with reserveLabels={ROW_CONTROL_LABELS}). */
   control: ReactNode;
   testID?: string;
 }
@@ -90,6 +94,7 @@ const styles = StyleSheet.create({
   groupLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', flexShrink: 1, columnGap: SPACE.s - 2, rowGap: 2 },
   mark: { width: MARK, height: MARK, borderRadius: 3 },
   place: { flexShrink: 1 },
-  note: { fontWeight: '600' },
+  // Pushed to the end, so when it wraps under the group's name it still sits under the amount.
+  note: { fontWeight: '600', marginLeft: 'auto' },
   stackedActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: SPACE.s, marginTop: SPACE.xs },
 });

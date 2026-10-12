@@ -13,7 +13,7 @@ import { AccessibilityInfo, Platform, Pressable, ScrollView, StyleSheet, View } 
 import { addExpense, updateExpense, useDataStatus, useProfile } from '@/data';
 import { CategoryIcon, Chip, ChipRow, Field, Icon, ListSection, Row, SPACE, SampleChip, Skeleton, SkeletonText, Text, confirmDialog, useHaptic, useTheme } from '@/design';
 import { minorUnitsLabel } from '@/features/common/currency';
-import { THIS_DEVICE } from '@/features/common/device';
+import { ON_THIS_DEVICE } from '@/features/common/device';
 import { EmptyState } from '@/features/common/EmptyState';
 import { categoryLabel, cleanName } from '@/features/common/format';
 import { HeaderButton } from '@/features/common/HeaderButton';
@@ -53,7 +53,7 @@ export function AddExpenseScreen() {
     return (
       <Screen testID="add-expense">
         <Stack.Screen options={{ title: 'Edit expense', headerRight: () => null }} />
-        <EmptyState title="This expense no longer exists" message={`It may have been deleted, or the data on ${THIS_DEVICE} was reset.`} action={{ label: 'Close', onPress: closeAddSheet }} />
+        <EmptyState title="This expense no longer exists" message={`It may have been deleted, or the data ${ON_THIS_DEVICE} was reset.`} action={{ label: 'Close', onPress: closeAddSheet }} />
       </Screen>
     );
   }

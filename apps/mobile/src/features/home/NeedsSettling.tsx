@@ -16,7 +16,7 @@ import { cleanName, transferSentence, type Formatter, type Spoken } from '@/feat
 import { SectionEmpty } from '@/features/common/SectionEmpty';
 import { useLineColorOverrides } from '@/features/groups/lineColors';
 
-import { TransferRow } from './TransferRow';
+import { ROW_CONTROL_LABELS, TransferRow } from './TransferRow';
 
 /** Rows beyond this many hand over to Groups, which lists every plan in full. */
 const MAX_ROWS = 5;
@@ -110,6 +110,7 @@ function SettleRow({ item, f, groupName, line, sample }: SettleRowProps) {
           label="Settle up"
           size="small"
           variant="tonal"
+          reserveLabels={ROW_CONTROL_LABELS}
           onPress={() => openSettle(item)}
           accessibilityLabel={`Settle up. ${sentence.spoken}`}
           accessibilityHint="Opens Settle up for this exact amount"
@@ -121,7 +122,7 @@ function SettleRow({ item, f, groupName, line, sample }: SettleRowProps) {
   );
 }
 
-/** Two words a sentence can use elsewhere: the credit role when the money comes to you. */
+/** The amount's colour role for money between you and someone else: credit when it comes to you, ink when it leaves you (Needs settling and Pending payments alike). */
 export function directionColor(toMe: boolean): 'credit' | 'debit' {
   return toMe ? 'credit' : 'debit';
 }

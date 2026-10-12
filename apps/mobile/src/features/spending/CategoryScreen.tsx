@@ -2,21 +2,24 @@
 // One category in one currency: the selected month's total (this month by default) with its change
 // against the month before, six months of bars to scrub, then your share of every expense in the
 // category, newest first and grouped by month, each opening Expense detail. Sample records wear
-// their chip. Reads: useCategoryRecords (spendingRecords) and spendingByMonth / monthOverMonth.
+// their chip. The month still running is hatched, and a month the engine flagged with a spike in
+// this category carries a marker; the card's foot names both. Reads: useCategoryRecords
+// (spendingRecords), spendingByMonth / monthOverMonth and the category_spike insight.
 import { addMonths, monthOf, monthOverMonth, monthRange, spendingByMonth, zero, type CategoryId, type CurrencyCode, type MonthChange, type MonthKey, type SpendingRecord } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { useCategoryRecords, useDataStore, useDeviceLocale, useGroups, useProfile, useToday } from '@/data';
+import { useCategoryRecords, useDataStore, useDeviceLocale, useGroups, useInsights, useProfile, useToday } from '@/data';
 import { Card, ListSection, Readout, Row, SPACE, SampleChip, Text, useTheme } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
 import { EmptyState } from '@/features/common/EmptyState';
 import { categoryLabel, changeInWords, monthName, useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
+import { CHART_HEIGHT, partialHatched, spikeMonths } from './barGeometry';
 import { expenseCount } from './copy';
-import { MonthBars } from './MonthBars';
+import { ChartKey, MonthBars } from './MonthBars';
 
 export interface CategoryScreenProps {
   categoryId: CategoryId;
@@ -40,6 +43,7 @@ function CategoryBody({ categoryId, currency }: CategoryScreenProps) {
   const expenses = useDataStore((s) => s.snapshot.expenses);
   const groups = useGroups();
   const records = useCategoryRecords(categoryId, currency);
+  const insights = useInsights();
   const [pickedMonth, setPickedMonth] = useState<MonthKey | null>(null);
 
   const label = categoryLabel(categoryId);
@@ -72,7 +76,16 @@ function CategoryBody({ categoryId, currency }: CategoryScreenProps) {
   const change = selected.previous === null || selected.current.amountMinor === 0 ? null : changeInWords(f, selected);
   const sampleCount = records.filter((r) => r.expense.isSample).length;
   const sampleLabel = sampleCount === 0 ? null : sampleCount === records.length ? 'Sample' : 'Includes sample';
-  const spokenSelected = `${monthLabel}, ${f.spokenMoney(selected.current)}`;
+  const spikes = spikeMonths(insights, currency, categoryId);
+  const spokenSelected = `${monthLabel}, ${f.spokenMoney(selected.current)}${spikes.has(selectedMonth) ? ', a spike in this category' : ''}`;
+  const spikeFlags = series.map((m) => spikes.has(m.month));
+  const spikeShown = spikeFlags.some(Boolean);
+  const partialShown = partialHatched(
+    series.map((m) => m.current.amountMinor),
+    series.findIndex((m) => m.month === thisMonth),
+    CHART_HEIGHT.category,
+    spikeFlags,
+  );
 
   // Newest first, grouped by month (the records already arrive newest first).
   const byMonth = new Map<MonthKey, SpendingRecord[]>();
@@ -111,8 +124,9 @@ function CategoryBody({ categoryId, currency }: CategoryScreenProps) {
               {change?.text ?? ''}
             </Text>
             <View style={styles.chart}>
-              <MonthBars months={series} currentMonth={thisMonth} selected={selectedMonth} onSelect={setPickedMonth} locale={locale} spokenSelected={spokenSelected} height={72} testID="category-chart" />
+              <MonthBars months={series} currentMonth={thisMonth} selected={selectedMonth} onSelect={setPickedMonth} spikes={spikes} locale={locale} spokenSelected={spokenSelected} height={CHART_HEIGHT.category} testID="category-chart" />
             </View>
+            <ChartKey thisMonth={monthName(locale, thisMonth)} partial={partialShown} spike={spikeShown} spikeMeaning="a spike in this category" style={styles.key} testID="category-key" />
           </View>
         </Card>
       </View>
@@ -155,4 +169,5 @@ const styles = StyleSheet.create({
   cardHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.s },
   readout: { marginVertical: SPACE.xs },
   chart: { marginTop: SPACE.m },
+  key: { marginTop: SPACE.xs },
 });

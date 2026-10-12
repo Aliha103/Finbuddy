@@ -1,18 +1,21 @@
 // apps/mobile/src/features/home/PendingPayments.tsx
 // Pending payments that involve you: recorded, not yet counted in balances. The words say who is
-// paying whom, the group sits under them, and the state sits under the amount: overdue (the only
-// place red appears), due soon or due on a date. Each is the same two-line row as Needs settling
-// (TransferRow) with a compact Confirm, which marks the payment as made through the platform's
-// two-step confirmation.
+// paying whom, the group sits under them with its line-colour mark, and the state sits under the
+// amount: overdue (the only place red appears), due soon or due on a date. Each is the same two-line
+// row as Needs settling (TransferRow), with the same amount colours (green when the money comes to
+// you, ink when it leaves you) and a compact Confirm, which marks the payment as made through the
+// platform's two-step confirmation.
 import { daysBetween, type Settlement } from '@finbuddy/shared';
 import { useState } from 'react';
 import Animated, { FadeOut } from 'react-native-reanimated';
 
 import { confirmSettlement, useGroups, useMyPendingSettlements, useToday } from '@/data';
-import { Button, DURATION, ListSection, confirmDialog, useHaptic, useLayoutTransition, useTheme } from '@/design';
+import { Button, DURATION, ListSection, confirmDialog, lineColorFor, useHaptic, useLayoutTransition, useTheme } from '@/design';
 import { cleanName, settlementSentence, type Formatter, type Spoken } from '@/features/common/format';
+import { useLineColorOverrides } from '@/features/groups/lineColors';
 
-import { TransferRow } from './TransferRow';
+import { directionColor } from './NeedsSettling';
+import { ROW_CONTROL_LABELS, TransferRow } from './TransferRow';
 
 /** The pending sentence without its amount: "Devon is paying you", "You're paying Casey". */
 export function pendingWords(f: Formatter, s: Settlement): Spoken {
@@ -37,6 +40,7 @@ export function PendingPayments({ f }: { f: Formatter }) {
   const groups = useGroups();
   const pending = useMyPendingSettlements();
   const today = useToday();
+  const overrides = useLineColorOverrides();
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const layout = useLayoutTransition();
@@ -69,10 +73,9 @@ export function PendingPayments({ f }: { f: Formatter }) {
                 words={pendingWords(f, s)}
                 amount={s.amount}
                 locale={f.locale}
+                amountColor={directionColor(f.isMe(s.toPersonId))}
                 place={group ? cleanName(group.group.name) : 'Outside a group'}
-                // No line-colour mark: this row's second line also carries the due state, which then
-                // still fits beside the group's name on a 390-point phone.
-                line={null}
+                line={group ? lineColorFor(group.group.id, overrides) : null}
                 sample={s.isSample === true}
                 note={dueWords(f, s, today)}
                 control={
@@ -80,6 +83,7 @@ export function PendingPayments({ f }: { f: Formatter }) {
                     label="Confirm"
                     size="small"
                     variant="tonal"
+                    reserveLabels={ROW_CONTROL_LABELS}
                     loading={busy === s.id}
                     disabled={busy !== null && busy !== s.id}
                     onPress={() => void confirm(s)}

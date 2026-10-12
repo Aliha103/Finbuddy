@@ -4,7 +4,8 @@
 // by default) with its change against the month before in words, and six months of bars to scrub.
 // Under it, that month by category (proportional bars, each opening the category), then budgets with
 // their pace, then Insights. Every figure comes from the engine: spendingByMonth, monthOverMonth,
-// spendingByCategory and the budget_pace insight.
+// spendingByCategory, the budget_pace insight, and the category_spike insight that marks a month in
+// the chart. The month still running is hatched in the chart, and the card's foot says so.
 import { firstDayOfMonth, lastDayOfMonth, spendingByCategory, spendingRecords, type CategorySpending, type CurrencyCode, type MonthChange, type MonthKey } from '@finbuddy/shared';
 import { router } from 'expo-router';
 import { Fragment, useState } from 'react';
@@ -17,11 +18,12 @@ import { EmptyState } from '@/features/common/EmptyState';
 import { categoryLabel, changeInWords, monthName, useFormat, type Formatter, type Spoken } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
 
+import { CHART_HEIGHT, partialHatched, spikeMonths } from './barGeometry';
 import { findPace } from './budgetPace';
 import { BudgetRow } from './BudgetRow';
 import { CategoryRow } from './CategoryRow';
 import { excludedNote } from './copy';
-import { MonthBars } from './MonthBars';
+import { ChartKey, MonthBars } from './MonthBars';
 
 export function SpendingScreen() {
   return (
@@ -73,7 +75,16 @@ function SpendingBody() {
   const paces = myBudgets.map((b) => ({ budget: b, pace: findPace(insights, b.id) }));
   const excluded = [...new Set(paces.flatMap((p) => p.pace?.excluded ?? []))].sort();
   const showList = asList || theme.screenReader;
-  const spokenSelected = `${monthLabel}, ${f.spokenMoney(selected.current)}`;
+  const spikes = spikeMonths(insights, currency);
+  const spokenSelected = `${monthLabel}, ${f.spokenMoney(selected.current)}${spikes.has(selected.month) ? ', a category spike' : ''}`;
+  const spikeFlags = current.monthly.map((m) => spikes.has(m.month));
+  const spikeShown = spikeFlags.some(Boolean);
+  const partialShown = partialHatched(
+    current.monthly.map((m) => m.current.amountMinor),
+    current.monthly.findIndex((m) => m.month === summary.thisMonth),
+    CHART_HEIGHT.spending,
+    spikeFlags,
+  );
   const openBudgets = () => router.push({ pathname: '/(tabs)/(spending)/budgets', params: { currency } });
   const openCategory = (categoryId: string) => router.push({ pathname: '/(tabs)/(spending)/category/[categoryId]', params: { categoryId, currency } });
 
@@ -110,15 +121,13 @@ function SpendingBody() {
             </Text>
             <View style={styles.chart}>
               {showList ? (
-                <MonthList months={current.monthly} currentMonth={summary.thisMonth} selected={selected.month} onSelect={setPickedMonth} locale={locale} f={f} />
+                <MonthList months={current.monthly} currentMonth={summary.thisMonth} selected={selected.month} onSelect={setPickedMonth} spikes={spikes} locale={locale} f={f} />
               ) : (
-                <MonthBars months={current.monthly} currentMonth={summary.thisMonth} selected={selected.month} onSelect={setPickedMonth} locale={locale} spokenSelected={spokenSelected} testID="spending-chart" />
+                <MonthBars months={current.monthly} currentMonth={summary.thisMonth} selected={selected.month} onSelect={setPickedMonth} spikes={spikes} locale={locale} spokenSelected={spokenSelected} testID="spending-chart" />
               )}
             </View>
             <View style={styles.cardFoot}>
-              <Text role="footnote" color="labelTertiary" style={styles.grow}>
-                {`Your own share, personal and group, in ${currencyName}.`}
-              </Text>
+              <ChartKey lead={`Your own share, personal and group, in ${currencyName}.`} thisMonth={monthName(locale, summary.thisMonth)} partial={!showList && partialShown} spike={!showList && spikeShown} style={styles.grow} testID="spending-foot" />
               {theme.screenReader ? null : (
                 // A full 44/48-point target that reaches into the card's padding, so the foot keeps its height.
                 <Pressable
@@ -196,7 +205,7 @@ function monthsWithSpending(months: readonly MonthChange[]): number {
 }
 
 /** The accessible alternative to the chart: the same months as rows, newest first, each selectable. */
-function MonthList({ months, currentMonth, selected, onSelect, locale, f }: { months: readonly MonthChange[]; currentMonth: MonthKey; selected: MonthKey; onSelect: (m: MonthKey) => void; locale: string; f: Formatter }) {
+function MonthList({ months, currentMonth, selected, onSelect, spikes, locale, f }: { months: readonly MonthChange[]; currentMonth: MonthKey; selected: MonthKey; onSelect: (m: MonthKey) => void; spikes: ReadonlySet<MonthKey>; locale: string; f: Formatter }) {
   const { colors } = useTheme();
   const haptic = useHaptic();
   const rows = [...months].reverse();
@@ -206,13 +215,14 @@ function MonthList({ months, currentMonth, selected, onSelect, locale, f }: { mo
         const isCurrent = m.month === currentMonth;
         const isSelected = m.month === selected;
         const title = isCurrent ? `${monthName(locale, m.month)} so far` : monthName(locale, m.month);
-        const change = m.previous === null ? null : changeInWords(f, m);
+        const change = m.previous === null || m.current.amountMinor === 0 ? null : changeInWords(f, m);
+        const subtitle = [change?.text, spikes.has(m.month) ? 'A category spike' : undefined].filter((x): x is string => !!x);
         return (
           <Fragment key={m.month}>
             {i > 0 ? <View style={[styles.separator, { backgroundColor: colors.separator }]} /> : null}
             <Row
               title={title}
-              subtitle={m.current.amountMinor === 0 ? undefined : change?.text}
+              subtitle={subtitle.length ? subtitle : undefined}
               detail={<Readout money={m.current} locale={locale} role="readoutS" inline />}
               trailing={isSelected ? <Icon name="check" size={18} color={colors.tint} accessibilityLabel="Selected" /> : <View style={styles.checkSpace} />}
               chevron={false}

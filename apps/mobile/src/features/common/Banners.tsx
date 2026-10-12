@@ -7,6 +7,11 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useDataStatus, useProfile } from '@/data';
 import { Icon, RADIUS, SPACE, Text, useTheme } from '@/design';
 
+import { onDevice } from './device';
+
+/** The storage-refused sentence, in the browser's words on the web build. */
+export const UNSAVED = onDevice("Changes won't be saved on this device", "Changes won't be saved in this browser");
+
 /** Shown on Home and in Settings when the device refused to store data. Explained in Privacy. */
 export function StorageBar({ explain = true }: { explain?: boolean }) {
   const { colors } = useTheme();
@@ -16,7 +21,7 @@ export function StorageBar({ explain = true }: { explain?: boolean }) {
     <View style={styles.inner}>
       <Icon name="warning" size={18} color={colors.attention} />
       <Text role="subhead" style={[styles.text, { color: colors.attention }]}>
-        {"Changes won't be saved on this device"}
+        {UNSAVED}
       </Text>
       {explain ? <Icon name="chevronRight" size={16} color={colors.attention} /> : null}
     </View>
@@ -25,7 +30,7 @@ export function StorageBar({ explain = true }: { explain?: boolean }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Changes won't be saved on this device. Why"
+      accessibilityLabel={`${UNSAVED}. Why`}
       onPress={() => router.push('/settings/privacy')}
       style={({ pressed }) => [styles.bar, { backgroundColor: colors.attentionWash, opacity: pressed ? 0.85 : 1 }]}
       testID="storage-bar"

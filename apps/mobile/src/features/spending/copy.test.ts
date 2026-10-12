@@ -6,7 +6,7 @@ import { changeInWords, monthName, paceSentence, type Formatter } from '@/featur
 
 import { findPace } from './budgetPace';
 import { excludedNote, expenseCount } from './copy';
-import { indexAtX, layoutBars } from './barGeometry';
+import { HATCH, SPIKE_MARKER, indexAtX, layoutBars, monthCues, partialHatched, spikeMonths } from './barGeometry';
 
 /** A Formatter for en-GB without the data layer (the real one is a hook). */
 function formatter(locale = 'en-GB'): Formatter {
@@ -67,6 +67,24 @@ describe('changeInWords', () => {
   });
 });
 
+describe('spike markers', () => {
+  const insights = generateInsights({ today: TODAY, personId: me, expenses: sample.expenses, settlements: sample.settlements, budgets: sample.budgets });
+  const spikes = insights.filter((i) => i.kind === 'category_spike');
+  test('come from the engine\'s category_spike insights, per currency', () => {
+    expect(spikes.length).toBeGreaterThan(0);
+    for (const spike of spikes) {
+      const current = spike.body.data.current as Money;
+      expect(spikeMonths(insights, current.currency).has(thisMonth)).toBe(true);
+      expect(spikeMonths(insights, current.currency, spike.subject.categoryId).has(thisMonth)).toBe(true);
+    }
+  });
+  test('stay off a currency or a category the engine did not flag', () => {
+    const flagged = new Set<string>(spikes.map((s) => (s.body.data.current as Money).currency));
+    for (const currency of ['GBP', 'USD', 'JPY', 'EUR'].filter((c) => !flagged.has(c))) expect(spikeMonths(insights, currency).size).toBe(0);
+    expect(spikeMonths(insights, 'GBP', 'not-a-category').size).toBe(0);
+  });
+});
+
 describe('budget pace', () => {
   const f = formatter();
   const insights = generateInsights({ today: TODAY, personId: me, expenses: sample.expenses, settlements: sample.settlements, budgets: sample.budgets });
@@ -91,6 +109,34 @@ describe('chart geometry', () => {
     expect(bars.map((b) => b.height)).toEqual([2, 59, 118]);
     expect(bars.map((b) => b.zero)).toEqual([true, false, false]);
     expect(bars.every((b) => b.y + b.height === 120)).toBe(true);
+  });
+  test('the month still running is partial and a spike leaves room for its marker', () => {
+    const { bars } = layoutBars([50, 100, 80], 300, 120, { partialIndex: 2, spikes: [false, true, false] });
+    expect(bars.map((b) => b.partial)).toEqual([false, false, true]);
+    const tallest = bars[1]!;
+    expect(tallest.spike).not.toBeNull();
+    expect(tallest.spike!.bottom).toBe(tallest.y - SPIKE_MARKER.gap);
+    expect(tallest.spike!.top).toBeGreaterThanOrEqual(0);
+    expect(tallest.spike!.cx).toBe(tallest.x + tallest.width / 2);
+    expect(bars[0]!.spike).toBeNull();
+  });
+  test('a partial month too short to show stripes is drawn plain, and the key leaves the hatch out', () => {
+    const { bars } = layoutBars([10_000, 5], 300, 120, { partialIndex: 1 });
+    expect(bars[1]!.height).toBeLessThan(HATCH.minHeight);
+    expect(bars[1]!.partial).toBe(false);
+    expect(partialHatched([10_000, 5], 1, 120)).toBe(false);
+    expect(partialHatched([10_000, 8_000], 1, 120)).toBe(true);
+    expect(partialHatched([10_000, 0], 1, 120)).toBe(false);
+  });
+  test('without a spike the bars keep the full height', () => {
+    expect(layoutBars([100], 100, 120).bars[0]!.y).toBe(2);
+  });
+  test('the selected month carries a cue beyond its colour, on exactly one column', () => {
+    const months = ['2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10'];
+    const cues = monthCues(months, '2026-09', '2026-10', new Set(['2026-10']));
+    expect(cues.filter((c) => c.selected).map((c) => c.month)).toEqual(['2026-09']);
+    expect(cues.filter((c) => c.partial).map((c) => c.month)).toEqual(['2026-10']);
+    expect(cues.filter((c) => c.spike).map((c) => c.month)).toEqual(['2026-10']);
   });
   test('index under a finger is clamped to the columns', () => {
     expect(indexAtX(-10, 300, 6)).toBe(0);

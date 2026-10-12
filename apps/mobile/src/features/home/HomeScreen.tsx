@@ -11,6 +11,7 @@ import { Icon, ListSection, Row, SPACE, useTheme } from '@/design';
 import { ActivityRow } from '@/features/activity/ActivityRow';
 import { SampleBanner, StorageBar } from '@/features/common/Banners';
 import { DataGate } from '@/features/common/DataGate';
+import { ON_YOUR_DEVICE } from '@/features/common/device';
 import { Fab } from '@/features/common/Fab';
 import { useFormat } from '@/features/common/format';
 import { Screen } from '@/features/common/Screen';
@@ -57,7 +58,7 @@ function HomeBody() {
       <View style={styles.gutter}>
         <StorageBar />
         <SampleBanner />
-        <FinBuddyCard nets={overview?.net ?? []} hasEntries={hasEntries} sample={profile?.isSample === true} locale={locale} />
+        <FinBuddyCard nets={overview?.net ?? []} hasEntries={hasEntries} sample={profile?.isSample === true} locale={locale} profileCurrency={profile?.defaultCurrency} />
       </View>
 
       {!hasEntries && groups.length === 0 ? (
@@ -75,11 +76,11 @@ function HomeBody() {
 
       {insights.length === 0 || (loaded && shownInsights.length === 0) ? (
         <View style={styles.gutter}>
-          <SectionEmpty title={INSIGHTS_EMPTY} message={insights.length ? 'Everything found today is dismissed. See all insights to restore one.' : 'Insights are worked out on your phone from your own entries.'} testID="insights-empty-home" />
+          <SectionEmpty title={INSIGHTS_EMPTY} message={insights.length ? 'Everything found today is dismissed. See all insights to restore one.' : `Insights are worked out ${ON_YOUR_DEVICE} from your own entries.`} testID="insights-empty-home" />
           {insights.length ? <Row title="See all insights" onPress={() => router.push('/(tabs)/(home)/insights')} chevron testID="home-insights" style={styles.bare} /> : null}
         </View>
       ) : (
-        <ListSection header="Insights" footer="Worked out on your phone from your own entries.">
+        <ListSection header="Insights" footer={`Worked out ${ON_YOUR_DEVICE} from your own entries.`}>
           {shownInsights.map((insight) => (
             <InsightRow key={insight.id} insight={insight} f={f} onPress={() => openInsight(insight.id)} testID={`home-insight-${insight.id}`} />
           ))}

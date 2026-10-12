@@ -12,7 +12,7 @@ import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 import { deleteExpense, useDataStore, useExpense, useGroups } from '@/data';
 import { Card, CategoryIcon, HoldToConfirm, ListSection, Readout, Row, SPACE, SampleChip, Text, bestOn, lineSwatch, useTheme } from '@/design';
 import { DataGate } from '@/features/common/DataGate';
-import { THIS_DEVICE } from '@/features/common/device';
+import { ON_THIS_DEVICE } from '@/features/common/device';
 import { EmptyState } from '@/features/common/EmptyState';
 import { cleanName, useFormat, type Formatter } from '@/features/common/format';
 import { HeaderButton } from '@/features/common/HeaderButton';
@@ -46,7 +46,7 @@ export function ExpenseDetailScreen({ expenseId }: { expenseId: string }) {
       ) : (
         <Screen testID="expense-missing">
           <Stack.Screen options={{ title: 'Expense' }} />
-          <EmptyState title="This expense no longer exists" message={`It may have been deleted, or the data on ${THIS_DEVICE} was reset.`} action={{ label: 'Back', onPress: goBack }} />
+          <EmptyState title="This expense no longer exists" message={`It may have been deleted, or the data ${ON_THIS_DEVICE} was reset.`} action={{ label: 'Back', onPress: goBack }} />
         </Screen>
       )}
     </DataGate>
